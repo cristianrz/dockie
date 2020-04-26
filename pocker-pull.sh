@@ -33,7 +33,9 @@
 # Pulls $1
 set -eu
 
-. ./paths.sh
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
 _bootstrap_error() {
 	echo "Error response: pull access denied for $_system" >&2

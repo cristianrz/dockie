@@ -34,22 +34,9 @@
 
 set -eu
 
-. ./paths.sh
-
-_extract() {
-	case "$1" in
-	*.tbz2 | *.tar.bz2) tar fjvx "$@" ;;
-	*.tar | *.tar.xz) tar fvx "$@" ;;
-	*.tgz | *.tar.gz) tar fvxz "$@" ;;
-	*.7z) 7za x "$@" ;;
-	*.Z) uncompress "$@" ;;
-	*.bz2) bunzip2 "$@" ;;
-	*.gz) gunzip "$@" ;;
-	*.rar) unrar e "$@" ;;
-	*.zip) unzip "$@" ;;
-	*) die "'$*' cannot be extracted" ;;
-	esac
-}
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
 _log_error() {
 	printf '%s: %s\n' "$(basename "$0")" "$*"

@@ -34,7 +34,9 @@
 
 set -eu
 
-./paths.sh
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
 _usage() {
 	echo '"pocker run" requires at least 1 argument.
@@ -42,7 +44,10 @@ See "pocker --help".
 
 Usage:  pocker run [OPTIONS] SYSTEM [COMMAND] [ARG...]
 
-Run a command in a new rootfs'
+Run a command in a new rootfs
+
+Options:
+    --name string    Assign a name to the container'
 	exit 1
 }
 
@@ -65,8 +70,8 @@ _system_name="$1" && shift
 
 [ -d "$POCKER_GUESTS/$_guest_name" ] && _error_existing "$_guest_name"
 
-./pocker-bootstrap.sh "$_system_name" "$POCKER_GUESTS/$_guest_name"
+sh "$PREFIX"/pocker-bootstrap.sh "$_system_name" "$POCKER_GUESTS/$_guest_name"
 
 [ "$#" -eq 0 ] && return 0
 
-./pocker-exec.sh "$_guest_name" "$@"
+sh "$PREFIX/pocker-exec.sh" "$_guest_name" "$@"

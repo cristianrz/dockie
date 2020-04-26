@@ -34,7 +34,9 @@
 
 set -eu
 
-. ./paths.sh
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
 [ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
 
@@ -75,4 +77,3 @@ _proot_name="$1" && shift
 
 cd /
 env -i proot -r "$POCKER_GUESTS/$_proot_name" -i "$(_get_uid "$_user")" "$@"
-

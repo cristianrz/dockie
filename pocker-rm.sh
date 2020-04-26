@@ -34,7 +34,9 @@
 
 set -eu
 
-. ./paths.sh
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
 _log_fatal() {
 	printf '%s\n' "$*"

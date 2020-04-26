@@ -32,7 +32,9 @@
 #
 # Docker-like interface for proots
 
-. ./paths.sh
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
 set -eu
 
@@ -59,8 +61,10 @@ Run 'pocker --help' for more information on a command." >&2
 
 cmd="$1" && shift
 
+
+
 case "$cmd" in
-ls) ./pocker-images.sh "$@" ;;
-pull) ./pocker-pull.sh "$@" ;;
-rm) ./pocker-image-rm.sh "$@" ;;
+ls) sh "$PREFIX/pocker-images.sh" "$@" ;;
+pull) sh "$PREFIX/pocker-pull.sh" "$@" ;;
+rm) sh "$PREFIX/pocker-image-rm.sh" "$@" ;;
 esac

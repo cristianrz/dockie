@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-set -x
 #
 # BSD 3-Clause License
 #
@@ -35,7 +34,9 @@ set -x
 
 set -eu
 
-. ./paths.sh
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
 _bootstrap_error() {
 	echo "Error response: pull access denied for $1" >&2
@@ -43,8 +44,7 @@ _bootstrap_error() {
 	exit 1
 }
 
-
-[ ! -d "$POCKER_IMAGES/$1" ] && ./pocker-pull.sh "$1"
+[ ! -d "$POCKER_IMAGES/$1" ] && sh "$PREFIX/pocker-pull.sh" "$1"
 
 mkdir -p "$2"
 cd "$2"
@@ -53,4 +53,5 @@ if ! sh "$POCKER_IMAGES/$1/bootstrap.sh"; then
 	_bootstrap_error "$@"
 fi
 
-echo "export PS1='\u@$(basename "$2"):\w\$ '" >>etc/profile
+echo "export PS1='\u@$(basename "$2"):\w\\$ '" >>etc/profile
+echo "$1" >> etc/pocker_image

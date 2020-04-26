@@ -30,25 +30,60 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for proots
+# Docker-like interface for rootfs
 set -eu
 
-. ./paths.sh
+PREFIX="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=paths.sh
+. "$PREFIX/paths.sh"
 
-_usage() {
+# _help()
+# Show help and exit
+_help() {
 	cat <<'EOF'
-"pocker images" accepts no arguments.
-See 'pocker --help'.
 
-Usage:  pocker ps [OPTIONS]
+Usage: pocker [OPTIONS] COMMAND [ARG...]
 
-List rootfs
+Docker-like interface for unprivileged chroot
+
+Options:
+  -D              Enable debug mode
+  -h              Print usage
+  -v              Print version information and quit
+
+Commands:
+    exec      Run a command in a proot
+    images    List images
+    ls        List rootfs
+    ps        List rootfs
+    pull      Pull an image
+    rename    Rename a rootfs
+    rm        Remove one or more rootfs
+    run       Run a command in a new rootfs
+    search    Search the pocker hub for images
+
 EOF
 	exit 1
 }
 
-[ "$#" -ne 0 ] && _usage
+_version() {
+	echo "Pocker version v0.1.0"
+	exit 0
+}
 
-[ ! -d "$POCKER_IMAGES" ] && mkdir -p "$POCKER_IMAGES"
+while getopts "Dv" _c; do
+	case "$_c" in
+	D) set -x ;;
+	v) _version ;;
+	*) _help ;;
+	esac
+done
+shift $((OPTIND - 1))
 
-find "$POCKER_IMAGES" -maxdepth 1 -type d -exec basename {} \; | sed 1d
+[ "$#" -eq 0 ] && _help
+
+_cmd="$1" && shift
+
+[ ! -f "$PREFIX/pocker-$_cmd.sh" ] && _help
+
+sh "$PREFIX/pocker-$_cmd.sh" "$@"
