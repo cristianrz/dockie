@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -x
 #
 # BSD 3-Clause License
 #
@@ -36,7 +37,7 @@ set -eu
 
 _bootstrap_error() {
 	echo "Error response: pull access denied for $_system" >&2
-	rm -rf "$_system"
+	rm -rf "$IMAGES/$_system"
 	exit 1
 }
 
@@ -55,26 +56,23 @@ Pull an image or a repository from a registry' >&2
 IMAGES="$HOME"/.local/lib/pocker/images
 
 _system="$1"
-_url="https://cristianrz.github.io/pocker-hub/library/$_system/pull"
+_url="https://cristianrz.github.io/pocker-hub/library/$_system/url"
+_bootstrap="https://cristianrz.github.io/pocker-hub/library/$_system/bootstrap"
 
 [ ! -d "$IMAGES" ] && mkdir -p "$IMAGES"
-
-cd "$IMAGES"
 
 rm -rf "${IMAGES:?}/$_system"
 mkdir -p "$IMAGES/$_system"
 
-cd "$_system"
+cd "$IMAGES/$_system"
 
 echo "Pulling from pocker-hub/$_system"
 
-if ! _tmp="$(curl -s "$_url" 2>/dev/null)"; then
-	_bootstrap_error
-fi
+# the url is inside the 'url' file
+_tar="$(curl -s "$_url" 2>/dev/null)" || _bootstrap_error
 
-if ! echo "$_tmp" | sh; then
-	_bootstrap_error
-fi
+wget "$_tar" || _bootstrap_error
+wget "$_bootstrap"
 
 echo 'Pull complete'
 echo "Status: Downloaded rootfs for $_system"
