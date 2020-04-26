@@ -54,9 +54,9 @@ EOF
 
 [ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
 
-printf 'IMAGE\tMODIFIED\t\t\tNAME\n'
+# printf 'IMAGE\tMODIFIED\t\t\tNAME\n'
 for guest in $(ls -1 "$POCKER_GUESTS"); do
     date="$(stat "$POCKER_GUESTS/$guest" | grep Modify | cut -d' ' -f 2- | cut -c -19)"
     system="$(cat "$POCKER_GUESTS/$guest/etc/pocker_image")"
-    printf '%s\t%s\t\t%s\n' "$guest" "$date" "$system"
+    printf '%s\t%s\t%s\n' "$guest" "$system" "$date"
 done
