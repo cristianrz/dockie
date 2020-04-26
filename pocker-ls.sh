@@ -30,7 +30,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for proots
+# Docker-like interface for unprivileged chroots
 
 set -eu
 
@@ -56,7 +56,7 @@ EOF
 
 printf 'IMAGE\tMODIFIED\t\t\tNAME\n'
 for guest in $(ls -1 "$POCKER_GUESTS"); do
-    date="$(stat url | grep Modify | cut -d' ' -f 2- | cut -c -19)"
+    date="$(stat "$POCKER_GUESTS/$guest" | grep Modify | cut -d' ' -f 2- | cut -c -19)"
     system="$(cat "$POCKER_GUESTS/$guest/etc/pocker_image")"
     printf '%s\t%s\t\t%s\n' "$guest" "$date" "$system"
 done
