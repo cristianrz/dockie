@@ -34,7 +34,6 @@
 
 set -eu
 
-IMAGES="$HOME"/.local/lib/pocker/images
 PROOTS="$HOME"/.local/lib/pocker/proots
 
 _extract() {

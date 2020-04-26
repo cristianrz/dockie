@@ -30,46 +30,34 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for user-space chroots
+# Docker-like interface for proots
 
 set -eu
+
+_log_fatal() {
+	printf '%s\n' "$*"
+	exit 1
+}
+
+_usage() {
+	cat <<'EOF'
+"pocker rm" requires at least 1 argument.
+See 'pocker --help'.
+
+Usage:  pocker rm [OPTIONS] ROOTFS [ROOTFS...]
+
+Remove one or more rootfs'.
+EOF
+}
+
+[ "$#" -eq 0 ] && _usage
 
 GUESTS="$HOME"/.local/lib/pocker/guests
 [ ! -d "$GUESTS" ] && mkdir -p "$GUESTS"
 
-_log_fatal() {
-	printf '%s: %s\n' "$(basename "$0")" "$*"
-	exit 1
-}
+cd "$GUESTS" || exit 1
 
-_get_uid() {
-	passwd="$GUESTS/$_proot_name/etc/passwd"
-
-	[ ! -f "$passwd" ] && echo 0 && return
-
-	grep -E "^$_user:" "$GUESTS/$_proot_name/etc/passwd" | cut -d':' -f 3
-}
-
-_usage() {
-	_log_fatal '"pocker exec" requires at least 2 arguments.
-See "pocker --help".
-
-Usage:  pocker exec [OPTIONS] ROOTFS COMMAND [ARG...]
-
-Run a command in an existing rootfs'
-}
-
-[ "$#" -lt 2 ] && _usage
-
-_user=root
-cd "$HOME"
-
-[ "$1" = "--user" ] && shift && _user="$1" && shift
-
-_proot_name="$1" && shift
-
-[ ! -d "$GUESTS/$_proot_name" ] && _log_fatal "Error: No such container: $_proot_name"
-
-[ "$#" -eq 0 ] && _usage
-
-proot -r "$GUESTS/$_proot_name" -i "$(_get_uid "$_user")" "$@"
+for fs; do
+	[ ! -d "$GUESTS/$fs" ] && _log_fatal "Error: No such container: $fs"
+	rm -rf "$fs" && echo "$fs"
+done

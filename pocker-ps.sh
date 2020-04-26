@@ -30,11 +30,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Bootstraps $1 to $2
+# Docker-like interface for proots
 
 set -eu
 
-mkdir -p "$2"
-cd "$2"
+_usage() {
+	cat <<'EOF'
+"pocker ps" accepts no arguments.
+See 'pocker --help'.
 
-curl https://raw.githubusercontent.com/cristianrz/pocker-hub/master/"$1".pck | sh
+Usage:  pocker ps [OPTIONS]
+
+List rootfs
+EOF
+	exit 1
+}
+
+[ "$#" -ne 0 ] && _usage
+
+PROOTS="$HOME"/.local/lib/pocker/guests
+[ ! -d "$PROOTS" ] && mkdir -p "$PROOTS"
+
+find "$PROOTS" -maxdepth 1 -type d -exec basename {} \; | sed 1d

@@ -30,52 +30,47 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for proots
+# Docker-like interface for user-space chroots
 
 set -eu
 
-GUESTS="$HOME"/.local/lib/pocker/proots
-
-_log_error() {
-	printf '%s: %s\n' "$(basename "$0")" "$*"
-}
+GUESTS="$HOME"/.local/lib/pocker/guests
+[ ! -d "$GUESTS" ] && mkdir -p "$GUESTS"
 
 _log_fatal() {
-	_log_error "$@"
+	printf '%s: %s\n' "$(basename "$0")" "$*"
 	exit 1
 }
 
+_get_uid() {
+	passwd="$GUESTS/$_proot_name/etc/passwd"
+
+	[ ! -f "$passwd" ] && echo 0 && return
+
+	grep -E "^$_user:" "$GUESTS/$_proot_name/etc/passwd" | cut -d':' -f 3
+}
+
 _usage() {
-	_log_fatal '"pocker run" requires at least 1 argument.
+	echo '"pocker exec" requires at least 2 arguments.
 See "pocker --help".
 
-Usage:  pocker run [OPTIONS] SYSTEM [COMMAND] [ARG...]
+Usage:  pocker exec [OPTIONS] ROOTFS COMMAND [ARG...]
 
-Run a command in a new rootfs'
+Run a command in an existing rootfs'
+	exit 1
 }
 
-_error_existing() {
-	echo "pocker: Error response: Conflict. The container name '/$1' is already in use. You have to"
-	echo "remove (or rename) that container to be able to reuse that name."
-	echo "See 'pocker --help'."
-}
+[ "$#" -lt 2 ] && _usage
 
-_run() {
-    # Run needs at least one argument
-    [ "$#" -eq 0 ] && _usage
+_user=root
 
-	[ "$1" = "--name" ] && shift && _guest_name="$1" && shift
+[ "$1" = "--user" ] && shift && _user="$1" && shift
 
-	_system_name="$1" && shift
+_proot_name="$1" && shift
 
-    # Need a guest name if the user did not specify any
-    : "${_guest_name=$_system_name}"
+[ ! -d "$GUESTS/$_proot_name" ] && _log_fatal "Error: No such container: $_proot_name"
 
-	[ -d "$GUESTS/$_guest_name" ] && _error_existing
+[ "$#" -eq 0 ] && _usage
 
-    ./pocker-bootstrap.sh "$_system_name" "$GUESTS/$_guest_name"
-
-	[ "$#" -eq 0 ] && return 0
-
-    ./pocker-exec.sh "$_guest_name" "$@"
-}
+cd /
+env -i proot -r "$GUESTS/$_proot_name" -i "$(_get_uid "$_user")" "$@"

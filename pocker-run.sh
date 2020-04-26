@@ -34,8 +34,39 @@
 
 set -eu
 
-PROOTS="$HOME"/.local/lib/pocker/proots
+GUESTS="$HOME"/.local/lib/pocker/guests
 
-[ ! -d "$PROOTS" ] && mkdir -p "$PROOTS"
+_usage() {
+	echo '"pocker run" requires at least 1 argument.
+See "pocker --help".
 
-find "$PROOTS" -maxdepth 1 -type d -exec basename {} \; | sed 1d
+Usage:  pocker run [OPTIONS] SYSTEM [COMMAND] [ARG...]
+
+Run a command in a new rootfs'
+	exit 1
+}
+
+_error_existing() {
+	echo "pocker: Error response: Conflict. The container name '/$1' is already in use. You have to"
+	echo "remove (or rename) that container to be able to reuse that name."
+	echo "See 'pocker --help'."
+	exit 1
+}
+
+# Run needs at least one argument
+[ "$#" -eq 0 ] && _usage
+
+[ "$1" = "--name" ] && shift && _guest_name="$1" && shift
+
+_system_name="$1" && shift
+
+# Need a guest name if the user did not specify any
+: "${_guest_name=$_system_name}"
+
+[ -d "$GUESTS/$_guest_name" ] && _error_existing "$_guest_name"
+
+./pocker-bootstrap.sh "$_system_name" "$GUESTS/$_guest_name"
+
+[ "$#" -eq 0 ] && return 0
+
+./pocker-exec.sh "$_guest_name" "$@"
