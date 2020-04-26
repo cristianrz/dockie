@@ -34,8 +34,9 @@
 
 set -eu
 
-GUESTS="$HOME"/.local/lib/pocker/guests
-[ ! -d "$GUESTS" ] && mkdir -p "$GUESTS"
+. ./paths.sh
+
+[ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
 
 _log_fatal() {
 	printf '%s: %s\n' "$(basename "$0")" "$*"
@@ -43,11 +44,11 @@ _log_fatal() {
 }
 
 _get_uid() {
-	passwd="$GUESTS/$_proot_name/etc/passwd"
+	passwd="$POCKER_GUESTS/$_proot_name/etc/passwd"
 
 	[ ! -f "$passwd" ] && echo 0 && return
 
-	grep -E "^$_user:" "$GUESTS/$_proot_name/etc/passwd" | cut -d':' -f 3
+	grep -E "^$_user:" "$POCKER_GUESTS/$_proot_name/etc/passwd" | cut -d':' -f 3
 }
 
 _usage() {
@@ -68,9 +69,10 @@ _user=root
 
 _proot_name="$1" && shift
 
-[ ! -d "$GUESTS/$_proot_name" ] && _log_fatal "Error: No such container: $_proot_name"
+[ ! -d "$POCKER_GUESTS/$_proot_name" ] && _log_fatal "Error: No such container: $_proot_name"
 
 [ "$#" -eq 0 ] && _usage
 
 cd /
-env -i proot -r "$GUESTS/$_proot_name" -i "$(_get_uid "$_user")" "$@"
+env -i proot -r "$POCKER_GUESTS/$_proot_name" -i "$(_get_uid "$_user")" "$@"
+

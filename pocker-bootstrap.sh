@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -x
 #
 # BSD 3-Clause License
 #
@@ -34,20 +35,21 @@
 
 set -eu
 
+. ./paths.sh
+
 _bootstrap_error() {
 	echo "Error response: pull access denied for $1" >&2
 	rm -rf "$2"
 	exit 1
 }
 
-IMAGES="$HOME/.local/pocker/images"
 
-[ ! -d "$IMAGES/$1" ] && ./pocker-pull.sh "$1"
+[ ! -d "$POCKER_IMAGES/$1" ] && ./pocker-pull.sh "$1"
 
 mkdir -p "$2"
 cd "$2"
 
-if ! sh "$IMAGES/$1/bootstrap.sh"; then
+if ! sh "$POCKER_IMAGES/$1/bootstrap.sh"; then
 	_bootstrap_error "$@"
 fi
 

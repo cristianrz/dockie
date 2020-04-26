@@ -31,8 +31,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Docker-like interface for proots
-
 set -eu
+
+. ./paths.sh
 
 _usage() {
 	cat <<'EOF'
@@ -48,8 +49,6 @@ EOF
 
 [ "$#" -ne 0 ] && _usage
 
-IMAGES="$HOME"/.local/lib/pocker/images
+[ ! -d "$POCKER_IMAGES" ] && mkdir -p "$POCKER_IMAGES"
 
-[ ! -d "$IMAGES" ] && mkdir -p "$IMAGES"
-
-find "$IMAGES" -maxdepth 1 -type d -exec basename {} \; | sed 1d
+find "$POCKER_IMAGES" -maxdepth 1 -type d -exec basename {} \; | sed 1d

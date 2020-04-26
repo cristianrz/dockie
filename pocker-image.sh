@@ -32,6 +32,8 @@
 #
 # Docker-like interface for proots
 
+. ./paths.sh
+
 set -eu
 
 _log_fatal() {

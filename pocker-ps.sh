@@ -34,6 +34,8 @@
 
 set -eu
 
+. ./paths.sh
+
 _usage() {
 	cat <<'EOF'
 "pocker ps" accepts no arguments.
@@ -48,7 +50,6 @@ EOF
 
 [ "$#" -ne 0 ] && _usage
 
-PROOTS="$HOME"/.local/lib/pocker/guests
-[ ! -d "$PROOTS" ] && mkdir -p "$PROOTS"
+[ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
 
-find "$PROOTS" -maxdepth 1 -type d -exec basename {} \; | sed 1d
+find "$POCKER_GUESTS" -maxdepth 1 -type d -exec basename {} \; | sed 1d

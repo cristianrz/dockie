@@ -34,7 +34,7 @@
 
 set -eu
 
-PROOTS="$HOME"/.local/lib/pocker/proots
+. ./paths.sh
 
 _extract() {
 	case "$1" in
@@ -64,20 +64,20 @@ _rm() {
 	_id="$1"
 	shift
 
-	if [ -z "$PROOTS" ]; then
+	if [ -z "$POCKER_GUESTS" ]; then
 		_log_fatal "PROOTS is empty"
 	elif [ -z "$_id" ]; then
 		_log_fatal "no name given"
 	fi
 
-	rm -r "${PROOTS:?}/$_id"
+	rm -r "${POCKER_GUESTS:?}/$_id"
 }
 
 _get_uid() {
-	passwd="$PROOTS/$_name/etc/passwd"
+	passwd="$POCKER_GUESTS/$_name/etc/passwd"
 
 	if [ -f "$passwd" ]; then
-		grep -E "^$_user:" "$PROOTS/$_name/etc/passwd" | cut -d':' -f 3
+		grep -E "^$_user:" "$POCKER_GUESTS/$_name/etc/passwd" | cut -d':' -f 3
 	else
 		echo 0
 	fi
@@ -108,7 +108,7 @@ _exec() {
 
 	[ "$#" -eq 0 ] && _exec_error
 
-	proot -r "$PROOTS/$_name" -i "$(_get_uid "$_user")" "$@"
+	proot -r "$POCKER_GUESTS/$_name" -i "$(_get_uid "$_user")" "$@"
 }
 
 _run() {
@@ -129,12 +129,12 @@ Run a command in a new proot'
 
 	[ ! -f "$BOOTSTRAP/$_system" ] && _log_fatal "script for $_system is not available"
 	[ -z "$_name" ] && _name="$_system"
-	[ -z "$PROOTS" ] && _log_fatal "PROOTS environment variable is undefined"
-	[ -d "$PROOTS/$_system" ] && _log_fatal "$_system already exists"
+	[ -z "$POCKER_GUESTS" ] && _log_fatal "PROOTS environment variable is undefined"
+	[ -d "$POCKER_GUESTS/$_system" ] && _log_fatal "$_system already exists"
 
 	_url="$(cat "$BOOTSTRAP/$_system")"
 	printf 'Pulling from %s...\n' "$_url"
-	cd "$PROOTS"
+	cd "$POCKER_GUESTS"
 	mkdir "$_system"
 	cd "$_system"
 	wget "$_url"
@@ -146,13 +146,13 @@ Run a command in a new proot'
 	[ "$#" -eq 0 ] && return 0
 
 	cd "$HOME"
-	proot -r "$PROOTS"/"$_system"
+	proot -r "$POCKER_GUESTS"/"$_system"
 }
 
 # _ps()
 # Lists the installed proots
 _ps() {
-	find "$PROOTS" -maxdepth 1 -type d -exec basename {} \; | sed 1d
+	find "$POCKER_GUESTS" -maxdepth 1 -type d -exec basename {} \; | sed 1d
 }
 
 # _version()

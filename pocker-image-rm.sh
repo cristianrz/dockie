@@ -34,6 +34,8 @@
 
 set -eu
 
+. ./paths.sh
+
 _log_fatal() {
 	printf '%s\n' "$*"
 	exit 1
@@ -52,12 +54,11 @@ EOF
 
 [ "$#" -eq 0 ] && _usage
 
-IMAGES="$HOME"/.local/lib/pocker/images
-[ ! -d "$IMAGES" ] && mkdir -p "$IMAGES"
+[ ! -d "$POCKER_IMAGES" ] && mkdir -p "$POCKER_IMAGES"
 
-cd "$IMAGES" || exit 1
+cd "$POCKER_IMAGES" || exit 1
 
 for fs; do
-	[ ! -d "$IMAGES/$fs" ] && _log_fatal "Error: No such container: $fs"
+	[ ! -d "$POCKER_IMAGES/$fs" ] && _log_fatal "Error: No such container: $fs"
 	rm -rf "$fs" && echo "$fs"
 done

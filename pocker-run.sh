@@ -34,7 +34,7 @@
 
 set -eu
 
-GUESTS="$HOME"/.local/lib/pocker/guests
+./paths.sh
 
 _usage() {
 	echo '"pocker run" requires at least 1 argument.
@@ -63,9 +63,9 @@ _system_name="$1" && shift
 # Need a guest name if the user did not specify any
 : "${_guest_name=$_system_name}"
 
-[ -d "$GUESTS/$_guest_name" ] && _error_existing "$_guest_name"
+[ -d "$POCKER_GUESTS/$_guest_name" ] && _error_existing "$_guest_name"
 
-./pocker-bootstrap.sh "$_system_name" "$GUESTS/$_guest_name"
+./pocker-bootstrap.sh "$_system_name" "$POCKER_GUESTS/$_guest_name"
 
 [ "$#" -eq 0 ] && return 0
 
