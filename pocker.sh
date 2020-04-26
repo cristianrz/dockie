@@ -55,7 +55,6 @@ Commands:
 	exec      Run a command in a proot
 	images    List images
 	ls        List rootfs
-	ps        List rootfs
 	pull      Pull an image
 	rename    Rename a rootfs
 	rm        Remove one or more rootfs

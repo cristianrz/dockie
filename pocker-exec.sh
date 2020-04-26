@@ -76,4 +76,8 @@ _proot_name="$1" && shift
 [ "$#" -eq 0 ] && _usage
 
 cd /
+
+echo
+echo "Tip: to get the proper prompt, always run sh/bash with the '-l' option" >&2
+echo
 env -i proot -r "$POCKER_GUESTS/$_proot_name" -i "$(_get_uid "$_user")" "$@"

@@ -49,9 +49,7 @@ _bootstrap_error() {
 mkdir -p "$2"
 cd "$2"
 
-if ! sh "$POCKER_IMAGES/$1/bootstrap.sh"; then
-	_bootstrap_error "$@"
-fi
+sh "$POCKER_IMAGES/$1/bootstrap.sh" || true
 
 echo "export PS1='\u@$(basename "$2"):\w\\$ '" >>etc/profile
 echo "$1" >> etc/pocker_image
