@@ -84,35 +84,30 @@ _get_uid() {
 	fi
 }
 
-_pull(){
-
+_bootstrap() {
+	curl https://raw.githubusercontent.com/cristianrz/pocker-hub/master/"$1".pck | sh
 }
 
+_exec_error() {
+	_log_fatal '"pocker exec" requires at least 2 arguments.
+See "pocker --help".
+
+Usage:  pocker exec [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+Run a command in a bootstrapped proot'
+}
 
 _exec() {
+	[ "$#" -eq 0 ] && _exec_error
+
 	_user=root
 	cd "$HOME" || exit 1
 
-	if [ "$#" -eq 0 ]; then
-		_log_fatal '"pocker exec" requires at least 1 argument.
-See "pocker --help".
-
-Usage:  pocker run [OPTIONS] IMAGE [COMMAND] [ARG...]
-
-Run a command in a new proot'
-	fi
-
 	[ "$1" = "--user" ] && shift && _user="$1" && shift
+
 	_name="$1" && shift
 
-	if [ "$#" -eq 0 ]; then
-		_log_fatal '"pocker exec" requires at least 2 arguments.
-See "pocker --help".
-
-Usage:  pocker exec [OPTIONS] proot COMMAND [ARG...]
-
-Run a command in a running proot'
-	fi
+	[ "$#" -eq 0 ] && _exec_error
 
 	proot -r "$PROOTS/$_name" -i "$(_get_uid "$_user")" "$@"
 }
