@@ -18,6 +18,14 @@ git clone https://github.com/cristianrz/pocker.git
 
 ## Usage
 
+Get a remote rootfs, set it up and chroot into it:
+
+```
+pocker run --name my_alpine alpine /bin/sh -l
+```
+
+Plus all the most used Docker commands:
+
 ```
 $ pocker --help
 
