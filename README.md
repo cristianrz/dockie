@@ -27,6 +27,7 @@ pocker run --name my_alpine alpine /bin/sh -l
 As well as all the most used Docker commands:
 
 | **Command** | **Description**                        |
+| ---         | ---                                    |
 | `exec`      | Run a command in a root filesystem     |
 | `images`    | List images                            |
 | `ls`        | List root filesystems                  |
