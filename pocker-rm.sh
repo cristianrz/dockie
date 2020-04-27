@@ -61,6 +61,7 @@ EOF
 cd "$POCKER_GUESTS" || exit 1
 
 for fs; do
+	chmod -R +w "$POCKER_GUESTS/$fs"
 	[ ! -d "$POCKER_GUESTS/$fs" ] && _log_fatal "Error: No such container: $fs"
 	rm -rf "$fs" && echo "$fs"
 done
