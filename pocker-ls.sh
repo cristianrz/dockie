@@ -35,12 +35,12 @@
 set -eu
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
+# shellcheck source=config.sh
+. "$PREFIX/config.sh"
 
 _usage() {
 	cat <<'EOF'
-"pocker ps" accepts no arguments.
+"pocker ls" accepts no arguments.
 
 Usage:  pocker ps [OPTIONS]
 
@@ -51,18 +51,15 @@ EOF
 
 [ "$#" -ne 0 ] && _usage
 
-[ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
-
 [ -z "$(ls "$POCKER_GUESTS")" ] && exit 0
 
 {
 	printf 'ROOTFS ID,IMAGE,CREATED,NAME\n'
-	for guest in "$POCKER_GUESTS"/*; do
-		date="$(cat "$guest/date")"
-		hash="$(cat "$guest/id")"
-		system="$(cat "$guest/image")"
-		guest="$(basename "$guest")"
-		printf '%s,%s,%s,%s\n' "$hash" "$system" "$date" "$guest"
+	for _guest_name in "$POCKER_GUESTS"/*; do
+		_hash="$(cat "$_guest_name/id")"
+		_image_name="$(cat "$_guest_name/image")"
+		_date="$(cat "$_guest_name/date")"
+		_guest_name="$(basename "$_guest_name")"
+		printf '%s,%s,%s,%s\n' "$_hash" "$_image_name" "$_date" "$_guest_name"
 	done
 } | awk -F ',' '{printf "%-15s%-15s%-25s%s\n",$1,$2,$3,$4}'
-

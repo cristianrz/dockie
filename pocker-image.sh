@@ -33,8 +33,8 @@
 # Docker-like interface for unprivileged chroots
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
+# shellcheck source=config.sh
+. "$PREFIX/config.sh"
 
 set -eu
 
@@ -43,7 +43,7 @@ _log_fatal() {
 	exit 1
 }
 
-_usage() {
+_image_usage() {
 	echo "Usage:	pocker image COMMAND
 
 Manage images
@@ -55,12 +55,41 @@ Commands:
 	exit 1
 }
 
-[ "$#" -eq 0 ] && _usage
+_log_fatal() {
+	printf '%s\n' "$*"
+	exit 1
+}
+
+_image_rm_usage() {
+	cat <<'EOF'
+"pocker image rm" requires at least 1 argument.
+
+Usage:  pocker image rm [OPTIONS] ROOTFS [ROOTFS...]
+
+Remove one or more rootfs'.
+EOF
+}
+
+_image_rm(){
+    [ "$#" -eq 0 ] && _image_rm_usage
+
+    cd "$POCKER_IMAGES" || exit 1
+
+    for fs; do
+        [ ! -d "$POCKER_IMAGES/$fs" ] && _log_fatal "Error: No such container: $fs" &&  continue
+        rm -rf "$fs" && echo "$fs"
+    done
+}
+
+_image_ls(){
+    find "$POCKER_IMAGES" -maxdepth 1 -type d -exec basename {} \; | sed 1d
+}
+
+[ "$#" -eq 0 ] && _image_ls
 
 cmd="$1" && shift
 
 case "$cmd" in
-ls) sh "$PREFIX/pocker-images.sh" "$@" ;;
-pull) sh "$PREFIX/pocker-pull.sh" "$@" ;;
-rm) sh "$PREFIX/pocker-image-rm.sh" "$@" ;;
+ls) _image_ls ;;
+rm) _image_rm "$@" ;;
 esac

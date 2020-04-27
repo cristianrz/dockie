@@ -34,10 +34,10 @@
 set -eu
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
+# shellcheck source=config.sh
+. "$PREFIX/config.sh"
 
-_bootstrap_error() {
+_network_error() {
 	echo "Error response: pull access denied for $_system" >&2
 	rm -rf "${POCKER_IMAGES:?}/$_system"
 	exit 1
@@ -52,26 +52,21 @@ Pull an image or a repository from a registry' >&2
 	exit 1
 }
 
-[ "$#" -eq 0 ] && _pull_error
+[ "$#" -ne 1 ] && _pull_error
 
 _system="$1"
-_url="https://cristianrz.github.io/pocker-hub/library/$_system/url"
-_bootstrap="https://cristianrz.github.io/pocker-hub/library/$_system/bootstrap.sh"
 
-[ ! -d "$POCKER_IMAGES" ] && mkdir -p "$POCKER_IMAGES"
+_url="$REMOTE_LIBRARY/$_system/url"
+_bootstrap="$REMOTE_LIBRARY/$_system/bootstrap.sh"
 
 rm -rf "${POCKER_IMAGES:?}/$_system"
 mkdir -p "$POCKER_IMAGES/$_system"
 
-cd "$POCKER_IMAGES/$_system"
-
 echo "Pulling from pocker-hub/$_system"
 
 # the url is inside the 'url' file
-_tar_url="$(wget -O- "$_url" 2>/dev/null)" || _bootstrap_error
-wget "$_tar_url" 2>/dev/null || _bootstrap_error
-wget -q "$_bootstrap" || _bootstrap_error
+_tar_url="$(wget -O- "$_url" 2>/dev/null)" || _network_error
+wget "$_tar_url" "$POCKER_IMAGES/$_system" 2>/dev/null || _network_error
+wget -q "$_bootstrap" -P "$POCKER_IMAGES/$_system" || _network_error
 
-echo 'Pull complete'
-echo "Status: Downloaded rootfs for $_system"
-echo "cristianrz.github.io/pocker-hub/library/$_system"
+echo "Downloaded rootfs for $_system"

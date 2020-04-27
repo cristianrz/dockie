@@ -31,11 +31,4 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Docker-like interface for proots
-
-set -eu
-
-PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
-
 echo This feature is not yet implemented.

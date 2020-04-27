@@ -30,36 +30,29 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for unprivileged chroots
+# Bootstraps $1 to $2
 
 set -eu
 
-PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
-
-_log_fatal() {
-	printf '%s\n' "$*"
+_bootstrap_error() {
+	echo "Error response: pull access denied for $1" >&2
+	rm -rf "$2"
 	exit 1
 }
 
-_usage() {
-	cat <<'EOF'
-"pocker rm" requires at least 1 argument.
+[ ! -d "$POCKER_IMAGES/$1" ] && sh "$PREFIX/pocker-pull.sh" "$1"
 
-Usage:  pocker rm [OPTIONS] ROOTFS [ROOTFS...]
+mkdir -p "$2"/rootfs
 
-Remove one or more rootfs'.
-EOF
-}
+cd "$2"
 
-[ "$#" -eq 0 ] && _usage
+date '+%Y-%m-%d %H:%M:%S' >"date"
+printf '%s%s\n' "$*" "$(date)" | sha1sum | cut -c -12 >"id"
+echo "$1" >"image"
 
-[ ! -d "$POCKER_IMAGES" ] && mkdir -p "$POCKER_IMAGES"
+cd rootfs
 
-cd "$POCKER_IMAGES" || exit 1
-
-for fs; do
-	[ ! -d "$POCKER_IMAGES/$fs" ] && _log_fatal "Error: No such container: $fs"
-	rm -rf "$fs" && echo "$fs"
-done
+sh "$POCKER_IMAGES/$1/bootstrap.sh" || true
+echo "export PS1='\u@$(basename "$2"):\w\\$ '" >>etc/profile
+rm etc/resolv.conf
+cat /etc/resolv.conf etc/resolv.conf

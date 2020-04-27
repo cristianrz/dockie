@@ -35,8 +35,8 @@
 set -eu
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
+# shellcheck source=config.sh
+. "$PREFIX/config.sh"
 
 _usage() {
 	echo '"pocker run" requires at least 1 argument.
@@ -51,9 +51,7 @@ Options:
 }
 
 _error_existing() {
-	echo "pocker: Error response: Conflict. The container name '/$1' is already in use. You have to
-remove (or rename) that container to be able to reuse that name." >&2
-	exit 1
+	echo "pocker: The container name '$1' is already in use." >&2 && exit 1
 }
 
 # Run needs at least one argument
@@ -70,8 +68,6 @@ _system_name="$1" && shift
 
 mkdir -p "$POCKER_GUESTS/$_guest_name/rootfs"
 
-sh "$PREFIX"/pocker-bootstrap.sh "$_system_name" "$POCKER_GUESTS/$_guest_name"
+sh "$PREFIX"/bootstrap.sh "$_system_name" "$POCKER_GUESTS/$_guest_name"
 
-[ "$#" -eq 0 ] && return 0
-
-sh "$PREFIX/pocker-exec.sh" "$_guest_name" "$@"
+[ "$#" -eq 0 ] || sh "$PREFIX/pocker-exec.sh" "$_guest_name" "$@"

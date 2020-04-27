@@ -35,13 +35,8 @@
 set -eu
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
-
-_log_fatal() {
-	printf '%s\n' "$*"
-	exit 1
-}
+# shellcheck source=config.sh
+. "$PREFIX/config.sh"
 
 _usage() {
 	cat <<'EOF'
@@ -55,12 +50,9 @@ EOF
 
 [ "$#" -eq 0 ] && _usage
 
-[ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
-
 cd "$POCKER_GUESTS" || exit 1
 
 for fs; do
-	chmod -R +w "$POCKER_GUESTS/$fs"
-	[ ! -d "$POCKER_GUESTS/$fs" ] && _log_fatal "Error: No such container: $fs"
-	rm -rf "$fs" && echo "$fs"
+	[ ! -d "$POCKER_GUESTS/$fs" ] && echo "Error: No such container: $fs" >&2 && continue
+	chmod -R +w "$fs" && rm -r "$fs" && echo "$fs"
 done

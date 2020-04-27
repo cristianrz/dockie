@@ -34,8 +34,8 @@
 set -eu
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
+# shellcheck source=config.sh
+. "$PREFIX/config.sh"
 
 # _help()
 # Show help and exit
@@ -65,18 +65,9 @@ EOF
 	exit 1
 }
 
-while getopts "Dv" _c; do
-	case "$_c" in
-	v) echo "Pocker version v0.1.0" && exit 0 ;;
-	*) _help ;;
-	esac
-done
-shift $((OPTIND - 1))
-
 [ "$#" -eq 0 ] && _help
 
-_cmd="$1" && shift
+[ "$1" = "-v" ] && echo "Pocker version v0.1.0" && exit 0
 
-[ ! -f "$PREFIX/pocker-$_cmd.sh" ] && _help
-
-sh "$PREFIX/pocker-$_cmd.sh" "$@"
+[ ! -f "$PREFIX/pocker-$1.sh" ] && _help
+sh "$PREFIX/pocker-$1.sh" "$@"

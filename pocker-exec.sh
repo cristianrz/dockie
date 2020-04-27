@@ -35,10 +35,8 @@
 set -eu
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=paths.sh
-. "$PREFIX/paths.sh"
-
-[ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
+# shellcheck source=config.sh
+. "$PREFIX/config.sh"
 
 _log_fatal() {
 	printf '%s: %s\n' "$(basename "$0")" "$*"
@@ -69,7 +67,7 @@ Options:
 
 _user=root
 
-[ "$1" = "--user" ] && shift && _user="$1" && shift
+[ "$1" = "--user" ] && _user="$2" && shift 2
 
 _guest_name="$1" && shift
 
@@ -78,10 +76,10 @@ _guest_name="$1" && shift
 
 [ "$#" -eq 0 ] && _usage
 
-cd /
+cat << 'EOF' >&2
 
-echo
-echo "Tip: to get the proper prompt, always run sh/bash with the '-l'" >&2
-echo "option" >&2
-echo
-env -i proot -r "$POCKER_GUESTS/$_guest_name/rootfs" -i "$(_get_uid "$_user")" "$@"
+Tip: to get the proper prompt, always run sh/bash with the '-l' option
+
+EOF
+
+&& env -i proot -w / -r "$POCKER_GUESTS/$_guest_name/rootfs" -i "$(_get_uid "$_user")" "$@"
