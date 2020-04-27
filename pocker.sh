@@ -44,7 +44,7 @@ _help() {
 
 Usage: pocker [OPTIONS] COMMAND [ARG...]
 
-Docker-like interface for unprivileged chroot
+Docker-like interface for unprivileged chroots
 
 Options:
 	-D        Enable debug mode
@@ -52,7 +52,7 @@ Options:
 	-v        Print version information and quit
 
 Commands:
-	exec      Run a command in a proot
+	exec      Run a command in a rootfs
 	images    List images
 	ls        List rootfs
 	pull      Pull an image
