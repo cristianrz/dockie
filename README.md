@@ -2,6 +2,14 @@
 
 Docker-like interface for unprivileged chroots
 
+## Disclaimer
+
+`chroot` is not a security feature and should not be used as one and same
+applies for PRoot. PRoot should only be used as a "soft sandbox" where
+you want to test some other distros features or fake root privileges on a
+non-root environment where you know that whatever gets into your PRoot will
+be able to get out into your main OS.
+
 ## Dependencies
 
 * `proot`
