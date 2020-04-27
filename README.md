@@ -45,7 +45,7 @@ and now delete them both:
 $ pocker rm my_alpine my_void
 ```
 
-but the images remain available locally!
+but the images remain available locally in case you want to use them again:
 
 ```
 $ pocker images
