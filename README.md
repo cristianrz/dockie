@@ -31,7 +31,7 @@ As well as all the most used Docker commands:
 
 * `exec`: Run a command in a root filesystem
 * `images`: List images
-* `ls`: List root filesystem
+* `ls`: List root filesystems
 * `pull`: Pull an image
 * `rename`: Rename a root filesystem
 * `rm`: Remove one or more root filesystems
