@@ -29,7 +29,7 @@ _pull() {
 
 	# the url is inside the 'url' file
 	_tar_url="$(wget -O- "$_url" 2>/dev/null)" || _pull_network_error
-	wget "$_tar_url" -P "$POCKER_IMAGES/$_system" 2>/dev/null || _pull_network_error
+	wget "$_tar_url" -P "$POCKER_IMAGES/$_system" || _pull_network_error
 	wget -q "$_bootstrap" -P "$POCKER_IMAGES/$_system" || _pull_network_error
 
 	echo "Downloaded rootfs for $_system"
