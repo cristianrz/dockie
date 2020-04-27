@@ -26,14 +26,15 @@ pocker run --name my_alpine alpine /bin/sh -l
 
 As well as all the most used Docker commands:
 
-* `exec`: Run a command in a root filesystem
-* `images`: List images
-* `ls`: List root filesystems
-* `pull`: Pull an image
-* `rename`: Rename a root filesystem
-* `rm`: Remove one or more root filesystems
-* `run`: Run a command in a new root filesystem
-* `search`: Search the pocker hub for images
+| **Command** | **Description**                        |
+| `exec`      | Run a command in a root filesystem     |
+| `images`    | List images                            |
+| `ls`        | List root filesystems                  |
+| `pull`      | Pull an image                          |
+| `rename`    | Rename a root filesystem               |
+| `rm`        | Remove one or more root filesystems    |
+| `run`       | Run a command in a new root filesystem |
+| `search`    | Search the pocker hub for images       |
 
 For more information on a command:
 
