@@ -46,20 +46,22 @@ _log_fatal() {
 }
 
 _get_uid() {
-	passwd="$POCKER_GUESTS/$_proot_name/rootfs/etc/passwd"
+	passwd="$POCKER_GUESTS/$1/rootfs/etc/passwd"
 
 	[ ! -f "$passwd" ] && echo 0 && return
 
-	grep -E "^$_user:" "$POCKER_GUESTS/$_proot_name/rootfs/etc/passwd" | cut -d':' -f 3
+	awk -F ':' '$1 = '"$(whoami)"'{print $3}' "$POCKER_GUESTS/$1/rootfs/etc/passwd"
 }
 
 _usage() {
 	echo '"pocker exec" requires at least 2 arguments.
-See "pocker --help".
 
 Usage:  pocker exec [OPTIONS] ROOTFS COMMAND [ARG...]
 
-Run a command in an existing rootfs'
+Run a command in an existing rootfs
+
+Options:
+    --user  Username'
 	exit 1
 }
 
@@ -69,15 +71,17 @@ _user=root
 
 [ "$1" = "--user" ] && shift && _user="$1" && shift
 
-_proot_name="$1" && shift
+_guest_name="$1" && shift
 
-[ ! -d "$POCKER_GUESTS/$_proot_name" ] && _log_fatal "Error: No such container: $_proot_name"
+[ ! -d "$POCKER_GUESTS/$_guest_name" ] &&
+	echo "Error: No such container: $_guest_name" >&2 && exit 1
 
 [ "$#" -eq 0 ] && _usage
 
 cd /
 
 echo
-echo "Tip: to get the proper prompt, always run sh/bash with the '-l' option" >&2
+echo "Tip: to get the proper prompt, always run sh/bash with the '-l'" >&2
+echo "option" >&2
 echo
-env -i proot -r "$POCKER_GUESTS/$_proot_name/rootfs" -i "$(_get_uid "$_user")" "$@"
+env -i proot -r "$POCKER_GUESTS/$_guest_name/rootfs" -i "$(_get_uid "$_user")" "$@"

@@ -30,7 +30,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for proots
+# Docker-like interface for unprivileged chroots
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=paths.sh
@@ -51,17 +51,13 @@ Manage images
 Commands:
   ls    List images
   pull  Pull an image
-  rm    Remove one or more images
-
-Run 'pocker --help' for more information on a command." >&2
+  rm    Remove one or more images" >&2
 	exit 1
 }
 
 [ "$#" -eq 0 ] && _usage
 
 cmd="$1" && shift
-
-
 
 case "$cmd" in
 ls) sh "$PREFIX/pocker-images.sh" "$@" ;;

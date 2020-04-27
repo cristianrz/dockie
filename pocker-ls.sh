@@ -41,7 +41,6 @@ PREFIX="$(cd "$(dirname "$0")" && pwd)"
 _usage() {
 	cat <<'EOF'
 "pocker ps" accepts no arguments.
-See 'pocker --help'.
 
 Usage:  pocker ps [OPTIONS]
 

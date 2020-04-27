@@ -45,7 +45,6 @@ _bootstrap_error() {
 
 _pull_error() {
 	echo '"pocker pull" requires exactly 1 argument.
-See "pocker --help".
 
 Usage:  pocker pull [OPTIONS] NAME
 

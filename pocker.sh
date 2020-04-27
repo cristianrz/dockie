@@ -30,7 +30,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for rootfs
+# Docker-like interface for unprivileged chroots
 set -eu
 
 PREFIX="$(cd "$(dirname "$0")" && pwd)"
@@ -40,7 +40,7 @@ PREFIX="$(cd "$(dirname "$0")" && pwd)"
 # _help()
 # Show help and exit
 _help() {
-	cat <<'EOF'
+	cat <<'EOF' >&2
 
 Usage: pocker [OPTIONS] COMMAND [ARG...]
 
@@ -52,28 +52,24 @@ Options:
 	-v        Print version information and quit
 
 Commands:
-	exec      Run a command in a rootfs
+	exec      Run a command in a root filesystem
 	images    List images
-	ls        List rootfs
+	ls        List root filesystem
 	pull      Pull an image
-	rename    Rename a rootfs
-	rm        Remove one or more rootfs
-	run       Run a command in a new rootfs
+	rename    Rename a root filesystem
+	rm        Remove one or more root filesystems
+	run       Run a command in a new root filesystem
 	search    Search the pocker hub for images
 
+Run 'pocker COMMAND' for more information on a command.
 EOF
 	exit 1
-}
-
-_version() {
-	echo "Pocker version v0.1.0"
-	exit 0
 }
 
 while getopts "Dv" _c; do
 	case "$_c" in
 	D) set -x ;;
-	v) _version ;;
+	v) echo "Pocker version v0.1.0" && exit 0 ;;
 	*) _help ;;
 	esac
 done

@@ -46,7 +46,6 @@ _log_fatal() {
 _usage() {
 	cat <<'EOF'
 "pocker rm" requires at least 1 argument.
-See 'pocker --help'.
 
 Usage:  pocker rm [OPTIONS] ROOTFS [ROOTFS...]
 

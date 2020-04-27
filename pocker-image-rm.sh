@@ -30,7 +30,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Docker-like interface for proots
+# Docker-like interface for unprivileged chroots
 
 set -eu
 
@@ -46,7 +46,6 @@ _log_fatal() {
 _usage() {
 	cat <<'EOF'
 "pocker rm" requires at least 1 argument.
-See 'pocker --help'.
 
 Usage:  pocker rm [OPTIONS] ROOTFS [ROOTFS...]
 

@@ -40,7 +40,6 @@ PREFIX="$(cd "$(dirname "$0")" && pwd)"
 
 _usage() {
 	echo '"pocker run" requires at least 1 argument.
-See "pocker --help".
 
 Usage:  pocker run [OPTIONS] SYSTEM [COMMAND] [ARG...]
 
@@ -52,9 +51,8 @@ Options:
 }
 
 _error_existing() {
-	echo "pocker: Error response: Conflict. The container name '/$1' is already in use. You have to"
-	echo "remove (or rename) that container to be able to reuse that name."
-	echo "See 'pocker --help'."
+	echo "pocker: Error response: Conflict. The container name '/$1' is already in use. You have to
+remove (or rename) that container to be able to reuse that name." >&2
 	exit 1
 }
 
