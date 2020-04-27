@@ -5,12 +5,14 @@ DEST = ${HOME}/bin
 all: pocker
 
 pocker: $(OBJ)
-	cat $(OBJ) > pocker
-	shellcheck pocker
-	chmod +x pocker
+	@cat $(OBJ) > pocker
+	@shellcheck pocker
+	@chmod +x pocker
+	@echo pocker
 
 install:
-	cp pocker $(DEST)
+	@cp pocker $(DEST)
+	@echo $(DEST)/pocker
 
 clean:
-	rm pocker
+	@rm pocker
