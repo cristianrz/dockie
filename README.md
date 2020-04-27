@@ -17,7 +17,7 @@ git clone https://github.com/cristianrz/pocker.git
 
 ## Usage
 
-Get a remote rootfs, set it up and chroot into it:
+Get a remote rootfs [from the library](https://github.com/cristianrz/pocker-hub/tree/master/library), set it up and chroot into it:
 
 ```
 pocker run --name my_alpine alpine /bin/sh -l
