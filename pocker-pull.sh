@@ -69,8 +69,8 @@ cd "$POCKER_IMAGES/$_system"
 echo "Pulling from pocker-hub/$_system"
 
 # the url is inside the 'url' file
-_tar_url="$(curl -s "$_url" 2>/dev/null)" || _bootstrap_error
-wget "$_tar_url" || _bootstrap_error
+_tar_url="$(wget -O- "$_url" 2>/dev/null)" || _bootstrap_error
+wget "$_tar_url" 2>/dev/null || _bootstrap_error
 wget -q "$_bootstrap" || _bootstrap_error
 
 echo 'Pull complete'

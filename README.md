@@ -6,7 +6,6 @@ Docker-like interface for unprivileged chroots
 
 * `proot`
 * `wget`
-* `curl`
 
 ## Installation
 
