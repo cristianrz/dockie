@@ -22,7 +22,7 @@ EOF
 }
 
 _image_rm() {
-	[ "$#" -eq 0 ] && _image_rm_usage
+	[ "$#" -eq 0 ] && _image_rm_usage && return
 
 	cd "$POCKER_IMAGES" || exit 1
 
