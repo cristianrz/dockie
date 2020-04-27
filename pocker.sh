@@ -47,7 +47,6 @@ Usage: pocker [OPTIONS] COMMAND [ARG...]
 Docker-like interface for unprivileged chroots
 
 Options:
-	-D        Enable debug mode
 	-h        Print usage
 	-v        Print version information and quit
 
@@ -68,7 +67,6 @@ EOF
 
 while getopts "Dv" _c; do
 	case "$_c" in
-	D) set -x ;;
 	v) echo "Pocker version v0.1.0" && exit 0 ;;
 	*) _help ;;
 	esac
