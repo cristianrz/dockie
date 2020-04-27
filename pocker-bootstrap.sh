@@ -50,13 +50,13 @@ mkdir -p "$2"/rootfs
 
 cd "$2"
 
-date '+%Y-%m-%d %H:%M:%S' > "date"
-printf '%s%s\n' "$*" "$(date)" | sha1sum | cut -c -12 > "id"
-echo "$1" > "image"
+date '+%Y-%m-%d %H:%M:%S' >"date"
+printf '%s%s\n' "$*" "$(date)" | sha1sum | cut -c -12 >"id"
+echo "$1" >"image"
 
 cd rootfs
 
 sh "$POCKER_IMAGES/$1/bootstrap.sh" || true
 echo "export PS1='\u@$(basename "$2"):\w\\$ '" >>etc/profile
-cp /etc/resolv.conf etc/resolv.conf
-
+rm etc/resolv.conf
+cat /etc/resolv.conf etc/resolv.conf
