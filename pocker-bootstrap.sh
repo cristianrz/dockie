@@ -46,10 +46,17 @@ _bootstrap_error() {
 
 [ ! -d "$POCKER_IMAGES/$1" ] && sh "$PREFIX/pocker-pull.sh" "$1"
 
-mkdir -p "$2"
+mkdir -p "$2"/rootfs
+
 cd "$2"
 
-sh "$POCKER_IMAGES/$1/bootstrap.sh" || true
+date '+%Y-%m-%d %H:%M:%S' > "date"
+printf '%s%s\n' "$*" "$(date)" | sha1sum | cut -c -12 > "id"
+echo "$1" > "image"
 
+cd rootfs
+
+sh "$POCKER_IMAGES/$1/bootstrap.sh" || true
 echo "export PS1='\u@$(basename "$2"):\w\\$ '" >>etc/profile
-echo "$1" >> etc/pocker_image
+cp /etc/resolv.conf etc/resolv.conf
+

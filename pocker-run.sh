@@ -70,6 +70,8 @@ _system_name="$1" && shift
 
 [ -d "$POCKER_GUESTS/$_guest_name" ] && _error_existing "$_guest_name"
 
+mkdir -p "$POCKER_GUESTS/$_guest_name/rootfs"
+
 sh "$PREFIX"/pocker-bootstrap.sh "$_system_name" "$POCKER_GUESTS/$_guest_name"
 
 [ "$#" -eq 0 ] && return 0

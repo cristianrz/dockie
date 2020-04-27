@@ -39,7 +39,7 @@ PREFIX="$(cd "$(dirname "$0")" && pwd)"
 
 _bootstrap_error() {
 	echo "Error response: pull access denied for $_system" >&2
-	rm -rf "$POCKER_IMAGES/$_system"
+	rm -rf "${POCKER_IMAGES:?}/$_system"
 	exit 1
 }
 

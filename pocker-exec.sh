@@ -46,11 +46,11 @@ _log_fatal() {
 }
 
 _get_uid() {
-	passwd="$POCKER_GUESTS/$_proot_name/etc/passwd"
+	passwd="$POCKER_GUESTS/$_proot_name/rootfs/etc/passwd"
 
 	[ ! -f "$passwd" ] && echo 0 && return
 
-	grep -E "^$_user:" "$POCKER_GUESTS/$_proot_name/etc/passwd" | cut -d':' -f 3
+	grep -E "^$_user:" "$POCKER_GUESTS/$_proot_name/rootfs/etc/passwd" | cut -d':' -f 3
 }
 
 _usage() {
@@ -80,4 +80,4 @@ cd /
 echo
 echo "Tip: to get the proper prompt, always run sh/bash with the '-l' option" >&2
 echo
-env -i proot -r "$POCKER_GUESTS/$_proot_name" -i "$(_get_uid "$_user")" "$@"
+env -i proot -r "$POCKER_GUESTS/$_proot_name/rootfs" -i "$(_get_uid "$_user")" "$@"

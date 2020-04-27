@@ -54,9 +54,13 @@ EOF
 
 [ ! -d "$POCKER_GUESTS" ] && mkdir -p "$POCKER_GUESTS"
 
-# printf 'IMAGE\tMODIFIED\t\t\tNAME\n'
-for guest in $(ls -1 "$POCKER_GUESTS"); do
-    date="$(stat "$POCKER_GUESTS/$guest" | grep Modify | cut -d' ' -f 2- | cut -c -19)"
-    system="$(cat "$POCKER_GUESTS/$guest/etc/pocker_image")"
-    printf '%s\t%s\t%s\n' "$guest" "$system" "$date"
+[ -z "$(ls "$POCKER_GUESTS")" ] && exit 0
+
+printf 'ROOTFS ID\tIMAGE\tCREATED\t\t\tNAME\n'
+for guest in "$POCKER_GUESTS"/*; do
+	date="$(cat "$guest/date")"
+	hash="$(cat "$guest/id")"
+	system="$(cat "$guest/image")"
+	guest="$(basename "$guest")"
+	printf '%s\t%s\t%s\t%s\n' "$hash" "$system" "$date" "$guest"
 done
