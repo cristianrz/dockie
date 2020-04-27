@@ -1,1 +1,0 @@
-pocker-ls.sh

@@ -11,12 +11,9 @@ Docker-like interface for unprivileged chroots
 
 ```
 $ git clone https://github.com/cristianrz/pocker.git
-```
-
-and optionally:
-
-```
-pocker/make_shortcut "$HOME"/bin
+$ cd pocker
+$ make
+$ make install
 ```
 
 ## Usage
