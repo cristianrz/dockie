@@ -21,10 +21,47 @@ $ make install
 Get a remote root filesystem [from the pocker hub](https://github.com/cristianrz/pocker-hub/tree/master/library), set it up and chroot into it:
 
 ```
-pocker run --name my_alpine alpine /bin/sh -l
+$ pocker run --name my_alpine alpine /bin/sh -l
 ```
 
-As well as all the most used Docker commands:
+also get a Void Linux one:
+
+```
+$ pocker run --name my_void void /bin/bash -l
+```
+
+see which ones you got:
+
+```
+$ pocker ps
+ROOTFS ID      IMAGE          CREATED                  NAME
+e322828157cd   alpine         2020-04-27 19:10:00      my_alpine
+b8db93b41e83   void           2020-04-27 19:11:00      my_void
+```
+
+and now delete them both:
+
+```
+$ pocker rm my_alpine my_void
+```
+
+but the images remain available locally!
+
+```
+$ pocker images
+void
+alpine
+```
+
+you can also delete them
+
+```
+$ pocker image rm void
+$ pocker images
+alpine
+```
+
+Also, all the most used Docker commands are available:
 
 | **Command** | **Description**                        |
 | ---         | ---                                    |
