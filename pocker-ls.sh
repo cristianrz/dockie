@@ -56,11 +56,14 @@ EOF
 
 [ -z "$(ls "$POCKER_GUESTS")" ] && exit 0
 
-printf 'ROOTFS ID\tIMAGE\tCREATED\t\t\tNAME\n'
-for guest in "$POCKER_GUESTS"/*; do
-	date="$(cat "$guest/date")"
-	hash="$(cat "$guest/id")"
-	system="$(cat "$guest/image")"
-	guest="$(basename "$guest")"
-	printf '%s\t%s\t%s\t%s\n' "$hash" "$system" "$date" "$guest"
-done
+{
+	printf 'ROOTFS ID,IMAGE,CREATED,NAME\n'
+	for guest in "$POCKER_GUESTS"/*; do
+		date="$(cat "$guest/date")"
+		hash="$(cat "$guest/id")"
+		system="$(cat "$guest/image")"
+		guest="$(basename "$guest")"
+		printf '%s,%s,%s,%s\n' "$hash" "$system" "$date" "$guest"
+	done
+} | awk -F ',' '{printf "%-15s%-15s%-25s%s\n",$1,$2,$3,$4}'
+
