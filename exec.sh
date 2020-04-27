@@ -39,5 +39,5 @@ Tip: to get the proper prompt, always run sh/bash with the '-l' option
 
 EOF
 
-	env -i proot -w / -r "$POCKER_GUESTS/$_guest_name/rootfs" -i "$(_get_uid "$_user")" "$@"
+	env -i proot -w / -r "$POCKER_GUESTS/$_guest_name/rootfs" -i "$(_exec_get_uid "$_user")" "$@"
 }
