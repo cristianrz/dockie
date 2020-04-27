@@ -30,7 +30,7 @@ _run() {
 
 	mkdir -p "$POCKER_GUESTS/$_guest_name/rootfs"
 
-	sh "$PREFIX"/bootstrap.sh "$_system_name" "$POCKER_GUESTS/$_guest_name"
+	_bootstrap "$_system_name" "$POCKER_GUESTS/$_guest_name"
 
-	[ "$#" -eq 0 ] || sh "$PREFIX/pocker-exec.sh" "$_guest_name" "$@"
+	[ "$#" -eq 0 ] || _exec "$_guest_name" "$@"
 }
