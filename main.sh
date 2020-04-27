@@ -20,7 +20,7 @@ Usage: pocker [OPTIONS] COMMAND [ARG...]
 Docker-like interface for unprivileged chroots
 
 Options:
-    -D        Debug mode
+	-D        Debug mode
 	-h        Print usage
 	-v        Print version information and quit
 
