@@ -18,9 +18,9 @@ _ls() {
 	{
 		printf 'ROOTFS ID,IMAGE,CREATED,NAME\n'
 		for _guest_name in "$POCKER_GUESTS"/*; do
-			_hash="$(cat "$_guest_name/id")"
-			_image_name="$(cat "$_guest_name/image")"
-			_date="$(cat "$_guest_name/date")"
+			_hash="$(cat "$_guest_name/id" 2>/dev/null)"
+			_image_name="$(cat "$_guest_name/image" 2>/dev/null)"
+			_date="$(cat "$_guest_name/date" 2>/dev/null)"
 			_guest_name="$(basename "$_guest_name")"
 			printf '%s,%s,%s,%s\n' "$_hash" "$_image_name" "$_date" "$_guest_name"
 		done
