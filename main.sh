@@ -43,7 +43,7 @@ EOF
 [ "$1" = "-v" ] && echo "Pocker version v0.1.0" && exit 0
 [ "$1" = "-D" ] && set -x && shift
 
-cmd="$1"
-shift
+cmd="_$1" && shift
 
-_"$cmd" "$@"
+type "$cmd" >/dev/null 2>&1 || _pocker_usage
+"$cmd" "$@"
