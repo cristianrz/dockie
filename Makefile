@@ -7,7 +7,7 @@ all: pocker
 pocker: $(OBJ) Makefile
 	@echo '#!/usr/bin/env sh' > pocker
 	@echo '#' >> pocker
-	@cat LICENSE >> pocker
+	@sed 's/^/# /g' LICENSE >> pocker
 	@echo '#' >> pocker
 	@echo '# Docker-like interface for unprivileged chroots' >> pocker
 	@cat $(OBJ) >> pocker
