@@ -32,5 +32,5 @@ _run() {
 
 	_bootstrap "$_system_name" "$POCKER_GUESTS/$_guest_name"
 
-	[ "$#" -eq 0 ] || _exec "$_guest_name" "$@"
+	[ "$#" -eq 0 ] || _exec "$_guest_name" "$@" && exit 0
 }
