@@ -19,6 +19,8 @@ _run() {
 	# Run needs at least one argument
 	[ "$#" -eq 0 ] && _run_usage
 
+	echo Bootstraping... This may take a few minutes.
+
 	[ "$1" = "--name" ] && shift && _guest_name="$1" && shift
 
 	_system_name="$1" && shift
