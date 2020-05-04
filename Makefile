@@ -1,6 +1,6 @@
 #!/bin/sh
 OBJ = header.sh bootstrap.sh exec.sh image.sh log.sh ls.sh pull.sh rename.sh rm.sh run.sh main.sh
-DEST = ${HOME}/bin
+PREFIX = ${HOME}/.local
 
 all: pocker
 
@@ -11,8 +11,9 @@ pocker: $(OBJ)
 	@echo pocker
 
 install:
-	@cp pocker $(DEST)
-	@echo $(DEST)/pocker
+	@mkdir -p $(DESTDIR)$(PREFIX)/bin
+	@cp pocker $(DESTDIR)$(PREFIX)/bin
+	@echo $(DESTDIR)$(PREFIX)/bin/pocker
 
 clean:
 	@rm pocker
