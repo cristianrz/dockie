@@ -77,10 +77,8 @@ Also, all the most used Docker commands are available:
 | `images`    | List images                            |
 | `ls`        | List root filesystems                  |
 | `pull`      | Pull an image                          |
-| `rename`    | Rename a root filesystem               |
 | `rm`        | Remove one or more root filesystems    |
 | `run`       | Run a command in a new root filesystem |
-| `search`    | Search the pocker hub for images       |
 
 For more information on a command:
 
