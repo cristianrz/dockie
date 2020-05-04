@@ -36,15 +36,15 @@ _image_ls() {
 	find "$POCKER_IMAGES" -maxdepth 1 -type d -exec basename {} \; | sed 1d
 }
 
-_image(){
-    [ "$#" -eq 0 ] && _image_ls
+_image() {
+	[ "$#" -eq 0 ] && _image_ls && return
 
-    cmd="$1" && shift
+	cmd="$1" && shift
 
-    case "$cmd" in
-    ls) _image_ls ;;
-    rm) _image_rm "$@" ;;
-    esac
+	case "$cmd" in
+	ls) _image_ls ;;
+	rm) _image_rm "$@" ;;
+	esac
 }
 
 _images() {
