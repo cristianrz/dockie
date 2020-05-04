@@ -65,6 +65,7 @@ Tip: to get the proper prompt, always run sh/bash with the '-l' option
 
 EOF
 
+	_proot="$(which proot)"
 	# shellcheck disable=SC2086
-	env -i proot $_gui -w / $_type "$POCKER_GUESTS/$_guest_name/rootfs" -i "$_id" "$@"
+	env -i "$_proot" $_gui -w / $_type "$POCKER_GUESTS/$_guest_name/rootfs" -i "$_id" "$@"
 }
