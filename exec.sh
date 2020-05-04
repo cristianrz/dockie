@@ -9,19 +9,6 @@ _exec_get_uid() {
 
 }
 
-_exec_usage() {
-	echo '"pocker exec" requires at least 2 arguments.
-
-Usage:  pocker exec [OPTIONS] ROOTFS COMMAND [ARG...]
-
-Run a command in an existing rootfs
-
-Options:
-	--gui      Use when a GUI is going to be run
-	--install  Use when packages need to be installed
-	--user     Username'
-	exit 1
-}
 
 _is_opt() {
 	case x"$1" in
@@ -30,8 +17,17 @@ _is_opt() {
 	esac
 }
 
+# Usage: pocker exec [OPTIONS] ROOTFS COMMAND [ARG...]
+# 
+# Run a command in an existing rootfs
+# 
+# Options:
+# 	--gui      Use when a GUI is going to be run
+# 	--install  Use when packages need to be installed
+# 	--user     Username'
+#
 _exec() {
-	[ "$#" -lt 2 ] && _exec_usage
+	[ "$#" -lt 2 ] && _print_usage "exec"
 
 	_user=root
 	_type='-r'
@@ -57,7 +53,7 @@ _exec() {
 	[ ! -d "$POCKER_GUESTS/$_guest_name" ] &&
 		echo "Error: No such container: $_guest_name" >&2 && exit 1
 
-	[ "$#" -eq 0 ] && _usage
+	[ "$#" -eq 0 ] && _print_usage exec
 
 	cat <<'EOF' >&2
 

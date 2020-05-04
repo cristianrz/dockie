@@ -1,17 +1,10 @@
 # shellcheck shell=sh
-_ls_usage() {
-	cat <<'EOF'
-"pocker ls" accepts no arguments.
-
-Usage:  pocker ps [OPTIONS]
-
-List rootfs
-EOF
-	exit 1
-}
-
+# Usage: pocker ls
+#
+# List rootfs
+#
 _ls() {
-	[ "$#" -ne 0 ] && _usage
+	[ "$#" -ne 0 ] && _print_usage "ls"
 
 	[ -z "$(ls "$POCKER_GUESTS")" ] && exit 0
 

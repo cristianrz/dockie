@@ -1,15 +1,11 @@
 # shellcheck shell=sh
-_run_usage() {
-	echo '"pocker run" requires at least 1 argument.
-
-Usage:  pocker run [OPTIONS] SYSTEM [COMMAND] [ARG...]
-
-Run a command in a new rootfs
-
-Options:
-    --name string    Assign a name to the container'
-	exit 1
-}
+# Usage: pocker run [OPTIONS] SYSTEM [COMMAND] [ARG...]
+# 
+# Run a command in a new rootfs
+# 
+# Options:
+#     --name string    Assign a name to the container'
+#
 
 _run_error_existing() {
 	echo "pocker: The container name '$1' is already in use." >&2 && exit 1
@@ -17,7 +13,7 @@ _run_error_existing() {
 
 _run() {
 	# Run needs at least one argument
-	[ "$#" -eq 0 ] && _run_usage
+	[ "$#" -eq 0 ] && _print_usage run
 
 	echo Bootstraping... This may take a few minutes.
 

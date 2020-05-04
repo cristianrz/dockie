@@ -1,5 +1,5 @@
 #!/bin/sh
-OBJ = header.sh bootstrap.sh exec.sh image.sh log.sh ls.sh pull.sh rename.sh rm.sh run.sh main.sh
+OBJ = header.sh bootstrap.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh main.sh
 PREFIX = ${HOME}/.local
 
 all: pocker

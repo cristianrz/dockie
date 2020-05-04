@@ -1,21 +1,17 @@
 # shellcheck shell=sh
+# Usage: pocker pull [OPTIONS] NAME
+# 
+# Pull an image or a repository from a registry' >&2
+#
+
 _pull_network_error() {
 	echo "Error response: pull access denied for $_system" >&2
 	rm -rf "${POCKER_IMAGES:?}/$_system"
 	exit 1
 }
 
-_pull_usage() {
-	echo '"pocker pull" requires exactly 1 argument.
-
-Usage:  pocker pull [OPTIONS] NAME
-
-Pull an image or a repository from a registry' >&2
-	exit 1
-}
-
 _pull() {
-	[ "$#" -ne 1 ] && _pull_usage
+	[ "$#" -ne 1 ] && _print_usage "pull"
 
 	_system="$1"
 

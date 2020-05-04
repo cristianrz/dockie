@@ -1,28 +1,14 @@
 # shellcheck shell=sh
-_image_usage() {
-	echo "Usage:	pocker image COMMAND
 
-Manage images
-
-Commands:
-  ls    List images
-  pull  Pull an image
-  rm    Remove one or more images" >&2
-	exit 1
-}
-
-_image_rm_usage() {
-	cat <<'EOF'
-"pocker image rm" requires at least 1 argument.
-
-Usage:  pocker image rm [OPTIONS] ROOTFS [ROOTFS...]
-
-Remove one or more rootfs'.
-EOF
-}
-
+# Usage: pocker image rm [OPTIONS] ROOTFS [ROOTFS...]
+# 
+# Remove one or more rootfs'.
+#
 _image_rm() {
-	[ "$#" -eq 0 ] && _image_rm_usage && return
+	[ "$#" -eq 0 ] &&
+		echo '"pocker image rm" requires at least 1 argument.'
+		_print_usage "image rm" &&
+		return
 
 	cd "$POCKER_IMAGES" || exit 1
 
@@ -36,6 +22,15 @@ _image_ls() {
 	find "$POCKER_IMAGES" -maxdepth 1 -type d -exec basename {} \; | sed 1d
 }
 
+# Usage: pocker image COMMAND
+# 
+# Manage images
+# 
+# Commands:
+#   ls    List images
+#   pull  Pull an image
+#   rm    Remove one or more images" >&2
+#
 _image() {
 	[ "$#" -eq 0 ] && _image_ls && return
 
