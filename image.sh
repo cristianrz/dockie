@@ -1,19 +1,20 @@
 # shellcheck shell=sh
 
 # Usage: pocker image rm [OPTIONS] ROOTFS [ROOTFS...]
-# 
+#
 # Remove one or more rootfs'.
 #
 _image_rm() {
 	[ "$#" -eq 0 ] &&
-		echo '"pocker image rm" requires at least 1 argument.'
+		echo '"pocker image rm" requires at least 1 argument.' &&
 		_print_usage "image rm" &&
 		return
 
 	cd "$POCKER_IMAGES" || exit 1
 
 	for fs; do
-		[ ! -d "$POCKER_IMAGES/$fs" ] && _log_fatal "Error: No such container: $fs" && continue
+		[ ! -d "$POCKER_IMAGES/$fs" ] &&
+			_log_fatal "Error: No such container: $fs" && continue
 		rm -rf "$fs" && echo "$fs"
 	done
 }
@@ -23,9 +24,9 @@ _image_ls() {
 }
 
 # Usage: pocker image COMMAND
-# 
+#
 # Manage images
-# 
+#
 # Commands:
 #   ls    List images
 #   pull  Pull an image

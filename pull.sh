@@ -1,13 +1,12 @@
 # shellcheck shell=sh
 # Usage: pocker pull [OPTIONS] NAME
-# 
+#
 # Pull an image or a repository from a registry' >&2
 #
 
 _pull_network_error() {
-	echo "Error response: pull access denied for $_system" >&2
 	rm -rf "${POCKER_IMAGES:?}/$_system"
-	exit 1
+	_log_fatal "Error response: pull access denied for $_system"
 }
 
 _pull() {
@@ -22,9 +21,11 @@ _pull() {
 
 	echo "Pulling from pocker-hub/$_system"
 
-	_tar_url="$(wget -q -O- "$REMOTE_LIBRARY/$_system/url" | sh)" || _pull_network_error
-	wget "$_tar_url" -P "$POCKER_IMAGES/$_system" || _pull_network_error
-	wget -q "$_bootstrap" -P "$POCKER_IMAGES/$_system" || _pull_network_error
+	# shellcheck disable=SC2015
+	_tar_url="$(wget -q -O- "$REMOTE_LIBRARY/$_system/url" | sh)" &&
+		wget "$_tar_url" -P "$POCKER_IMAGES/$_system" &&
+		wget -q "$_bootstrap" -P "$POCKER_IMAGES/$_system" ||
+		_pull_network_error
 
 	echo "Downloaded rootfs for $_system"
 }

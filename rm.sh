@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 # Usage: pocker rm [OPTIONS] ROOTFS [ROOTFS...]
-# 
-# Remove one or more rootfs'.
+#
+# Remove one or more rootfs.
 #
 
 _rm() {
@@ -10,7 +10,8 @@ _rm() {
 	cd "$POCKER_GUESTS" || exit 1
 
 	for fs; do
-		[ ! -d "$POCKER_GUESTS/$fs" ] && echo "Error: No such container: $fs" >&2 && continue
+		[ ! -d "$POCKER_GUESTS/$fs" ] && \
+			_log_fatal "Error: No such container: $fs"
 		chmod -R +w "$fs" && rm -r "$fs" && echo "$fs"
 	done
 }

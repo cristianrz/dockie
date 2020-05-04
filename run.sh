@@ -1,8 +1,8 @@
 # shellcheck shell=sh
 # Usage: pocker run [OPTIONS] SYSTEM [COMMAND] [ARG...]
-# 
+#
 # Run a command in a new rootfs
-# 
+#
 # Options:
 #     --name string    Assign a name to the container'
 #
