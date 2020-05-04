@@ -19,7 +19,7 @@ _pull() {
 
 	_system="$1"
 
-	_url="$REMOTE_LIBRARY/$_system/url"
+	_url="curl $REMOTE_LIBRARY/$_system/url | sh"
 	_bootstrap="$REMOTE_LIBRARY/$_system/bootstrap.sh"
 
 	rm -rf "${POCKER_IMAGES:?}/$_system"
