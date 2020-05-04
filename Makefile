@@ -16,4 +16,4 @@ install:
 	@echo $(DESTDIR)$(PREFIX)/bin/pocker
 
 clean:
-	@rm pocker
+	rm pocker
