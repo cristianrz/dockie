@@ -19,16 +19,14 @@ _pull() {
 
 	_system="$1"
 
-	_url="curl $REMOTE_LIBRARY/$_system/url | sh"
-	_bootstrap="$REMOTE_LIBRARY/$_system/bootstrap.sh"
+	_bootstrap="$REMOTE_LIBRARY/$_system/bootstrap"
 
 	rm -rf "${POCKER_IMAGES:?}/$_system"
 	mkdir -p "$POCKER_IMAGES/$_system"
 
 	echo "Pulling from pocker-hub/$_system"
 
-	# the url is inside the 'url' file
-	_tar_url="$(wget -O- "$_url" 2>/dev/null)" || _pull_network_error
+	_tar_url="$(wget -q -O- "$REMOTE_LIBRARY/$_system/url" | sh)" || _pull_network_error
 	wget "$_tar_url" -P "$POCKER_IMAGES/$_system" || _pull_network_error
 	wget -q "$_bootstrap" -P "$POCKER_IMAGES/$_system" || _pull_network_error
 
