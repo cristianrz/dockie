@@ -1,13 +1,13 @@
 # shellcheck shell=sh
 # Usage: pocker [OPTIONS] COMMAND [ARG...]
-# 
+#
 # Docker-like interface for unprivileged chroots
-# 
+#
 # Options:
 # 	-D        Debug mode
 # 	-h        Print usage
 # 	-v        Print version information and quit
-# 
+#
 # Commands:
 # 	exec      Run a command in a root filesystem
 # 	images    List images
@@ -15,9 +15,11 @@
 # 	pull      Pull an image
 # 	rm        Remove one or more root filesystems
 # 	run       Run a command in a new root filesystem
-# 
+#
 # Run 'pocker COMMAND' for more information on a command.
 #
+
+VERSION="v0.2.0"
 
 _POCKER_PREFIX="$HOME/.local"
 
@@ -31,8 +33,8 @@ export POCKER_GUESTS="$_POCKER_PREFIX/var/lib/pocker/guests"
 
 REMOTE_LIBRARY="https://raw.githubusercontent.com/cristianrz/pocker-hub/master"
 
-
-_print_usage(){
+_print_usage() {
+	# grab usages from comments
 	awk '
 	/^# Usage: pocker '"$1"'/, $0 !~ /^#/ {
 		if ( $0 ~ /^#/ ) {
@@ -44,11 +46,11 @@ _print_usage(){
 	exit 1
 }
 
-[ "$#" -eq 0 ] && _print_usage "\[OPT"
-[ "$1" = "-v" ] && echo "Pocker version v0.1.0" && exit 0
+[ "$#" -eq 0 ] && _print_usage "\[O"
+[ "$1" = "-v" ] && echo "Pocker version $VERSION" && exit 0
 [ "$1" = "-D" ] && set -x && shift
 
 cmd="_$1" && shift
 
-type "$cmd" >/dev/null 2>&1 || _print_usage "\[OPT"
+type "$cmd" >/dev/null 2>&1 || _print_usage "\[O"
 "$cmd" "$@"
