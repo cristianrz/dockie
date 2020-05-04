@@ -2,13 +2,15 @@
 
 _POCKER_PREFIX="$HOME/.local"
 
+# need to export for bootstrap scripts
 export POCKER_IMAGES="$_POCKER_PREFIX/var/lib/pocker/images"
 [ -d "$POCKER_IMAGES" ] || mkdir -p "$POCKER_IMAGES"
 
+# need to export for bootstrap scripts
 export POCKER_GUESTS="$_POCKER_PREFIX/var/lib/pocker/guests"
 [ -d "$POCKER_GUESTS" ] || mkdir -p "$POCKER_GUESTS"
 
-export REMOTE_LIBRARY="https://cristianrz.github.io/pocker-hub/library"
+REMOTE_LIBRARY="https://raw.githubusercontent.com/cristianrz/pocker-hub/master"
 
 # _help()
 # Show help and exit
