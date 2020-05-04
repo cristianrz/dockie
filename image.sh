@@ -41,10 +41,7 @@ _image() {
 
 	cmd="$1" && shift
 
-	case "$cmd" in
-	ls) _image_ls ;;
-	rm) _image_rm "$@" ;;
-	esac
+	_inage_"$cmd"
 }
 
 _images() {
