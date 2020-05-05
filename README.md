@@ -38,6 +38,14 @@ set it up and chroot into it with a single command:
 $ dockie run --name my_alpine alpine /bin/sh -l
 ```
 
+now we are inside alpine, lets print something and leave:
+
+```
+root@my_alpine / # date
+Tue  5 May 12:57:05 BST 2020
+root@my_alpine / # exit
+```
+
 let's also get a Void Linux one:
 
 ```
