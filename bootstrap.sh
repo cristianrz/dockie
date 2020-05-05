@@ -4,34 +4,45 @@ _bootstrap_error() {
 	_log_fatal "Error response: pull access denied for $1"
 }
 
-_bootstrap_hash(){
-	printf '%s%s\n' "$*" "$(date)" | sha1sum | cut -c -12
+_bootstrap_hash() {
+	hash="$(echo "$*$(_date)" | sha1sum)"
+
+	# the only way I found to cut characters in POSIX using only builtins
+	echo "${hash%???????????????????????????????}"
 }
 
-_bootstrap_config(){
-	date '+%Y-%m-%d %H:%M:%S' >"$2/date"
+_bootstrap_config() {
+	guest_path="$2"
+	guest_name="$(_strings_basename "$guest_path")"
+	guest_prefix="$guest_path/rootfs"
 
-	_id="$(_bootstrap_hash "$*")"
-	printf '%s\n' "$_id" >"$2/id"
+	id="$(_bootstrap_hash "$*")"
 
-	printf '%s\n' "$1" >"$2/image"
+	echo "$id,$guest_name,$(_date),$1" > "$guest_path/info"
+
 	{
-		printf 'export PS1='\''\u@%s \w \$ '\' "$(basename "$2")"
-		echo 'export DISPLAY=":0.0"'
-	} >>etc/profile
+		echo 
+		echo "# added by dockie"
+		echo "export PS1='\033[30;34m\u@$guest_name \w \\$ \033[30;39m'"
+		echo "export DISPLAY='$DISPLAY'" 
+	} >> "$guest_prefix/etc/profile"
 
-	rm -f etc/resolv.conf
-	cat /etc/resolv.conf >etc/resolv.conf
+	cp /etc/resolv.conf "$guest_prefix/etc/resolv.conf"
+
+	echo "$id"
 }
 
 _bootstrap() {
-	[ ! -d "$POCKER_IMAGES/$1" ] && _pull "$1"
+	system="$1"
+	guest_path="$2"
+	guest_prefix="$guest_path/rootfs"
 
-	mkdir -p "$2"/rootfs
+	[ ! -d "$DOCKIE_IMAGES/$system" ] && _pull "$system"
 
-	cd "$2/rootfs" || exit 1
+	mkdir -p "$guest_prefix"
+	cd "$guest_prefix" || exit 1
+	# sometimes tar has errors and this is ok
+	sh "$DOCKIE_IMAGES/$system/bootstrap" || true
 
-	sh "$POCKER_IMAGES/$1/bootstrap" || true
 	_bootstrap_config "$@"
-	printf '%s\n' "$_id"
 }

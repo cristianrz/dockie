@@ -1,42 +1,42 @@
 # shellcheck shell=sh
-# Usage: pocker [OPTIONS] COMMAND [ARG...]
+# Usage: dockie [OPTIONS] COMMAND [ARG...]
 #
-# Docker-like interface for unprivileged chroots
+# Dockie is a wrapper around PRoot with a familiar interface
 #
 # Options:
-# 	-D        Debug mode
+# 	-d        Debug mode
 # 	-h        Print usage
 # 	-v        Print version information and quit
 #
 # Commands:
 # 	exec      Run a command in a root filesystem
-# 	images    List images
+# 	image     List images
 # 	ls        List root filesystems
 # 	pull      Pull an image
 # 	rm        Remove one or more root filesystems
 # 	run       Run a command in a new root filesystem
 #
-# Run 'pocker COMMAND' for more information on a command.
+# Run 'dockie COMMAND' for more information on a command.
 #
 
-VERSION="v0.2.0"
+VERSION="v0.3.0"
 
-_POCKER_PREFIX="$HOME/.local"
-
-# need to export for bootstrap scripts
-export POCKER_IMAGES="$_POCKER_PREFIX/var/lib/pocker/images"
-[ -d "$POCKER_IMAGES" ] || mkdir -p "$POCKER_IMAGES"
+PREFIX="$HOME/.local"
 
 # need to export for bootstrap scripts
-export POCKER_GUESTS="$_POCKER_PREFIX/var/lib/pocker/guests"
-[ -d "$POCKER_GUESTS" ] || mkdir -p "$POCKER_GUESTS"
+export DOCKIE_IMAGES="$PREFIX/var/lib/dockie/images"
+mkdir -p "$DOCKIE_IMAGES"
 
-REMOTE_LIBRARY="https://raw.githubusercontent.com/cristianrz/pocker-hub/master"
+# need to export for bootstrap scripts
+export DOCKIE_GUESTS="$PREFIX/var/lib/dockie/guests"
+mkdir -p "$DOCKIE_GUESTS"
+
+REMOTE="https://raw.githubusercontent.com/cristianrz/dockie-hub/master"
 
 _print_usage() {
 	# grab usages from comments
 	awk '
-	/^# Usage: pocker '"$1"'/, $0 !~ /^#/ {
+	/^# Usage: dockie '"$1"'/, $0 !~ /^#/ {
 		if ( $0 ~ /^#/ ) {
 			gsub(/# ?/,"")
 			print
@@ -47,10 +47,9 @@ _print_usage() {
 }
 
 [ "$#" -eq 0 ] && _print_usage "\[O"
-[ "$1" = "-v" ] && echo "Pocker version $VERSION" && exit 0
-[ "$1" = "-D" ] && set -x && shift
+[ "$1" = "-v" ] && echo "Dockie version $VERSION" && exit 0
+[ "$1" = "-d" ] && set -x && shift
 
 cmd="_$1" && shift
 
-type "$cmd" >/dev/null 2>&1 || _print_usage "\[O"
-"$cmd" "$@"
+"$cmd" "$@" || _print_usage "\[O"

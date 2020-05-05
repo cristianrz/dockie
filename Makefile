@@ -1,24 +1,19 @@
 #!/bin/sh
-OBJ = bootstrap.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh main.sh
+OBJ = bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
 PREFIX = ${HOME}/.local
 
-all: pocker
+all: dockie
 
-pocker: $(OBJ) Makefile
-	@echo '#!/usr/bin/env sh' > pocker
-	@echo '#' >> pocker
-	@sed 's/^/# /g' LICENSE >> pocker
-	@echo '#' >> pocker
-	@echo '# Docker-like interface for unprivileged chroots' >> pocker
-	@cat $(OBJ) >> pocker
-	@shellcheck pocker
-	@chmod +x pocker
-	@echo pocker
+dockie: $(OBJ) Makefile
+	@./link-scripts $(OBJ) > dockie
+	@shellcheck dockie
+	@chmod +x dockie
+	@echo dockie
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)/bin
-	@cp pocker $(DESTDIR)$(PREFIX)/bin
-	@echo $(DESTDIR)$(PREFIX)/bin/pocker
+	@cp dockie $(DESTDIR)$(PREFIX)/bin
+	@echo $(DESTDIR)$(PREFIX)/bin/dockie
 
 clean:
-	rm -f pocker
+	rm -f dockie

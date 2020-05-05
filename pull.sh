@@ -1,31 +1,31 @@
 # shellcheck shell=sh
-# Usage: pocker pull [OPTIONS] NAME
+# Usage: dockie pull [OPTIONS] NAME
 #
 # Pull an image or a repository from a registry' >&2
 #
 
-_pull_network_error() {
-	rm -rf "${POCKER_IMAGES:?}/$_system"
-	_log_fatal "Error response: pull access denied for $_system"
+_pull_error() {
+	rm -rf "${DOCKIE_IMAGES:?}/$system"
+	_log_fatal "pull failed for $system"
 }
 
 _pull() {
 	[ "$#" -ne 1 ] && _print_usage "pull"
 
-	_system="$1"
+	system="$1"
 
-	_bootstrap="$REMOTE_LIBRARY/$_system/bootstrap"
+	bootstrap="$REMOTE/$system/bootstrap"
 
-	rm -rf "${POCKER_IMAGES:?}/$_system"
-	mkdir -p "$POCKER_IMAGES/$_system"
+	rm -rf "${DOCKIE_IMAGES:?}/$system"
+	mkdir -p "$DOCKIE_IMAGES/$system"
 
-	echo "Pulling from pocker-hub/$_system"
+	echo "Pulling from dockie-hub/$system"
 
 	# shellcheck disable=SC2015
-	_tar_url="$(wget -q -O- "$REMOTE_LIBRARY/$_system/url" | sh)" &&
-		wget "$_tar_url" -P "$POCKER_IMAGES/$_system" &&
-		wget -q "$_bootstrap" -P "$POCKER_IMAGES/$_system" ||
-		_pull_network_error
+	tar_url="$(wget -q -O- "$REMOTE/$system/url" | sh)" &&
+		wget "$tar_url" -P "$DOCKIE_IMAGES/$system" &&
+		wget -q "$bootstrap" -P "$DOCKIE_IMAGES/$system" ||
+		_pull_error
 
-	echo "Downloaded rootfs for $_system"
+	echo "Downloaded rootfs for $system"
 }
