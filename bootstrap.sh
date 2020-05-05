@@ -18,14 +18,14 @@ _bootstrap_config() {
 
 	id="$(_bootstrap_hash "$*")"
 
-	echo "$id,$guest_name,$(_date),$1" > "$guest_path/info"
+	echo "$id,$guest_name,$(_date),$1" >"$guest_path/info"
 
 	{
-		echo 
+		echo
 		echo "# added by dockie"
 		echo "export PS1='\033[30;34m\u@$guest_name \w \\$ \033[30;39m'"
-		echo "export DISPLAY='$DISPLAY'" 
-	} >> "$guest_prefix/etc/profile"
+		echo "export DISPLAY='$DISPLAY'"
+	} >>"$guest_prefix/etc/profile"
 
 	cp /etc/resolv.conf "$guest_prefix/etc/resolv.conf"
 
@@ -33,6 +33,8 @@ _bootstrap_config() {
 }
 
 _bootstrap() {
+	echo "Bootstrapping... This may take a few minutes depending on your" \
+		"system."
 	system="$1"
 	guest_path="$2"
 	guest_prefix="$guest_path/rootfs"

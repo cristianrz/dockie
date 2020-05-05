@@ -8,13 +8,13 @@
 #
 
 _run_error_existing() {
-	_log_fatal "dockie: The container name '$1' is already in use."
+	_log_fatal "the guest name '$1' is already in use, did you mean to" \
+		"'exec' instead?"
 }
 
 _run() {
 	[ "$#" -eq 0 ] && _print_usage "run"
 
-	echo Bootstraping... This may take a few minutes.
 
 	[ "$1" = "--name" ] && shift && guest_name="$1" && shift
 
