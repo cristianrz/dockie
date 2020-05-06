@@ -1,14 +1,12 @@
 # shellcheck shell=sh
 _bootstrap_error() {
 	rm -rf "$2"
-	_log_fatal "Error response: pull access denied for $1"
+	_log_fatal "pull access denied for $1"
 }
 
 _bootstrap_hash() {
-	hash="$(echo "$*$(_date)" | sha1sum)"
-
-	# the only way I found to cut characters in POSIX using only builtins
-	echo "${hash%???????????????????????????????}"
+	hash="$(cat /proc/sys/kernel/random/uuid)"
+	echo "${hash%%-*}"
 }
 
 _bootstrap_config() {
