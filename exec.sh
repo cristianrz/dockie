@@ -11,7 +11,7 @@
 _exec_get_uid() {
 	passwd="$DOCKIE_GUESTS/$2/rootfs/etc/passwd"
 
-	[ ! -f "$passwd" ] && _log_fatal "/etc/passwd not found on rootfs"
+	[ ! -f "$passwd" ] && echo 0 && return
 
 	id="$(awk -F ':' "\$1 == \"$1\" { print \$3 }" "$passwd")"
 
@@ -50,7 +50,7 @@ _exec() {
 	[ ! -d "$DOCKIE_GUESTS/$guest_name" ] &&
 		_log_fatal "no such guest: $guest_name"
 
-	[ "$#" ] && _print_usage exec
+	[ "$#" -eq 0 ] && _print_usage exec
 
 	[ "$type" != "-S" ] &&
 		flags="$flags -i $(_exec_get_uid "$user" "$guest_name")"
