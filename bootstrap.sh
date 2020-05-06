@@ -42,9 +42,10 @@ _bootstrap() {
 	[ ! -d "$DOCKIE_IMAGES/$system" ] && _pull "$system"
 
 	mkdir -p "$guest_prefix"
+
 	cd "$guest_prefix" || exit 1
 	# sometimes tar has errors and this is ok
-	sh "$DOCKIE_IMAGES/$system/bootstrap" || true
+	tar xf "$DOCKIE_IMAGES/$system/rootfs.tar.xz" || true
 
 	_bootstrap_config "$@"
 }

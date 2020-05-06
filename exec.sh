@@ -56,6 +56,7 @@ _exec() {
 	echo
 	echo "$(_strings_basename "$0"): to get the proper prompt, always" \
 		"run sh/bash with the '-l' option"
+	echo "You can safely ignore this message."
 	echo
 
 	PROOT="$(which proot)"

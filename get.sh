@@ -14,6 +14,6 @@ _get_host_arch() {
 _get() {
 	[ "$#" -ge 2 ] && ARCH="$2" || ARCH="$(_get_host_arch)"
 	url="$REMOTE/$1"
-	url="$url/$(latest)/$ARCH/default"
-	echo "$url/$(latest)/rootfs.tar.xz"
+	url="$url/$(_get_latest)/$ARCH/default"
+	echo "$url/$(_get_latest)/rootfs.tar.xz"
 }

@@ -14,17 +14,14 @@ _pull() {
 
 	system="$1"
 
-	bootstrap="$REMOTE/$system/bootstrap"
-
 	rm -rf "${DOCKIE_IMAGES:?}/$system"
 	mkdir -p "$DOCKIE_IMAGES/$system"
 
 	echo "Pulling from dockie-hub/$system"
 
 	# shellcheck disable=SC2015
-	tar_url="$(_get_url "$system")" &&
-		wget "$tar_url" -P "$DOCKIE_IMAGES/$system" &&
-		wget -q "$bootstrap" -P "$DOCKIE_IMAGES/$system" ||
+	tar_url="$(_get "$system")" &&
+		wget "$tar_url" -P "$DOCKIE_IMAGES/$system" ||
 		_pull_error
 
 	echo "Downloaded rootfs for $system"
