@@ -4,27 +4,24 @@ _bootstrap_error() {
 	_log_fatal "pull access denied for $1"
 }
 
-_bootstrap_hash() {
-	hash="$(cat /proc/sys/kernel/random/uuid)"
-	echo "${hash%%-*}"
-}
-
 _bootstrap_config() {
 	guest_path="$2"
 	guest_name="$(_strings_basename "$guest_path")"
 	guest_prefix="$guest_path/rootfs"
 
-	id="$(_bootstrap_hash "$*")"
+	# generate uuid
+	id="$(cat /proc/sys/kernel/random/uuid)"
+	id="${id%%-*}"
 
 	echo "$id,$guest_name,$(_date),$1" >"$guest_path/info"
 
 	{
 		echo
 		echo "# added by dockie"
-		echo "export PS1='\033[30;34m\u@$guest_name \w \\$ \033[30;39m'"
 		echo "export DISPLAY='$DISPLAY'"
 		# not sure why PATH is not exported by default
 		echo "export PATH"
+		echo "export PS1='\033[30;34m\u@$guest_name \w \\$ \033[30;39m'"
 	} >>"$guest_prefix/etc/profile"
 
 	rm -f "$guest_prefix"/etc/resolv.conf
@@ -46,7 +43,7 @@ _bootstrap() {
 
 	cd "$guest_prefix" || exit 1
 	# sometimes tar has errors and this is ok
-	tar xf "$DOCKIE_IMAGES/$system/rootfs.tar.xz" || true
+	tar xf "$DOCKIE_IMAGES/$system/rootfs.tar" || true
 
 	_bootstrap_config "$@"
 }
