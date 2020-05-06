@@ -13,7 +13,9 @@ _exec_get_uid() {
 
 	[ ! -f "$passwd" ] && _log_fatal "/etc/passwd not found on rootfs"
 
-	awk -F ':' "\$1 == \"$1\" { print \$3 }" "$passwd"
+	id="$(awk -F ':' "\$1 == \"$1\" { print \$3 }" "$passwd")"
+
+	echo "${id:-0}"
 }
 
 _exec_is_opt() {
@@ -50,7 +52,7 @@ _exec() {
 
 	[ "$#" -eq 0 ] && _print_usage exec
 
-	[ -z "$user" ] && flags="$flags -0" ||
+	[ "$type" != "-S" ] &&
 		flags="$flags -i $(_exec_get_uid "$user" "$guest_name")"
 
 	echo
