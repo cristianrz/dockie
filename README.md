@@ -93,6 +93,7 @@ Also, all the most used Docker commands are available:
 | `pull`      | Pull an image                          |
 | `rm`        | Remove one or more root filesystems    |
 | `run`       | Run a command in a new root filesystem |
+| `search`    | Search the image server                |
 
 For more information on a command:
 

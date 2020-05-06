@@ -15,6 +15,7 @@
 # 	pull      Pull an image
 # 	rm        Remove one or more root filesystems
 # 	run       Run a command in a new root filesystem
+#	search    Search the image server for images
 #
 # Run 'dockie COMMAND' for more information on a command.
 #

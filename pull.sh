@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 # Usage: dockie pull [OPTIONS] NAME
 #
-# Pull an image or a repository from a registry' >&2
+# Pull an image or a repository from a registry
 #
 
 _pull_error() {

@@ -2,7 +2,14 @@
 
 _get_latest() { curl -sL "$url" | awk -F"/" '/edge/ { next } /\[DIR\]/ { gsub(/<[^>]*>/,""); v=$1 } END { print v }'; }
 
-_search() { curl -sL "$url" | awk -F"/" '/\[DIR\]/ { gsub(/<[^>]*>/,""); print $1 }'; }
+# Usage: dockie search [OPTIONS] TERM
+# 
+# Search the LXC image server for images
+#
+_search() {
+	[ "$#" -gt 1 ] && _print_usage "search"
+	curl -sL "$REMOTE" | awk -F"/" '/\[DIR\]/ && /'"${1-}"'/ { gsub(/<[^>]*>/,""); print $1 }';
+}
 
 _get_host_arch() {
 	case "$(uname -m)" in
