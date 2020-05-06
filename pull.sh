@@ -17,7 +17,7 @@ _pull() {
 	rm -rf "${DOCKIE_IMAGES:?}/$system"
 	mkdir -p "$DOCKIE_IMAGES/$system"
 
-	echo "Pulling from dockie-hub/$system"
+	echo "Pulling"
 
 	# shellcheck disable=SC2015
 	tar_url="$(_get "$system")" &&
