@@ -9,12 +9,12 @@
 # 	-v        Print version information and quit
 #
 # Commands:
-# 	exec      Run a command in a root filesystem
-# 	image     List images
-# 	ls        List root filesystems
-# 	pull      Pull an image
-# 	rm        Remove one or more root filesystems
-# 	run       Run a command in a new root filesystem
+#	exec      Run a command in a root filesystem
+#	image     List images
+#	ls        List root filesystems
+#	pull      Pull an image
+#	rm        Remove one or more root filesystems
+#	run       Run a command in a new root filesystem
 #	search    Search the image server for images
 #
 # Run 'dockie COMMAND' for more information on a command.
@@ -32,7 +32,6 @@ mkdir -p "$DOCKIE_IMAGES"
 export DOCKIE_GUESTS="$PREFIX/var/lib/dockie/guests"
 mkdir -p "$DOCKIE_GUESTS"
 
-REMOTE="https://us.images.linuxcontainers.org/images"
 
 _print_usage() {
 	# grab usages from comments
