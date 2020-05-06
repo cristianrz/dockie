@@ -1,8 +1,11 @@
 # shellcheck shell=sh
-_get(){
+_get() {
 	TMP="$(mktemp -d)"
 	trap 'rm -rf "$TMP"' EXIT
 
+	command -v "docker-hub-pull" >/dev/null >&2 &&
+		_log_fatal "could not find docker-hub-pull executable, have" \
+			"you installed it?"
 	docker-hub-pull "$TMP" "$1:latest" >/dev/null
 
 	# shellcheck disable=SC2012
@@ -11,8 +14,7 @@ _get(){
 	gzip -dv rootfs.tar.gz
 }
 
-
-_search(){
+_search() {
 	echo "There is no built-in search for the docker hub, but you can" \
 		"visit"
 	printf '\n\thttps://hub.docker.com/search?q=&type=image\n\n'

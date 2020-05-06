@@ -1,5 +1,5 @@
 # Set to either "lxc" or "docker"
-HUB = docker
+HUB = lxc
 
 OBJ = get-$(HUB).sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
 PREFIX = ${HOME}/.local
@@ -17,4 +17,4 @@ install:
 	@cp docker-hub-pull $(DESTDIR)$(PREFIX)/bin
 
 clean:
-	rm -f dockie
+	@rm -f dockie
