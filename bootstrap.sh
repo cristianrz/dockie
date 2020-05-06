@@ -27,6 +27,7 @@ _bootstrap_config() {
 		echo "export DISPLAY='$DISPLAY'"
 	} >>"$guest_prefix/etc/profile"
 
+	rm -f "$guest_prefix"/etc/resolv.conf
 	cp /etc/resolv.conf "$guest_prefix/etc/resolv.conf"
 
 	echo "$id"
