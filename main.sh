@@ -50,6 +50,6 @@ _print_usage() {
 [ "$1" = "-v" ] && echo "Dockie version $VERSION" && exit 0
 [ "$1" = "-d" ] && set -x && shift
 
+type "$1" >/dev/null 2>&1 || _print_usage "\[O"
 cmd="_$1" && shift
-
-"$cmd" "$@" || _print_usage "\[O"
+"$cmd" "$@"
