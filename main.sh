@@ -31,7 +31,7 @@ mkdir -p "$DOCKIE_IMAGES"
 export DOCKIE_GUESTS="$PREFIX/var/lib/dockie/guests"
 mkdir -p "$DOCKIE_GUESTS"
 
-REMOTE="https://raw.githubusercontent.com/cristianrz/dockie-hub/master"
+REMOTE="https://us.images.linuxcontainers.org/images"
 
 _print_usage() {
 	# grab usages from comments

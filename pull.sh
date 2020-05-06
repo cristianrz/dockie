@@ -22,7 +22,7 @@ _pull() {
 	echo "Pulling from dockie-hub/$system"
 
 	# shellcheck disable=SC2015
-	tar_url="$(wget -q -O- "$REMOTE/$system/url" | sh)" &&
+	tar_url="$(_get_url "$system")" &&
 		wget "$tar_url" -P "$DOCKIE_IMAGES/$system" &&
 		wget -q "$bootstrap" -P "$DOCKIE_IMAGES/$system" ||
 		_pull_error

@@ -31,6 +31,24 @@
 
 set -eu
 
+
+_get_latest() { curl -sL "$url" | awk -F"/" '/edge/ { next } /\[DIR\]/ { gsub(/<[^>]*>/,""); v=$1 } END { print v }'; }
+
+_search() { curl -sL "$url" | awk -F"/" '/\[DIR\]/ { gsub(/<[^>]*>/,""); print $1 }'; }
+
+_get_host_arch() {
+	case "$(uname -m)" in
+	x86_64) echo "amd64" ;;
+	*) _log_fatal "unknown host architecture" ;;
+	esac
+}
+
+_get() {
+	[ "$#" -ge 2 ] && ARCH="$2" || ARCH="$(_get_host_arch)"
+	url="$REMOTE/$1"
+	url="$url/$(latest)/$ARCH/default"
+	echo "$url/$(latest)/rootfs.tar.xz"
+}
 _bootstrap_error() {
 	rm -rf "$2"
 	_log_fatal "Error response: pull access denied for $1"
@@ -50,14 +68,14 @@ _bootstrap_config() {
 
 	id="$(_bootstrap_hash "$*")"
 
-	echo "$id,$guest_name,$(_date),$1" > "$guest_path/info"
+	echo "$id,$guest_name,$(_date),$1" >"$guest_path/info"
 
 	{
-		echo 
+		echo
 		echo "# added by dockie"
 		echo "export PS1='\033[30;34m\u@$guest_name \w \\$ \033[30;39m'"
-		echo "export DISPLAY='$DISPLAY'" 
-	} >> "$guest_prefix/etc/profile"
+		echo "export DISPLAY='$DISPLAY'"
+	} >>"$guest_prefix/etc/profile"
 
 	cp /etc/resolv.conf "$guest_prefix/etc/resolv.conf"
 
@@ -65,6 +83,8 @@ _bootstrap_config() {
 }
 
 _bootstrap() {
+	echo "Bootstrapping... This may take a few minutes depending on your" \
+		"system."
 	system="$1"
 	guest_path="$2"
 	guest_prefix="$guest_path/rootfs"
@@ -78,7 +98,7 @@ _bootstrap() {
 
 	_bootstrap_config "$@"
 }
-_date(){
+_date() {
 	date '+%Y-%m-%d %H:%M:%S'
 }
 # Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
@@ -136,7 +156,7 @@ _exec() {
 		flags="$flags -i $(_exec_get_uid "$user" "$guest_name")"
 
 	echo
-	echo "$(_strings_basename "$0"): to get the proper prompt, always " \
+	echo "$(_strings_basename "$0"): to get the proper prompt, always" \
 		"run sh/bash with the '-l' option"
 	echo
 
@@ -228,7 +248,7 @@ _pull() {
 	echo "Pulling from dockie-hub/$system"
 
 	# shellcheck disable=SC2015
-	tar_url="$(wget -q -O- "$REMOTE/$system/url" | sh)" &&
+	tar_url="$(_get_url "$system")" &&
 		wget "$tar_url" -P "$DOCKIE_IMAGES/$system" &&
 		wget -q "$bootstrap" -P "$DOCKIE_IMAGES/$system" ||
 		_pull_error
@@ -259,13 +279,12 @@ _rm() {
 #
 
 _run_error_existing() {
-	_log_fatal "dockie: The container name '$1' is already in use."
+	_log_fatal "the guest name '$1' is already in use, did you mean to" \
+		"'exec' instead?"
 }
 
 _run() {
 	[ "$#" -eq 0 ] && _print_usage "run"
-
-	echo Bootstraping... This may take a few minutes.
 
 	[ "$1" = "--name" ] && shift && guest_name="$1" && shift
 
@@ -320,7 +339,7 @@ mkdir -p "$DOCKIE_IMAGES"
 export DOCKIE_GUESTS="$PREFIX/var/lib/dockie/guests"
 mkdir -p "$DOCKIE_GUESTS"
 
-REMOTE="https://raw.githubusercontent.com/cristianrz/dockie-hub/master"
+REMOTE="https://us.images.linuxcontainers.org/images"
 
 _print_usage() {
 	# grab usages from comments
@@ -339,6 +358,6 @@ _print_usage() {
 [ "$1" = "-v" ] && echo "Dockie version $VERSION" && exit 0
 [ "$1" = "-d" ] && set -x && shift
 
+type "$1" >/dev/null 2>&1 || _print_usage "\[O"
 cmd="_$1" && shift
-
-"$cmd" "$@" || _print_usage "\[O"
+"$cmd" "$@"

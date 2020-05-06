@@ -15,7 +15,6 @@ _run_error_existing() {
 _run() {
 	[ "$#" -eq 0 ] && _print_usage "run"
 
-
 	[ "$1" = "--name" ] && shift && guest_name="$1" && shift
 
 	system_name="$1" && shift

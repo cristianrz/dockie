@@ -1,5 +1,5 @@
 #!/bin/sh
-OBJ = bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
+OBJ = get.sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
 PREFIX = ${HOME}/.local
 
 all: dockie

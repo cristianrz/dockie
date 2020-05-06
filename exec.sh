@@ -54,7 +54,7 @@ _exec() {
 		flags="$flags -i $(_exec_get_uid "$user" "$guest_name")"
 
 	echo
-	echo "$(_strings_basename "$0"): to get the proper prompt, always " \
+	echo "$(_strings_basename "$0"): to get the proper prompt, always" \
 		"run sh/bash with the '-l' option"
 	echo
 
