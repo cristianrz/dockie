@@ -1,19 +1,20 @@
-#!/bin/sh
-OBJ = get.sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
+# Set to either "lxc" or "docker"
+HUB = docker
+
+OBJ = get-$(HUB).sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
 PREFIX = ${HOME}/.local
 
-all: dockie
+all: dockie 
 
 dockie: $(OBJ) Makefile
 	@./link-scripts $(OBJ) > dockie
 	@shellcheck dockie
 	@chmod +x dockie
-	@echo dockie
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)/bin
 	@cp dockie $(DESTDIR)$(PREFIX)/bin
-	@echo $(DESTDIR)$(PREFIX)/bin/dockie
+	@cp docker-hub-pull $(DESTDIR)$(PREFIX)/bin
 
 clean:
 	rm -f dockie

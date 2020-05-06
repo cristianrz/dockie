@@ -17,12 +17,12 @@ _pull() {
 	rm -rf "${DOCKIE_IMAGES:?}/$system"
 	mkdir -p "$DOCKIE_IMAGES/$system"
 
-	echo "Pulling"
+	echo "Pulling from the remote repository..."
+
+	cd "$DOCKIE_IMAGES/$system"
 
 	# shellcheck disable=SC2015
-	tar_url="$(_get "$system")" &&
-		wget "$tar_url" -P "$DOCKIE_IMAGES/$system" ||
-		_pull_error
+	_get "$system" || _pull_error
 
 	echo "Downloaded rootfs for $system"
 }
