@@ -29,7 +29,7 @@ _exec() {
 	[ "$#" -lt 2 ] && _print_usage "exec"
 
 	type="-r"
-	user=
+	user=root
 	flags="-w /"
 
 	c="$1"
@@ -48,9 +48,9 @@ _exec() {
 	guest_name="$c"
 
 	[ ! -d "$DOCKIE_GUESTS/$guest_name" ] &&
-		_log_fatal "Error: No such guest: $guest_name"
+		_log_fatal "no such guest: $guest_name"
 
-	[ "$#" -eq 0 ] && _print_usage exec
+	[ "$#" ] && _print_usage exec
 
 	[ "$type" != "-S" ] &&
 		flags="$flags -i $(_exec_get_uid "$user" "$guest_name")"
@@ -65,6 +65,7 @@ _exec() {
 
 	touch "$DOCKIE_GUESTS/$guest_name/lock"
 	trap 'rm "$DOCKIE_GUESTS/$guest_name/lock"' EXIT
+
 	# shellcheck disable=SC2086
 	env -i DISPLAY="$DISPLAY" "$PROOT" $flags "$type" "$DOCKIE_GUESTS/$guest_name/rootfs" "$@"
 }
