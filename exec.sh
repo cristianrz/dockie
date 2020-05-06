@@ -36,7 +36,7 @@ _exec() {
 	shift
 	while _exec_is_opt "$c"; do
 		case x"$c" in
-		x--gui | x-g) flags="$flags -b /proc -b /dev" ;;
+		x--gui | x-g) flags="$flags -b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev" ;;
 		x--user | x-u) user="$1" && shift ;;
 		x--install | x-i) type='-S' ;;
 		esac
@@ -63,6 +63,8 @@ _exec() {
 
 	PROOT="$(which proot)"
 
+	touch "$DOCKIE_GUESTS/$guest_name/lock"
+	trap 'rm "$DOCKIE_GUESTS/$guest_name/lock"' EXIT
 	# shellcheck disable=SC2086
-	env -i "$PROOT" $flags "$type" "$DOCKIE_GUESTS/$guest_name/rootfs" "$@"
+	env -i DISPLAY="$DISPLAY" "$PROOT" $flags "$type" "$DOCKIE_GUESTS/$guest_name/rootfs" "$@"
 }

@@ -9,8 +9,11 @@ _rm() {
 	cd "$DOCKIE_GUESTS" || exit 1
 
 	for fs; do
-		[ ! -d "$DOCKIE_GUESTS/$fs" ] &&
-			_log_fatal "Error: No such container: $fs"
-		chmod -R +w "$fs" && rm -r "$fs" && echo "$fs"
+		[ ! -d "$fs" ] &&
+			_log_fatal "no such container: $fs"
+		[ -e "$fs/lock" ] &&
+			_log_fatal "guest is currently in use, otherwise" \
+			"delete $DOCKIE_GUESTS/$fs/lock manually"
+		chmod -R +w "$fs" && rm -r "$fs"
 	done
 }
