@@ -21,6 +21,7 @@ If you want to build from source:
 
 * `git`
 * `make`
+* `shellcheck`
 
 For the PRoot version:
 
@@ -41,5 +42,5 @@ For the Docker version:
 
 ## Usage
 
-[See "Quick-start" on the wiki.](https://github.com/cristianrz/dockie/wiki/Quick-start)
+[See "Usage" on the wiki.](https://github.com/cristianrz/dockie/wiki/Usage)
 
