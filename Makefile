@@ -5,7 +5,6 @@ all: dockie
 
 dockie: clean
 	@./link-scripts $(OBJ) > dockie
-	@shellcheck dockie
 	@chmod +x dockie
 
 install:

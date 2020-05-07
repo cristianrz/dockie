@@ -21,7 +21,6 @@ If you want to build from source:
 
 * `git`
 * `make`
-* `shellcheck`
 
 For the PRoot version:
 
