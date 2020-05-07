@@ -1,12 +1,9 @@
 OBJ = tar.sh get.sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
 PREFIX = ${HOME}/.local
 
-all: dockie 
-
-dockie: clean
-	@./link-scripts $(OBJ) > dockie
-	@shellcheck dockie
-	@chmod +x dockie
+all:
+	@echo 1. ./configure
+	@echo 2. make install
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -15,3 +12,7 @@ install:
 
 clean:
 	@rm -f dockie
+
+uninstall:
+	@rm $(DESTDIR)$(PREFIX)/bin/dockie
+	@rm $(DESTDIR)$(PREFIX)/bin/docker-hub-pull

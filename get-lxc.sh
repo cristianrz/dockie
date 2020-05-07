@@ -41,6 +41,7 @@ _get() {
 
 	url="$REMOTE/$2"
 	url="$url/$(_get_latest)/$ARCH/default"
+	echo "Pulling from LXC image server..."
 	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
 
 	case "$(file "$1/rootfs.tar.xz")" in

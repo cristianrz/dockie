@@ -1,4 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env sh
+
+set -eu
+
+OBJ="tar.sh get.sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh"
 
 echo "Do you want to use:"
 echo "1) LXC image server"
@@ -26,3 +30,17 @@ esac
 rm -f get.sh exec.sh
 ln -s get-"$HUB".sh get.sh
 ln -s exec-"$CHROOT".sh exec.sh
+
+{
+	echo '#!/usr/bin/env sh'
+	sed 's/^/# /g' LICENSE
+	echo
+	echo 'set -eu'
+	echo
+
+	for i in $OBJ; do
+		sed '/shellcheck shell/d' "$i"
+	done
+} > dockie
+
+chmod +x dockie
