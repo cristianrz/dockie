@@ -1,17 +1,16 @@
 # shellcheck shell=sh
+
+# _get(path, system, architecture)
 _get() {
 	TMP="$(mktemp -d)"
 	trap 'rm -rf "$TMP"' EXIT
 
-	command -v "docker-hub-pull" >/dev/null >&2 &&
-		_log_fatal "could not find docker-hub-pull executable, have" \
-			"you installed it?"
-	docker-hub-pull "$TMP" "$1:latest" >/dev/null
+	docker-hub-pull "$TMP" "$2:latest" >/dev/null || exit 1
 
 	# shellcheck disable=SC2012
-	mv "$(ls -1S "$TMP"/*/layer.tar | head -n 1)" rootfs.tar.gz
+	mv "$(ls -1S "$TMP"/*/layer.tar | head -n 1)" "$1/rootfs.tar.gz"
 
-	gzip -dv rootfs.tar.gz
+	gzip -dv "$1/rootfs.tar.gz"
 }
 
 _search() {

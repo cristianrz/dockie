@@ -19,10 +19,8 @@ _pull() {
 
 	echo "Pulling from the remote repository..."
 
-	cd "$DOCKIE_IMAGES/$system"
-
 	# shellcheck disable=SC2015
-	_get "$system" || _pull_error
+	_get "$DOCKIE_IMAGES/$system" "$system" || _pull_error
 
 	echo "Downloaded rootfs for $system"
 }

@@ -1,7 +1,4 @@
-# Set to either "lxc" or "docker"
-HUB = lxc
-
-OBJ = get-$(HUB).sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
+OBJ = tar.sh get.sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh
 PREFIX = ${HOME}/.local
 
 all: dockie 
@@ -14,7 +11,7 @@ dockie: $(OBJ) Makefile
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)/bin
 	@cp dockie $(DESTDIR)$(PREFIX)/bin
-	@cp docker-hub-pull $(DESTDIR)$(PREFIX)/bin
+	@cp contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/bin
 
 clean:
 	@rm -f dockie

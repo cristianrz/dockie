@@ -17,7 +17,11 @@ host OS.
 
 * `git` (only if you want to download the repo)
 * `proot`
-* `wget`
+* `curl`
+
+For the Docker Hub downloader:
+
+* `jq`
 
 ## Installation
 

@@ -1,15 +1,8 @@
 # shellcheck shell=sh
-# Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
-#
-# Run a command in an existing rootfs
-#
-# Options:
-# 	--gui      Use when a GUI is going to be run
-# 	--install  Use when packages need to be installed
-# 	--user     Specify Username
-#
+
+# _exec_get_uid(user, root_path)
 _exec_get_uid() {
-	passwd="$DOCKIE_GUESTS/$2/rootfs/etc/passwd"
+	passwd="$2/rootfs/etc/passwd"
 
 	[ ! -f "$passwd" ] && echo 0 && return
 
@@ -25,35 +18,51 @@ _exec_is_opt() {
 	esac
 }
 
+# Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
+#
+# Run a command in an existing rootfs
+#
+# Options:
+# 	--gui      Use when a GUI is going to be run
+# 	--install  Use when packages need to be installed
+# 	--user     Specify Username
+#
 _exec() {
 	[ "$#" -lt 2 ] && _print_usage "exec"
 
-	type="-r"
+	flags="-r"
+	mounts=
 	user=root
-	flags="-w /"
 
-	c="$1"
+	arg="$1"
 	shift
-	while _exec_is_opt "$c"; do
-		case x"$c" in
-		x--gui | x-g) flags="$flags -b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev" ;;
+	while _exec_is_opt "$arg"; do
+		case x"$arg" in
+		x--gui | x-g)
+			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
+			;;
 		x--user | x-u) user="$1" && shift ;;
-		x--install | x-i) type='-S' ;;
+		x--install | x-i) flags="-S" ;;
 		esac
 
-		c="$1"
+		arg="$1"
 		shift
 	done
 
-	guest_name="$c"
+	guest_path="$DOCKIE_GUESTS/$arg"
+	guest_prefix="$guest_path/rootfs"
 
-	[ ! -d "$DOCKIE_GUESTS/$guest_name" ] &&
-		_log_fatal "no such guest: $guest_name"
-
+	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $arg"
 	[ "$#" -eq 0 ] && _print_usage exec
 
-	[ "$type" != "-S" ] &&
-		flags="$flags -i $(_exec_get_uid "$user" "$guest_name")"
+	id="$(_exec_get_uid "$user" "$guest_prefix")"
+
+	[ "$flags" = "-r" ] &&
+		flags="$mounts -i $id $flags"
+
+	touch "$guest_path/lock"
+
+	trap 'rm "$guest_path/lock"' EXIT
 
 	echo
 	echo "$(_strings_basename "$0"): to get the proper prompt, always" \
@@ -63,9 +72,6 @@ _exec() {
 
 	PROOT="$(which proot)"
 
-	touch "$DOCKIE_GUESTS/$guest_name/lock"
-	trap 'rm "$DOCKIE_GUESTS/$guest_name/lock"' EXIT
-
 	# shellcheck disable=SC2086
-	env -i DISPLAY="$DISPLAY" "$PROOT" $flags "$type" "$DOCKIE_GUESTS/$guest_name/rootfs" "$@"
+	env -i DISPLAY="$DISPLAY" "$PROOT" -w / $flags "$guest_prefix" "$@"
 }

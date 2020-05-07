@@ -4,7 +4,7 @@
 # Run a command in a new rootfs
 #
 # Options:
-#     --name string    Assign a name to the container'
+#     --name string    Assign a name to the guest'
 #
 
 _run_error_existing() {

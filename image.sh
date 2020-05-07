@@ -17,23 +17,17 @@ _image() {
 	_image_"$cmd" "$@" || _print_usage "image"
 }
 
-_images() {
-	_image "$@"
-}
+_images() { _image "$@"; }
 
-# Usage: dockie image rm [OPTIONS] ROOTFS [ROOTFS...]
+# Usage: dockie image rm [OPTIONS] ROOTFS
 #
 # Remove one or more rootfs'.
 #
 _image_rm() {
-	[ "$#" -eq 0 ] && _print_usage "image rm"
+	[ "$#" -ne 1 ] && _print_usage "image rm"
 
-	# just to make sure we don't delete what we shouldn't
-	cd "$DOCKIE_IMAGES" || exit 1
+	[ ! -d "$DOCKIE_IMAGES/$1" ] &&
+		_log_fatal "Error: No such guest: $1"
 
-	for fs; do
-		[ ! -d "$DOCKIE_IMAGES/$fs" ] &&
-			_log_fatal "Error: No such container: $fs"
-		rm -rf ./"$fs" && echo "$fs"
-	done
+	rm -rf "${DOCKIE_IMAGES:?}/$1"
 }

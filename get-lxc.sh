@@ -2,7 +2,16 @@
 
 REMOTE="https://us.images.linuxcontainers.org/images"
 
-_get_latest() { curl -sL "$url" | awk -F"/" '/edge/ { next } /\[DIR\]/ { gsub(/<[^>]*>/,""); v=$1 } END { print v }'; }
+_get_latest() {
+	curl -sL "$url" | awk -F"/" '
+		/\[DIR\]/ {
+			gsub(/<[^>]*>/,"")
+			last = $1
+		}
+		
+		END { print last }
+		'
+}
 
 # Usage: dockie search [OPTIONS] TERM
 #
@@ -10,7 +19,11 @@ _get_latest() { curl -sL "$url" | awk -F"/" '/edge/ { next } /\[DIR\]/ { gsub(/<
 #
 _search() {
 	[ "$#" -gt 1 ] && _print_usage "search"
-	curl -sL "$REMOTE" | awk -F"/" '/\[DIR\]/ && /'"${1-}"'/ { gsub(/<[^>]*>/,""); print $1 }'
+	curl -sL "$REMOTE" | awk -F"/" '
+		/\[DIR\]/ && /'"${1-}"'/ {
+			gsub(/<[^>]*>/,"")
+			print $1
+		}'
 }
 
 # _get_host_arch() {
@@ -20,14 +33,14 @@ _search() {
 # 	esac
 # }
 
-# _get system 
+# _get(path, system, architecture)
 _get() {
 	ARCH="amd64"
 
-	[ "$#" -gt 1 ] && ARCH="$2"
+	[ "$#" -gt 2 ] && ARCH="$3"
 	
-	url="$REMOTE/$1"
+	url="$REMOTE/$2"
 	url="$url/$(_get_latest)/$ARCH/default"
-	wget "$url/$(_get_latest)/rootfs.tar.xz"
-	tar xf rootfs.tar.xz
+	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" > "$1/rootfs.tar.xz"
+	_tar_c "$1" xf rootfs.tar.xz
 }

@@ -4,11 +4,9 @@ _bootstrap_config() {
 	guest_name="$(_strings_basename "$guest_path")"
 	guest_prefix="$guest_path/rootfs"
 
-	# generate uuid
 	id="$(cat /proc/sys/kernel/random/uuid)"
 	id="${id%%-*}"
 
-	echo "$id,$guest_name,$(_date),$1" >"$guest_path/info"
 
 	{
 		echo
@@ -22,7 +20,7 @@ _bootstrap_config() {
 	rm -f "$guest_prefix"/etc/resolv.conf
 	cp /etc/resolv.conf "$guest_prefix/etc/resolv.conf"
 
-	echo "$id"
+	echo "$id,$guest_name,$(_date),$1" | tee "guest_path/info"
 }
 
 _bootstrap() {
@@ -36,9 +34,8 @@ _bootstrap() {
 
 	mkdir -p "$guest_prefix"
 
-	cd "$guest_prefix" || exit 1
 	# sometimes tar has errors and this is ok
-	tar xf "$DOCKIE_IMAGES/$system/rootfs.tar" || true
+	_tar_c "$guest_prefix" xf "$DOCKIE_IMAGES/$system/rootfs.tar" || true
 
 	_bootstrap_config "$@"
 }

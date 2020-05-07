@@ -35,15 +35,14 @@ mkdir -p "$DOCKIE_GUESTS"
 
 _print_usage() {
 	# grab usages from comments
-	awk '
+	_log_fatal "$(awk '
 	/^# Usage: dockie '"$1"'/, $0 !~ /^#/ {
 		if ( $0 ~ /^#/ ) {
 			gsub(/# ?/,"")
 			print
 		}
 	}
-	' "$0"
-	exit 1
+	' "$0")"
 }
 
 [ "$#" -eq 0 ] && _print_usage "\[O"
