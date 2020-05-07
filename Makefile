@@ -3,7 +3,7 @@ PREFIX = ${HOME}/.local
 
 all: dockie 
 
-dockie: $(OBJ) Makefile
+dockie: clean
 	@./link-scripts $(OBJ) > dockie
 	@shellcheck dockie
 	@chmod +x dockie
