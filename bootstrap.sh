@@ -1,9 +1,4 @@
 # shellcheck shell=sh
-_bootstrap_error() {
-	rm -rf "$2"
-	_log_fatal "pull access denied for $1"
-}
-
 _bootstrap_config() {
 	guest_path="$2"
 	guest_name="$(_strings_basename "$guest_path")"
