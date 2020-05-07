@@ -26,10 +26,10 @@ For the PRoot version:
 
 * `proot`
 
-For the fakechroot version:
+<!-- For the fakechroot version:
 
 * `fakechroot`
-* `fakeroot`
+* `fakeroot` -->
 
 For the Docker version:
 
