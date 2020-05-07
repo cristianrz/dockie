@@ -15,9 +15,20 @@ host OS.
 
 ## Dependencies
 
-* `git` (only if you want to download the repo)
-* `proot`
 * `curl`
+
+If you want to build from source:
+
+* `git`
+
+For the PRoot version:
+
+* `proot`
+
+For the fakechroot version:
+
+* `fakechroot`
+* `fakeroot`
 
 For the Docker Hub downloader:
 
@@ -25,9 +36,25 @@ For the Docker Hub downloader:
 
 ## Installation
 
+### Quick installation (default options)
+
+* Get the latest release from the
+[releases pages](https://github.com/cristianrz/dockie/releases).
+* Unzip the contents
+* Place them:
+	* In an already existing directory in your path (`echo $PATH`) or
+	* wherever you want and add that directory to your PATH (e.g.
+`export PATH="$HOME/bin:PATH"`).
+
+### From source (configurable)
+
 ```
 $ git clone https://github.com/cristianrz/dockie.git
 $ cd dockie
+$ HUB=lxc # or docker
+$ CHROOT=proot # or fakechroot
+$ ln -s get-$HUB.sh get.sh
+$ ln -s exec-$CHROOT.sh exec.sh
 $ make
 $ make install
 ```
