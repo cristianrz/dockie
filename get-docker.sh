@@ -10,7 +10,7 @@ _get() {
 	# shellcheck disable=SC2012
 	mv "$(ls -1S "$TMP"/*/layer.tar | head -n 1)" "$1/rootfs.tar.gz"
 
-	gzip -dv "$1/rootfs.tar.gz"
+	gzip -qdv "$1/rootfs.tar.gz"
 }
 
 _search() {

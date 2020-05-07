@@ -42,5 +42,10 @@ _get() {
 	url="$REMOTE/$2"
 	url="$url/$(_get_latest)/$ARCH/default"
 	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
+
+	case "$(file "$1/rootfs.tar.xz")" in
+	*HTML*) _log_fatal "can't find remote image '$2'" ;;
+	esac
+
 	_tar_c "$1" xf rootfs.tar.xz
 }
