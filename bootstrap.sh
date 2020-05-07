@@ -7,7 +7,6 @@ _bootstrap_config() {
 	id="$(cat /proc/sys/kernel/random/uuid)"
 	id="${id%%-*}"
 
-
 	{
 		echo
 		echo "# added by dockie"

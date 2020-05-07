@@ -23,9 +23,10 @@ _exec_is_opt() {
 # Run a command in an existing rootfs
 #
 # Options:
-# 	--gui      Use when a GUI is going to be run
-# 	--install  Use when packages need to be installed
-# 	--user     Specify Username
+# 	--gui      Use when a GUI is going to be run, mounts
+#	               /var/lib/dbus/machine-id, /run/shm, /proc and /dev
+# 	--install  Needed for most of package managers to work
+# 	-user      Specify username
 #
 _exec() {
 	[ "$#" -lt 2 ] && _print_usage "exec"
@@ -38,11 +39,12 @@ _exec() {
 	shift
 	while _exec_is_opt "$arg"; do
 		case x"$arg" in
-		x--gui | x-g)
+		x--gui)
 			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
 			;;
-		x--user | x-u) user="$1" && shift ;;
-		x--install | x-i) flags="-S" ;;
+		x--user) user="$1" && shift ;;
+		x--install) flags="-S" ;;
+		*) _log_fatal "invalid option '$arg'" ;;
 		esac
 
 		arg="$1"

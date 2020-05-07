@@ -17,7 +17,9 @@ _image() {
 	_image_"$cmd" "$@" || _print_usage "image"
 }
 
-_images() { _image "$@"; }
+_images() {
+	_image "$@"
+}
 
 # Usage: dockie image rm [OPTIONS] ROOTFS
 #

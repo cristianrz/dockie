@@ -38,9 +38,9 @@ _get() {
 	ARCH="amd64"
 
 	[ "$#" -gt 2 ] && ARCH="$3"
-	
+
 	url="$REMOTE/$2"
 	url="$url/$(_get_latest)/$ARCH/default"
-	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" > "$1/rootfs.tar.xz"
+	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
 	_tar_c "$1" xf rootfs.tar.xz
 }

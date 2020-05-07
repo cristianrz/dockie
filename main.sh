@@ -32,7 +32,6 @@ mkdir -p "$DOCKIE_IMAGES"
 export DOCKIE_GUESTS="$PREFIX/var/lib/dockie/guests"
 mkdir -p "$DOCKIE_GUESTS"
 
-
 _print_usage() {
 	# grab usages from comments
 	_log_fatal "$(awk '
