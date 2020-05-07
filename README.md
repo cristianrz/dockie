@@ -1,6 +1,6 @@
 # Dockie
 
-Dockie is a wrapper around PRoot to manager unprivileged `chroot` with a
+Dockie is a wrapper around PRoot to manage unprivileged chroots with a
 familiar interface.
 
 PRoot, and therefore Dockie, are not security features and should not be used
