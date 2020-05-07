@@ -47,5 +47,5 @@ _get() {
 	*HTML*) _log_fatal "can't find remote image '$2'" ;;
 	esac
 
-	_tar_c "$1" xf rootfs.tar.xz
+	xz -d "$1/rootfs.tar.xz"
 }
