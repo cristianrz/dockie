@@ -12,15 +12,16 @@ _pull_error() {
 _pull() {
 	[ "$#" -ne 1 ] && _print_usage "pull"
 
-	system="$1"
+	# replace / with -
+	system="${1%/*}-${1#*/}"
 
-	rm -rf "${DOCKIE_IMAGES:?}/${system##*/}"
-	mkdir -p "$DOCKIE_IMAGES/${system##*/}"
+	rm -rf "${DOCKIE_IMAGES:?}/$system"
+	mkdir -p "$DOCKIE_IMAGES/$system"
 
 	echo "Pulling from the remote repository..."
 
 	# shellcheck disable=SC2015
-	_get "$DOCKIE_IMAGES/${system##*/}" "$system" || _pull_error
+	_get "$DOCKIE_IMAGES/$system" "$1" || _pull_error
 
 	echo "Downloaded rootfs for $system"
 }
