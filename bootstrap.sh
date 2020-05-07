@@ -19,7 +19,7 @@ _bootstrap_config() {
 		echo "export PS1='\033[30;34m\u@$guest_name \w \\$ \033[30;39m'"
 	} >>"$guest_prefix/etc/profile"
 
-	rm -f "$guest_prefix:?"/etc/resolv.conf
+	rm -f "${guest_prefix:?}"/etc/resolv.conf
 	cp /etc/resolv.conf "$guest_prefix/etc/resolv.conf"
 
 }
