@@ -40,11 +40,14 @@ _get() {
 	[ "$#" -gt 2 ] && ARCH="$3"
 
 	case "$2" in
-	*/*) : ;;
-	*) _log_fatal "for LXC pulls, need to specify 'system/version'" ;;
+	*:*) : ;;
+	*) _log_fatal "for LXC pulls, need to specify 'system:version'" ;;
 	esac
 
-	url="$REMOTE/$2"
+	version="${2#*:}"
+	system="${2%:*}"
+
+	url="$REMOTE/$system/$version"
 	url="$url/$ARCH/default"
 	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
 
