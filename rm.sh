@@ -3,6 +3,7 @@
 #
 # Remove an image.
 #
+
 _rm() {
 	[ "$#" -eq 0 ] && _print_usage rm
 
@@ -11,7 +12,7 @@ _rm() {
 	[ ! -d "$guest_path" ] && _log_fatal "no such guest '$1'"
 
 	[ -e "$guest_path/lock" ] && _log_fatal "guest is currently in use," \
-		"otherwise delete $guest_path/lock manually"
+		"otherwise do 'rm $guest_path/lock'"
 
 	chmod -R +w "$guest_path"
 	rm -r "$guest_path"
