@@ -2,7 +2,6 @@
 
 set -eu
 
-OBJ="tar.sh get.sh bootstrap.sh date.sh exec.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh"
 
 echo "Do you want to use:"
 echo "1) LXC image server"
@@ -27,20 +26,34 @@ case "$CHROOT" in
 *) echo invalid option && exit 1 ;;
 esac
 
-rm -f get.sh exec.sh
-ln -s get-"$HUB".sh get.sh
-ln -s exec-"$CHROOT".sh exec.sh
+OBJ="tar.sh get-$HUB.sh bootstrap.sh date.sh exec-$CHROOT.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh"
 
 {
-	echo '#!/usr/bin/env sh'
-	sed 's/^/# /g' LICENSE
+	echo "OBJ = $OBJ"
+	echo 'PREFIX = ${HOME}/.local'
 	echo
-	echo 'set -eu'
-	echo
+	echo 'all: $(OBJ)'
+	echo '	echo "#!/usr/bin/env sh" > dockie'
+	echo '	sed "s/^/# /g" LICENSE >> dockie'
+	echo '	echo >> dockie'
+	echo '	echo "set -eu" >> dockie'
+	echo '	echo >> dockie'
 
 	for i in $OBJ; do
-		sed '/shellcheck shell/d' "$i"
+		echo "	sed '/shellcheck shell/d' $i >> dockie"
 	done
-} > dockie
 
-chmod +x dockie
+	echo '	chmod +x dockie'
+
+	echo 'install:'
+	echo '	mkdir -p $(DESTDIR)$(PREFIX)/bin'
+	echo '	cp -p dockie $(DESTDIR)$(PREFIX)/bin'
+	echo '	cp -p contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/bin'
+	echo ''
+	echo 'clean:'
+	echo '	rm -f dockie'
+	echo ''
+	echo 'uninstall:'
+	echo '	rm $(DESTDIR)$(PREFIX)/bin/dockie'
+	echo '	rm $(DESTDIR)$(PREFIX)/bin/docker-hub-pull'
+} > Makefile
