@@ -21,7 +21,7 @@ _bootstrap_config() {
 	} >>"$guest_prefix/etc/profile"
 
 	rm -f "${guest_prefix:?}"/etc/resolv.conf
-	cp /etc/resolv.conf "$guest_prefix/etc/resolv.conf"
+	cp "${PREFIX-}"/etc/resolv.conf "$guest_prefix/etc/resolv.conf"
 
 }
 
