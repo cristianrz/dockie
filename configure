@@ -32,7 +32,9 @@ OBJ="tar.sh get-$HUB.sh bootstrap.sh date.sh exec-$CHROOT.sh image.sh log.sh ls.
 	echo "OBJ = $OBJ"
 	echo 'PREFIX = ${HOME}/.local'
 	echo
-	echo 'all: $(OBJ)'
+	echo 'all: dockie'
+	echo
+	echo 'dockie: $(OBJ)'
 	echo '	echo "#!/usr/bin/env sh" > dockie'
 	echo '	sed "s/^/# /g" LICENSE >> dockie'
 	echo '	echo >> dockie'
