@@ -12,9 +12,6 @@ _pull_error() {
 _pull() {
 	[ "$#" -ne 1 ] && _print_usage "pull"
 
-	# replace / with -
-	system="${1%/*}-${1#*/}"
-
 	rm -rf "${DOCKIE_IMAGES:?}/$system"
 	mkdir -p "$DOCKIE_IMAGES/$system"
 
