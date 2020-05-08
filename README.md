@@ -1,6 +1,6 @@
 # Dockie
 
-Dockie is a wrapper around PRoot to manager unprivileged `chroot` with a
+Dockie is a wrapper around PRoot to manage unprivileged chroots with a
 familiar interface.
 
 PRoot, and therefore Dockie, are not security features and should not be used
@@ -16,6 +16,7 @@ host OS.
 ## Dependencies
 
 * `curl`
+* `file`
 
 If you want to build from source:
 
@@ -26,10 +27,10 @@ For the PRoot version:
 
 * `proot`
 
-For the fakechroot version:
+<!-- For the fakechroot version:
 
 * `fakechroot`
-* `fakeroot`
+* `fakeroot` -->
 
 For the Docker version:
 
@@ -41,5 +42,5 @@ For the Docker version:
 
 ## Usage
 
-[See "Quick-start" on the wiki.](https://github.com/cristianrz/dockie/wiki/Quick-start)
+[See "Usage" on the wiki.](https://github.com/cristianrz/dockie/wiki/Usage)
 

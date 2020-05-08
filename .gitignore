@@ -1,4 +1,5 @@
 *tgz
+Makefile
 docker-hub-pull
 dockie
 exec.sh

@@ -39,14 +39,21 @@ _get() {
 
 	[ "$#" -gt 2 ] && ARCH="$3"
 
-	url="$REMOTE/$2"
-	url="$url/$(_get_latest)/$ARCH/default"
-	echo "Pulling from LXC image server..."
+	case "$2" in
+	*:*) : ;;
+	*) _log_fatal "for LXC pulls, need to specify 'system:version'" ;;
+	esac
+
+	version="${2#*:}"
+	system="${2%:*}"
+
+	url="$REMOTE/$system/$version"
+	url="$url/$ARCH/default"
 	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
 
 	case "$(file "$1/rootfs.tar.xz")" in
 	*HTML*) _log_fatal "can't find remote image '$2'" ;;
 	esac
 
-	_tar_c "$1" xf rootfs.tar.xz
+	xz -d "$1/rootfs.tar.xz"
 }
