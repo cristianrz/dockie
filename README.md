@@ -16,6 +16,7 @@ host OS.
 ## Dependencies
 
 * `curl`
+* `file`
 
 If you want to build from source:
 
