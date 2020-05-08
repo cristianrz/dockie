@@ -3,7 +3,7 @@
 set -eu
 
 
-echo "Do you want to use:"
+echo "image servers:"
 echo "1) LXC image server"
 echo "2) Docker Hub"
 printf '[1] ' && read -r HUB
@@ -14,17 +14,20 @@ case "$HUB" in
 *) echo invalid option && exit 1 ;;
 esac
 
-echo
-echo "Do you want to use:"
-echo "1) proot"
-# echo "2) fakechroot"
-printf '[1] ' && read -r CHROOT
+# echo
+# echo "unprivileged chroot:"
+# echo "1) proot"
+# # echo "2) fakechroot"
+# printf '[1] ' && read -r CHROOT
+# 
+# case "$CHROOT" in
+# 1 | "") CHROOT=proot ;;
+# # 2) CHROOT=fakechroot ;;
+# *) echo invalid option && exit 1 ;;
+# esac
 
-case "$CHROOT" in
-1 | "") CHROOT=proot ;;
-# 2) CHROOT=fakechroot ;;
-*) echo invalid option && exit 1 ;;
-esac
+# hardcoded for now
+CHROOT=proot
 
 OBJ="tar.sh get-$HUB.sh bootstrap.sh date.sh exec-$CHROOT.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh strings.sh main.sh"
 
