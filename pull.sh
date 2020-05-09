@@ -12,7 +12,10 @@ _pull_error() {
 _pull() {
 	[ "$#" -ne 1 ] && _print_usage "pull"
 
-	system="${1%/*}-${1#*/}"
+	case "$1" in
+	*/*) system="${1%/*}-${1#*/}" ;;
+	*) system="$1" ;;
+	esac
 
 	rm -rf "${DOCKIE_IMAGES:?}/$system"
 	mkdir -p "$DOCKIE_IMAGES/$system"
