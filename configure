@@ -29,7 +29,7 @@ esac
 # hardcoded for now
 CHROOT=proot
 
-OBJ="get-$HUB.sh bootstrap.sh exec-$CHROOT.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh main.sh"
+OBJ="strings.sh get-$HUB.sh bootstrap.sh exec-$CHROOT.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh main.sh"
 
 {
 	echo "OBJ = $OBJ"

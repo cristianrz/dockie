@@ -1,23 +1,5 @@
 # shellcheck shell=sh
 
-# _exec_get_uid(user, root_path)
-_exec_get_uid() {
-	passwd="$2/rootfs/etc/passwd"
-
-	[ ! -f "$passwd" ] && echo 0 && return
-
-	id="$(awk -F ':' "\$1 == \"$1\" { print \$3 }" "$passwd")"
-
-	echo "${id:-0}"
-}
-
-_exec_is_opt() {
-	case x"$1" in
-	x-*) return 0 ;;
-	*) return 1 ;;
-	esac
-}
-
 # Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
 #
 # Run a command in an existing rootfs
@@ -33,7 +15,9 @@ _exec() {
 
 	arg="$1"
 	shift
-	while _exec_is_opt "$arg"; do
+
+	# check if starts with -
+	while [ "${arg#-}" != "$arg" ]; do
 		case x"$arg" in
 		x--gui)
 			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
@@ -50,26 +34,25 @@ _exec() {
 	guest_path="$DOCKIE_GUESTS/$arg"
 	guest_prefix="$guest_path/rootfs"
 
-	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $arg"
 	[ "$#" -eq 0 ] && _print_usage exec
 
-	id="$(_exec_get_uid "${user-root}" "$guest_prefix")"
+	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $arg"
+
+	passwd="$guest_prefix/etc/passwd"
+
+	[ -f "$passwd" ] &&
+		id="$(awk -F ':' '$1 == '"${user-root}"' { print $3 }' "$passwd")"
 
 	[ -z "${flags-}" ] &&
-		flags="${mounts-} -i $id -r"
+		flags="${mounts-} -i ${id:-0} -r"
 
 	touch "$guest_path/lock"
 
-	trap 'rm "$guest_path/lock"' EXIT
-
-	echo
-	echo "$(_strings_basename "$0"): to get the proper prompt, always" \
-		"run sh/bash with the '-l' option"
-	echo "You can safely ignore this message."
-	echo
-
-	PROOT="$(which proot)"
+	trap 'rm $guest_path/lock' EXIT
 
 	# shellcheck disable=SC2086
-	env -i BASH_ENV=/etc/profile ENV=/etc/profile DISPLAY="${DISPLAY-}" "$PROOT" -w / $flags "$guest_prefix" "$@"
+	env -i DISPLAY="${DISPLAY-}" "$(which proot)" -w / $flags \
+		"$guest_prefix" "$@"
+
 }
+

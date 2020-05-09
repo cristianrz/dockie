@@ -15,8 +15,5 @@ _get() {
 }
 
 _search() {
-	echo "There is no built-in search for the docker hub, but you can" \
-		"visit"
-	printf '\n\thttps://hub.docker.com/search?q=&type=image\n\n'
-	echo "for a list of the available images"
+	echo 'https://hub.docker.com/search?q=&type=image'
 }

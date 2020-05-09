@@ -7,11 +7,6 @@
 #     --name string    Assign a name to the guest'
 #
 
-_run_error_existing() {
-	_log_fatal "the guest name '$1' is already in use, did you mean to" \
-		"'exec' instead?"
-}
-
 # _run(options..., image_name)
 _run() {
 	[ "$#" -eq 0 ] && _print_usage "run"

@@ -4,28 +4,23 @@
 # Pull an image or a repository from a registry
 #
 
-_pull_error() {
-	rm -rf "${DOCKIE_IMAGES:?}/$system"
-	_log_fatal "pull failed for $system"
-}
-
 # _pull(system)
 _pull() {
 	[ "$#" -ne 1 ] && _print_usage "pull"
 
-	image="$1"
-	image_path="$DOCKIE_IMAGES/$image"
+	image_path="$DOCKIE_IMAGES/$1"
 
-	case "$1" in
-	*:*) ;;
-	*) _log_fatal "need to specify image:version" ;;
-	esac
+	_strings_contains "$1" ':' ||
+		_log_fatal "need to specify image:version"
 
 	rm -rf "${image_path:?}"
 	mkdir -p "$image_path"
 
 	# shellcheck disable=SC2015
-	_get "$image_path" "$image" || _pull_error
+	_get "$image_path" "$1" || {
+		rm -rf "${DOCKIE_IMAGES:?}/$system" &&
+			_log_fatal "pull failed for $system"
+	}
 
-	echo "Downloaded rootfs for $image"
+	echo "Downloaded rootfs for $1"
 }

@@ -20,16 +20,14 @@
 # Run 'dockie COMMAND' for more information on a command.
 #
 
-VERSION="v0.5.0"
+VERSION="v0.6.0"
 
 DOCKIE_PREFIX="$HOME/.local"
 
-# need to export for bootstrap scripts
-export DOCKIE_IMAGES="$DOCKIE_PREFIX/var/lib/dockie/images"
+DOCKIE_IMAGES="$DOCKIE_PREFIX/var/lib/dockie/images"
 mkdir -p "$DOCKIE_IMAGES"
 
-# need to export for bootstrap scripts
-export DOCKIE_GUESTS="$DOCKIE_PREFIX/var/lib/dockie/guests"
+DOCKIE_GUESTS="$DOCKIE_PREFIX/var/lib/dockie/guests"
 mkdir -p "$DOCKIE_GUESTS"
 
 _print_usage() {
