@@ -10,7 +10,6 @@ _bootstrap_config() {
 	echo "$id"
 
 	{
-		[ -n "${DISPLAY-}" ] && echo "export DISPLAY='$DISPLAY'"
 		# not sure why PATH is not exported by default
 		echo "export PATH"
 	} >>"$guest_prefix/etc/profile"
