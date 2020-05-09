@@ -9,19 +9,23 @@ _pull_error() {
 	_log_fatal "pull failed for $system"
 }
 
+# _pull(system)
 _pull() {
 	[ "$#" -ne 1 ] && _print_usage "pull"
 
+	image="$1"
+	image_path="$DOCKIE_IMAGES/$image"
+
 	case "$1" in
-	*/*) system="${1%/*}-${1#*/}" ;;
-	*) system="$1" ;;
+	*:*) ;;
+	*) _log_fatal "need to specify image:version" ;;
 	esac
 
-	rm -rf "${DOCKIE_IMAGES:?}/$system"
-	mkdir -p "$DOCKIE_IMAGES/$system"
+	rm -rf "${image_path:?}"
+	mkdir -p "$image_path"
 
 	# shellcheck disable=SC2015
-	_get "$DOCKIE_IMAGES/$system" "$1" || _pull_error
+	_get "$image_path" "$image" || _pull_error
 
-	echo "Downloaded rootfs for $system"
+	echo "Downloaded rootfs for $image"
 }
