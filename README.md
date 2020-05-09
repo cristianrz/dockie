@@ -17,15 +17,12 @@ host OS.
 
 * `curl`
 * `file`
+* `proot`
 
 If you want to build from source:
 
 * `git`
 * `make`
-
-For the PRoot version:
-
-* `proot`
 
 <!-- For the fakechroot version:
 
