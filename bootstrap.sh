@@ -8,7 +8,7 @@ _bootstrap_config() {
 	guest_prefix="$guest_path/rootfs"
 
 
-	echo "$id,$1,$(_date),$guest_name" > "$guest_path/info"
+	echo "$id,$1,$(date '+%Y-%m-%d %H:%M:%S'),$guest_name" > "$guest_path/info"
 	echo "$id"
 
 	{
