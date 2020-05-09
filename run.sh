@@ -12,21 +12,21 @@ _run_error_existing() {
 		"'exec' instead?"
 }
 
-# _run(options..., system_name)
+# _run(options..., image_name)
 _run() {
 	[ "$#" -eq 0 ] && _print_usage "run"
 
 	[ "$1" = "--name" ] && shift && guest_name="$1" && shift
 
-	system_name="$1" && shift
+	image_name="$1" && shift
 
 	# need a guest name if the user did not specify any
-	: "${guest_name:=$system_name}"
+	: "${guest_name:=$image_name}"
 
 	id="$(cat /proc/sys/kernel/random/uuid)"
 	id="${id%%-*}"
 
-	_bootstrap "$system_name" "$id" "$guest_name"
+	_bootstrap "$image_name" "$id" "$guest_name"
 
 	[ "$#" -ne 0 ] && _exec "$id" "$@"
 }

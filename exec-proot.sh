@@ -71,5 +71,5 @@ _exec() {
 	PROOT="$(which proot)"
 
 	# shellcheck disable=SC2086
-	env -i DISPLAY="${DISPLAY-}" "$PROOT" -w / $flags "$guest_prefix" "$@"
+	env -i BASH_ENV=/etc/profile ENV=/etc/profile DISPLAY="${DISPLAY-}" "$PROOT" -w / $flags "$guest_prefix" "$@"
 }
