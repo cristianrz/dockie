@@ -1,4 +1,5 @@
 *tgz
+.idea
 Makefile
 docker-hub-pull
 dockie
