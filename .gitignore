@@ -1,4 +1,5 @@
 *tgz
+exec-fakechroot.sh
 .idea
 Makefile
 docker-hub-pull
