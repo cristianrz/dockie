@@ -17,9 +17,7 @@ _get_latest() {
 #
 # Search the LXC image server for images
 #
-_search() {
-	echo 'https://images.linuxcontainers.org/images/'
-}
+_search() { echo 'https://images.linuxcontainers.org/images/'; }
 
 # _get(path, system, architecture)
 _get() {
