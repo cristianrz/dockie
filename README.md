@@ -35,9 +35,9 @@ For the Docker version:
 
 ## Installation
 
-[See "Installation" on the wiki.](https://github.com/cristianrz/dockie/wiki/Installation)
+[See "Installation" on the wiki.](https://github.com/cristianrz/dockie/wiki#installation)
 
 ## Usage
 
-[See "Usage" on the wiki.](https://github.com/cristianrz/dockie/wiki/Usage)
+[See "Usage" on the wiki.](https://github.com/cristianrz/dockie/wiki#usage)
 
