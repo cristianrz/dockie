@@ -38,7 +38,7 @@ _bootstrap() {
 
 	d="$(date '+%Y-%m-%d %H:%M:%S')"
 
-	printf "%-14s%-20s%-21s%s\n" "$id" "$1" "$d" "$guest_name" >"$guest_path/info"
+	printf "%-14s%-20s%-21s%s\n" "$id" "$1" "$d" "$3" >"$guest_path/info"
 
 	{
 		# shellcheck disable=SC2016
