@@ -1,9 +1,5 @@
-*tgz
-exec-fakechroot.sh
+*gz
 .idea
-Makefile
+TODO
 docker-hub-pull
 dockie
-exec.sh
-get-local.sh
-get.sh

@@ -1,5 +1,4 @@
 # shellcheck shell=sh
-
 # _get(path, system, architecture)
 _get() {
 	TMP="$(mktemp -d)"
@@ -14,6 +13,4 @@ _get() {
 	gzip -qdv "$1/rootfs.tar.gz" >/dev/null 2>&1 || return 1
 }
 
-_search() {
-	echo 'https://hub.docker.com/search?q=&type=image'
-}
+_search() { echo 'https://hub.docker.com/search?q=&type=image'; }
