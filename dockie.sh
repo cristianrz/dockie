@@ -105,7 +105,7 @@ _exec() {
 
 	trap 'rm $guest_path/lock' EXIT
 
-	envs="DISPLAY=$DISPLAY TERM=$TERM BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
+	envs="DISPLAY=${DISPLAY-} TERM=${TERM-} BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
 
 	# shellcheck disable=SC2086
 	env -i $envs "$(which proot)" $flags "$guest_prefix" "$@"
