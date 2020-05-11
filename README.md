@@ -1,4 +1,4 @@
-<img src="docs/whale_small.jpg" alt="Dockie Logo" class="center"> 
+<p align="center"><img src="docs/whale_small.png" width="220px"></p>
 
 # Dockie
 
