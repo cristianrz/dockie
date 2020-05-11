@@ -26,6 +26,7 @@ install:
 
 clean:
 	rm -f dockie
+	rm -f dockie.1.gz
 
 uninstall:
 	rm $(DESTDIR)$(PREFIX)/bin/dockie
