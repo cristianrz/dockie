@@ -1,5 +1,7 @@
 # shellcheck shell=sh
 
+ORIGIN="LXC image server"
+
 REMOTE="https://us.images.linuxcontainers.org/images"
 
 _get_latest() {
@@ -21,9 +23,7 @@ _search() { echo 'https://images.linuxcontainers.org/images/'; }
 
 # _get(path, system, architecture)
 _get() {
-	[ "$#" -gt 2 ] && ARCH="$3"
-
-	_strings_contains "$2" ':' ||
+	_contains "$2" ':' ||
 		_log_fatal "need to specify 'system:version'"
 
 	version="${2#*:}"
@@ -33,7 +33,7 @@ _get() {
 	url="$url/${ARCH-amd64}/default"
 	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
 
-	_strings_contains "$(file "$1/rootfs.tar.xz")" "HTML" &&
+	_contains "$(file "$1/rootfs.tar.xz")" "HTML" &&
 		_log_fatal "could not find remote image '$2'"
 
 	xz -d "$1/rootfs.tar.xz"

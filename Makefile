@@ -9,13 +9,13 @@ dockie: $(OBJ) Makefile
 	echo >> dockie
 	echo "set -eu" >> dockie
 	echo >> dockie
-	cat get-lxc.sh >> dockie
-	cat dockie.sh >> dockie
+	grep -v 'shellcheck shell' get-lxc.sh >> dockie
+	grep -v 'shellcheck shell' dockie.sh >> dockie
 	chmod +x dockie
 
 install:
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp -p dockie $(DESTDIR)$(PREFIX)/bin
+	mv dockie $(DESTDIR)$(PREFIX)/bin
 	@# cp -p contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/bin
 
 clean:

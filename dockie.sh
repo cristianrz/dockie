@@ -1,3 +1,25 @@
+# shellcheck shell=sh
+
+# Usage: dockie import file
+# 
+# Import the contents from a tarball to create an image
+#
+_import() {
+	case "$1" in
+	*.tar)
+		image_name="${1##*/}"
+		image_name="${image_name%.*}"
+		image_path="$DOCKIE_IMAGES/$image_name"
+
+		mkdir -p "$image_path"
+		cp "$1" "$image_path/rootfs.tar"
+
+		_tag_image "$image_path" "$image_name"
+		;;
+	*) _log_fatal "extension must be .tar" ;;
+	esac
+}
+
 # _bootstrap(system, id, name)
 _bootstrap() {
 	guest_path="$DOCKIE_GUESTS/$2"
@@ -8,13 +30,13 @@ _bootstrap() {
 
 	mkdir -p "$guest_prefix"
 
-	cd "$guest_prefix"
+	cd "$guest_prefix" || exit 1
 	# sometimes tar has errors and this is ok
 	tar xf "$image_path/rootfs.tar" || true
 
 	d="$(date '+%Y-%m-%d %H:%M:%S')"
 
-	printf "%-11s%-15s%-21s%s\n" "$id" "$1" "$d" "$guest_name" >"$guest_path/info"
+	printf "%-14s%-20s%-21s%s\n" "$id" "$1" "$d" "$guest_name" >"$guest_path/info"
 
 	{
 		# shellcheck disable=SC2016
@@ -23,6 +45,7 @@ _bootstrap() {
 		# not sure why PATH is not exported by default
 		echo "export PATH"
 	} | tee -a "$guest_prefix/etc/profile" \
+		"$guest_prefix/root/.bashrc" \
 		"$guest_prefix/etc/bash.bashrc" >/dev/null
 
 
@@ -43,13 +66,10 @@ _bootstrap() {
 # 	--user      Specify username
 #
 _exec() {
-	[ "$#" -lt 2 ] && _print_usage "exec"
-
-	arg="$1"
-	shift
+	[ "$#" -lt 2 ] && _usage "exec"
 
 	# check if starts with -
-	while [ "${arg#-}" != "$arg" ]; do
+	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
 		case x"$arg" in
 		x--gui)
 			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
@@ -58,12 +78,9 @@ _exec() {
 		x--install) flags="-S" ;;
 		*) _log_fatal "invalid option '$arg'" ;;
 		esac
-
-		arg="$1"
-		shift
 	done
 
-	[ "$#" -eq 0 ] && _print_usage exec
+	[ "$#" -eq 0 ] && _usage exec
 
 	guest_path="$DOCKIE_GUESTS/$arg"
 	guest_prefix="$guest_path/rootfs"
@@ -72,21 +89,33 @@ _exec() {
 
 	passwd="$guest_prefix/etc/passwd"
 
-	[ -f "$passwd" ] &&
-		id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")" &&
+	: "${user:=root}"
+
+	if [ -f "$passwd" ]; then
+		id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")"
 		guest_home="$(awk -F ':' '$1 == "'"${user-root}"'" { print $6 }' "$passwd")"
+	fi
 
 	[ -z "${flags-}" ] &&
-		flags="-w "${guest_home:-/}" ${mounts-} -i ${id:-0} -r"
+		flags="${mounts-} -i ${id:-0} -r"
 
-	touch "$guest_path/lock"
+	flags="-w ${guest_home:-/} $flags"
+
+	[ ! -f "$guest_path/lock" ] && touch "$guest_path/lock"
 
 	trap 'rm $guest_path/lock' EXIT
 
-	envs="BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
+	envs="TERM=$TERM BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
 
 	# shellcheck disable=SC2086
 	env -i $envs "$(which proot)" $flags "$guest_prefix" "$@"
+}
+
+_image_ls(){
+	[ "$#" -eq 0 ] || _usage "image"
+
+	echo "REPOSITORY          CREATED               SIZE"
+	cat "$DOCKIE_IMAGES"/*/info 2>/dev/null
 }
 
 # Usage: dockie image COMMAND
@@ -99,19 +128,18 @@ _exec() {
 #   rm    Remove one or more images" >&2
 #
 _image() {
-	[ "$#" -eq 0 ] && ls -1 "$DOCKIE_IMAGES" && exit 0
-
-	[ "$1" != "rm" ] && _print_usage "image"
-
-	[ "$#" -ne 2 ] && _print_usage "image rm"
-
-	[ ! -d "$DOCKIE_IMAGES/$2" ] &&
-		_log_fatal "no such guest: $2"
-
-	rm -rf "${DOCKIE_IMAGES:?}/$2"
+	case "${1-}" in
+	ls) _image_ls "$@" ;;
+	rm)
+		[ "$#" -ne 2 ] && _usage "image rm"
+		[ ! -d "$DOCKIE_IMAGES/$2" ] && _log_fatal "no such image: $2"
+		rm -rf "${DOCKIE_IMAGES:?}/$2"
+		;;
+	*) _usage "image" ;;
+	esac
 }
 
-_images() { _image "$@"; }
+_images() { _image_ls; }
 
 # Usage: dockie image rm [OPTIONS] ROOTFS
 #
@@ -127,9 +155,9 @@ _log_fatal() {
 # List rootfs
 #
 _ls() {
-	[ "$#" -eq 0 ] || _print_usage "ls"
+	[ "$#" -eq 0 ] || _usage "ls"
 
-	echo "ROOTFS ID  IMAGE          CREATED              NAME"
+	echo "ROOTFS ID     IMAGE               CREATED              NAME"
 	cat "$DOCKIE_GUESTS"/*/info 2>/dev/null
 }
 
@@ -140,37 +168,45 @@ _ps() { _ls "$@"; }
 # Pull an image or a repository from a registry
 #
 
+# _tag_image(path, name)
+_tag_image(){
+	d="$(date '+%Y-%m-%d %H:%M:%S')"
+	s="$(du -h "$1/rootfs.tar" | awk '{print $1"B"}')"
+	printf '%-20s%-22s%s\n' "$2" "$d" "$s" > "$1/info"
+}
+
 # _pull(system)
 _pull() {
-	[ "$#" -ne 1 ] && _print_usage "pull"
+	[ "$#" -ne 1 ] && _usage "pull"
 
 	image_path="$DOCKIE_IMAGES/$1"
 
-	_strings_contains "$1" ':' ||
-		_log_fatal "need to specify image:version"
+	 ! _contains "$1" ':' && _log_fatal "need to specify image:version"
 
 	rm -rf "${image_path:?}"
 	mkdir -p "$image_path"
 
 	# shellcheck disable=SC2015
-	_get "$image_path" "$1" || _log_fatal "pull failed for $system"
+	_get "$image_path" "$1" || _log_fatal "pull failed for $1"
+
+	_tag_image "$image_path" "$1"
 
 	printf 'Downloaded rootfs for %s\n' "$1"
 }
 
 # Usage: dockie rm [OPTIONS] ROOTFS
 #
-# Remove an image.
+# Remove a guest.
 #
 _rm() {
-	[ "$#" -eq 0 ] && _print_usage rm
+	[ "$#" -eq 0 ] && _usage rm
 
 	guest_path="$DOCKIE_GUESTS/$1"
 
 	[ ! -d "$guest_path" ] && _log_fatal "no such guest '$1'"
 
-	[ -f "$guest_path/lock" ] && _log_fatal "guest is currently in use," \
-		"otherwise do 'rm $guest_path/lock'"
+	[ -f "$guest_path/lock" ] && _log_fatal "guest is locked or currently" \
+		"in use, otherwise do 'rm $guest_path/lock'"
 
 	rm -rf "$guest_path" || _log_fatal "Please remove any remaining files" \
 		"manually."
@@ -184,33 +220,33 @@ _rm() {
 #     --name string    Assign a name to the guest'
 #
 
+_uuid(){
+	id="$(cat /proc/sys/kernel/random/uuid)"
+	echo "${id##*-}"
+}
+
 # _run(options..., image_name)
 _run() {
-	[ "$#" -eq 0 ] && _print_usage "run"
+	[ "$#" -eq 0 ] && _usage "run"
 
-	[ "$1" = "--name" ] && shift && guest_name="$1" && shift
+	[ "$1" = "--name" ] && guest_name="$2" && shift 2
 
 	image_name="$1" && shift
 
 	# need a guest name if the user did not specify any
 	: "${guest_name:=$image_name}"
 
-	id="$(cat /proc/sys/kernel/random/uuid)"
-	id="${id%%-*}"
+	id="$(_uuid)"
 
 	_bootstrap "$image_name" "$id" "$guest_name"
 
 	[ "$#" -ne 0 ] && _exec "$id" "$@"
 }
 
-# _strings_contains(string, substring)
-_strings_contains() {
-	case x"$1" in *"$2"*) return 0 ;; *) return 1 ;; esac
-}
+# _contains(string, substring)
+_contains() { case x"$1" in *"$2"*) return 0 ;; *) return 1 ;; esac; }
 
 # Usage: dockie [OPTIONS] COMMAND [ARG...]
-#
-# Dockie is a wrapper around PRoot with a familiar interface
 #
 # Options:
 # 	-d        Debug mode
@@ -221,6 +257,7 @@ _strings_contains() {
 #	exec      Run a command in a root filesystem
 #	image     List images
 #	ls        List root filesystems
+#	import    Import the contents from a tarball to create an image
 #	pull      Pull an image
 #	rm        Remove one or more root filesystems
 #	run       Run a command in a new root filesystem
@@ -239,7 +276,7 @@ mkdir -p "$DOCKIE_IMAGES"
 DOCKIE_GUESTS="$DOCKIE_PATH/guests"
 mkdir -p "$DOCKIE_GUESTS"
 
-_print_usage() {
+_usage() {
 	# grab usages from comments
 	_log_fatal "$(awk '
 	/^# Usage: dockie '"$1"'/, $0 !~ /^#/ {
@@ -251,10 +288,13 @@ _print_usage() {
 	' "$0")"
 }
 
-[ "$#" -eq 0 ] && _print_usage "\[O"
+[ "$#" -eq 0 ] && _usage "\[O"
 [ "$1" = "-v" ] && printf 'Dockie version %s\n' "$VERSION" && exit 0
 [ "$1" = "-d" ] && set -x && shift
 
 cmd="_$1" && shift
-type "$cmd" >/dev/null 2>&1 || _print_usage "\[O"
+type "$cmd" >/dev/null 2>&1 || _usage "\[O"
 "$cmd" "$@"
+# shellcheck shell=sh
+
+
