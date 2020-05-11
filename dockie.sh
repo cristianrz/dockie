@@ -63,7 +63,7 @@ _bootstrap() {
 # 	--gui      Use when a GUI is going to be run, mounts
 #	               /var/lib/dbus/machine-id, /run/shm, /proc and /dev
 # 	--install  Needed for most of package managers to work
-# 	--user      Specify username
+# 	--user     Specify username
 #
 _exec() {
 	[ "$#" -lt 2 ] && _usage "exec"
