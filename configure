@@ -2,7 +2,7 @@
 
 set -eu
 
-printf "images source? (lxc, docker, tarball) [lxc] "
+printf "images source? (lxc, docker) [lxc] "
 read -r HUB
 
 case "$HUB" in
@@ -12,10 +12,6 @@ docker)
 	;;
 lxc | "" )
 	sed -i 's/get-*.sh/get-lxc.sh/g' Makefile 
-	sed -i 's/\tcp -p con/\t@# cp -p con/g' Makefile
-	;;
-tarball)
-	sed -i 's/get-*.sh/get-tarball.sh/g' Makefile 
 	sed -i 's/\tcp -p con/\t@# cp -p con/g' Makefile
 	;;
 *) echo invalid option >&2 && exit 1 ;;
