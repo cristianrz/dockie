@@ -12,21 +12,24 @@ _bootstrap() {
 	# sometimes tar has errors and this is ok
 	tar xf "$image_path/rootfs.tar" || true
 
-	echo "$id,$1,$(date '+%Y-%m-%d %H:%M:%S'),$guest_name" >"$guest_path/info"
-	echo "$id"
+	d="$(date '+%Y-%m-%d %H:%M:%S')"
+
+	printf "%-11s%-15s%-21s%s\n" "$id" "$1" "$d" "$guest_name" >"$guest_path/info"
 
 	{
+		# shellcheck disable=SC2016
+		printf 'export PS1="(%s) $PS1"\n' "$id"
+
 		# not sure why PATH is not exported by default
 		echo "export PATH"
-	} >>"$guest_prefix/etc/profile"
+	} | tee -a "$guest_prefix/etc/profile" \
+		"$guest_prefix/etc/bash.bashrc" >/dev/null
 
-	# shellcheck disable=SC2016
-	printf 'export PS1="(%s) $PS1"' "$id" |
-		tee -a "$guest_prefix/etc/profile" \
-			>>"$guest_prefix/root/.bashrc"
 
 	rm -f "${guest_prefix:?}"/etc/resolv.conf
 	cp "${PREFIX-}"/etc/resolv.conf "$guest_prefix/etc/resolv.conf"
+
+	printf %s\\n "$id"
 }
 
 # Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
@@ -60,29 +63,30 @@ _exec() {
 		shift
 	done
 
+	[ "$#" -eq 0 ] && _print_usage exec
+
 	guest_path="$DOCKIE_GUESTS/$arg"
 	guest_prefix="$guest_path/rootfs"
-
-	[ "$#" -eq 0 ] && _print_usage exec
 
 	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $arg"
 
 	passwd="$guest_prefix/etc/passwd"
 
 	[ -f "$passwd" ] &&
-		id="$(awk -F ':' '$1 == '"${user-root}"' { print $3 }' "$passwd")"
+		id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")" &&
+		guest_home="$(awk -F ':' '$1 == "'"${user-root}"'" { print $6 }' "$passwd")"
 
 	[ -z "${flags-}" ] &&
-		flags="${mounts-} -i ${id:-0} -r"
+		flags="-w "${guest_home:-/}" ${mounts-} -i ${id:-0} -r"
 
 	touch "$guest_path/lock"
 
 	trap 'rm $guest_path/lock' EXIT
 
-	# shellcheck disable=SC2086
-	env -i DISPLAY="${DISPLAY-}" "$(which proot)" -w / $flags \
-		"$guest_prefix" "$@"
+	envs="BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
 
+	# shellcheck disable=SC2086
+	env -i $envs "$(which proot)" $flags "$guest_prefix" "$@"
 }
 
 # Usage: dockie image COMMAND
@@ -107,18 +111,17 @@ _image() {
 	rm -rf "${DOCKIE_IMAGES:?}/$2"
 }
 
-_images() {
-	_image "$@"
-}
+_images() { _image "$@"; }
 
 # Usage: dockie image rm [OPTIONS] ROOTFS
 #
 # Remove one or more rootfs'.
 #
 _log_fatal() {
-	printf '\033[30;31m%s:\033[30;39m %s\n' "${0#*/}" "$*" >&2
+	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2
 	exit 1
 }
+
 # Usage: dockie ls
 #
 # List rootfs
@@ -126,13 +129,12 @@ _log_fatal() {
 _ls() {
 	[ "$#" -eq 0 ] || _print_usage "ls"
 
-	{
-		echo "ROOTFS ID,IMAGE,CREATED,NAME"
-		cat "$DOCKIE_GUESTS"/*/info 2>/dev/null
-	} | awk -F ',' '{printf "%-12s%-15s%-25s%s\n",$1,$2,$3,$4}'
+	echo "ROOTFS ID  IMAGE          CREATED              NAME"
+	cat "$DOCKIE_GUESTS"/*/info 2>/dev/null
 }
 
 _ps() { _ls "$@"; }
+
 # Usage: dockie pull [OPTIONS] NAME
 #
 # Pull an image or a repository from a registry
@@ -151,18 +153,15 @@ _pull() {
 	mkdir -p "$image_path"
 
 	# shellcheck disable=SC2015
-	_get "$image_path" "$1" || {
-		rm -rf "${DOCKIE_IMAGES:?}/$system" &&
-			_log_fatal "pull failed for $system"
-	}
+	_get "$image_path" "$1" || _log_fatal "pull failed for $system"
 
-	echo "Downloaded rootfs for $1"
+	printf 'Downloaded rootfs for %s\n' "$1"
 }
+
 # Usage: dockie rm [OPTIONS] ROOTFS
 #
 # Remove an image.
 #
-
 _rm() {
 	[ "$#" -eq 0 ] && _print_usage rm
 
@@ -173,9 +172,10 @@ _rm() {
 	[ -f "$guest_path/lock" ] && _log_fatal "guest is currently in use," \
 		"otherwise do 'rm $guest_path/lock'"
 
-	chmod -R +w "$guest_path"
-	rm -r "$guest_path"
+	rm -rf "$guest_path" || _log_fatal "Please remove any remaining files" \
+		"manually."
 }
+
 # Usage: dockie run [OPTIONS] SYSTEM [COMMAND] [ARG...]
 #
 # Run a command in a new rootfs
@@ -207,6 +207,7 @@ _run() {
 _strings_contains() {
 	case x"$1" in *"$2"*) return 0 ;; *) return 1 ;; esac
 }
+
 # Usage: dockie [OPTIONS] COMMAND [ARG...]
 #
 # Dockie is a wrapper around PRoot with a familiar interface
@@ -230,12 +231,12 @@ _strings_contains() {
 
 VERSION="v0.6.0"
 
-DOCKIE_PREFIX="$HOME/.local"
+[ -z "${DOCKIE_PATH-}" ] && DOCKIE_PATH="$HOME/.local/var/lib/dockie"
 
-DOCKIE_IMAGES="$DOCKIE_PREFIX/var/lib/dockie/images"
+DOCKIE_IMAGES="$DOCKIE_PATH/images"
 mkdir -p "$DOCKIE_IMAGES"
 
-DOCKIE_GUESTS="$DOCKIE_PREFIX/var/lib/dockie/guests"
+DOCKIE_GUESTS="$DOCKIE_PATH/guests"
 mkdir -p "$DOCKIE_GUESTS"
 
 _print_usage() {
@@ -251,7 +252,7 @@ _print_usage() {
 }
 
 [ "$#" -eq 0 ] && _print_usage "\[O"
-[ "$1" = "-v" ] && echo "Dockie version $VERSION" && exit 0
+[ "$1" = "-v" ] && printf 'Dockie version %s\n' "$VERSION" && exit 0
 [ "$1" = "-d" ] && set -x && shift
 
 cmd="_$1" && shift

@@ -16,7 +16,7 @@ dockie: $(OBJ) Makefile
 install:
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -p dockie $(DESTDIR)$(PREFIX)/bin
-	# cp -p contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/bin
+	@# cp -p contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/bin
 
 clean:
 	rm -f dockie
