@@ -1,64 +1,18 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 set -eu
 
-
-echo "image servers:"
-echo "1) LXC image server"
-echo "2) Docker Hub"
-printf '[1] ' && read -r HUB
+printf "image servers? (lxc or docker) [lxc] "
+read -r HUB
 
 case "$HUB" in
-1 | "") HUB=lxc ;;
-2) HUB=docker ;;
-*) echo invalid option && exit 1 ;;
+docker)
+	sed -i 's/get-lxc.sh/get-docker.sh/g' Makefile 
+	sed -i 's/\t# cp -p con/\tcp -p con/g' Makefile
+	;;
+lxc | "" )
+	sed -i 's/get-docker.sh/get-lxc.sh/g' Makefile 
+	sed -i 's/\tcp -p con/\t# cp -p con/g' Makefile
+	;;
+*) echo invalid option >&2 && exit 1 ;;
 esac
-
-# echo
-# echo "unprivileged chroot:"
-# echo "1) proot"
-# # echo "2) fakechroot"
-# printf '[1] ' && read -r CHROOT
-# 
-# case "$CHROOT" in
-# 1 | "") CHROOT=proot ;;
-# # 2) CHROOT=fakechroot ;;
-# *) echo invalid option && exit 1 ;;
-# esac
-
-# hardcoded for now
-CHROOT=proot
-
-OBJ="strings.sh get-$HUB.sh bootstrap.sh exec-$CHROOT.sh image.sh log.sh ls.sh pull.sh rm.sh run.sh main.sh"
-
-{
-	echo "OBJ = $OBJ"
-	echo 'PREFIX = ${HOME}/.local'
-	echo
-	echo 'all: dockie'
-	echo
-	echo 'dockie: $(OBJ)'
-	echo '	echo "#!/usr/bin/env sh" > dockie'
-	echo '	sed "s/^/# /g" LICENSE >> dockie'
-	echo '	echo >> dockie'
-	echo '	echo "set -eu" >> dockie'
-	echo '	echo >> dockie'
-
-	for i in $OBJ; do
-		echo "	sed '/shellcheck shell/d' $i >> dockie"
-	done
-
-	echo '	chmod +x dockie'
-
-	echo 'install:'
-	echo '	mkdir -p $(DESTDIR)$(PREFIX)/bin'
-	echo '	cp -p dockie $(DESTDIR)$(PREFIX)/bin'
-	echo '	cp -p contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/bin'
-	echo ''
-	echo 'clean:'
-	echo '	rm -f dockie'
-	echo ''
-	echo 'uninstall:'
-	echo '	rm $(DESTDIR)$(PREFIX)/bin/dockie'
-	echo '	rm $(DESTDIR)$(PREFIX)/bin/docker-hub-pull'
-} > Makefile
