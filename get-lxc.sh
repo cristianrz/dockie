@@ -1,7 +1,4 @@
 # shellcheck shell=sh
-
-ORIGIN="LXC image server"
-
 REMOTE="https://us.images.linuxcontainers.org/images"
 
 _get_latest() {

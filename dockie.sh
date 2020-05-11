@@ -89,8 +89,6 @@ _exec() {
 
 	passwd="$guest_prefix/etc/passwd"
 
-	: "${user:=root}"
-
 	if [ -f "$passwd" ]; then
 		id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")"
 		guest_home="$(awk -F ':' '$1 == "'"${user-root}"'" { print $6 }' "$passwd")"
@@ -105,7 +103,7 @@ _exec() {
 
 	trap 'rm $guest_path/lock' EXIT
 
-	envs="TERM=$TERM BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
+	envs="DISPLAY=$DISPLAY TERM=$TERM BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
 
 	# shellcheck disable=SC2086
 	env -i $envs "$(which proot)" $flags "$guest_prefix" "$@"
@@ -139,15 +137,14 @@ _image() {
 	esac
 }
 
-_images() { _image_ls; }
+_images() { _image_ls "$@"; }
 
 # Usage: dockie image rm [OPTIONS] ROOTFS
 #
 # Remove one or more rootfs'.
 #
 _log_fatal() {
-	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2
-	exit 1
+	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
 }
 
 # Usage: dockie ls
@@ -170,9 +167,8 @@ _ps() { _ls "$@"; }
 
 # _tag_image(path, name)
 _tag_image(){
-	d="$(date '+%Y-%m-%d %H:%M:%S')"
-	s="$(du -h "$1/rootfs.tar" | awk '{print $1"B"}')"
-	printf '%-20s%-22s%s\n' "$2" "$d" "$s" > "$1/info"
+	printf '%-20s%-22s%s\n' "$2" "$(date '+%Y-%m-%d %H:%M:%S')" \
+		"$(du -h "$1/rootfs.tar" | awk '{print $1"B"}')" > "$1/info"
 }
 
 # _pull(system)
@@ -181,7 +177,7 @@ _pull() {
 
 	image_path="$DOCKIE_IMAGES/$1"
 
-	 ! _contains "$1" ':' && _log_fatal "need to specify image:version"
+	 ! _contains "$1" ':' && _log_fatal "need to specify [image]:[version]"
 
 	rm -rf "${image_path:?}"
 	mkdir -p "$image_path"
@@ -190,8 +186,6 @@ _pull() {
 	_get "$image_path" "$1" || _log_fatal "pull failed for $1"
 
 	_tag_image "$image_path" "$1"
-
-	printf 'Downloaded rootfs for %s\n' "$1"
 }
 
 # Usage: dockie rm [OPTIONS] ROOTFS
@@ -199,7 +193,7 @@ _pull() {
 # Remove a guest.
 #
 _rm() {
-	[ "$#" -eq 0 ] && _usage rm
+	[ "$#" -ne 1 ] && _usage rm
 
 	guest_path="$DOCKIE_GUESTS/$1"
 
@@ -212,6 +206,11 @@ _rm() {
 		"manually."
 }
 
+_uuid(){
+	id="$(cat /proc/sys/kernel/random/uuid)"
+	echo "${id##*-}"
+}
+
 # Usage: dockie run [OPTIONS] SYSTEM [COMMAND] [ARG...]
 #
 # Run a command in a new rootfs
@@ -219,11 +218,6 @@ _rm() {
 # Options:
 #     --name string    Assign a name to the guest'
 #
-
-_uuid(){
-	id="$(cat /proc/sys/kernel/random/uuid)"
-	echo "${id##*-}"
-}
 
 # _run(options..., image_name)
 _run() {
@@ -233,18 +227,15 @@ _run() {
 
 	image_name="$1" && shift
 
-	# need a guest name if the user did not specify any
-	: "${guest_name:=$image_name}"
-
 	id="$(_uuid)"
 
-	_bootstrap "$image_name" "$id" "$guest_name"
+	_bootstrap "$image_name" "$id" "${guest_name:-$image_name}"
 
 	[ "$#" -ne 0 ] && _exec "$id" "$@"
 }
 
 # _contains(string, substring)
-_contains() { case x"$1" in *"$2"*) return 0 ;; *) return 1 ;; esac; }
+_contains() { case x"$1" in *"$2"*) : ;; *) return 1 ;; esac; }
 
 # Usage: dockie [OPTIONS] COMMAND [ARG...]
 #
@@ -295,6 +286,4 @@ _usage() {
 cmd="_$1" && shift
 type "$cmd" >/dev/null 2>&1 || _usage "\[O"
 "$cmd" "$@"
-# shellcheck shell=sh
-
 

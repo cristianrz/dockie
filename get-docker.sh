@@ -1,7 +1,4 @@
 # shellcheck shell=sh
-
-ORIGIN="Docker Hub"
-
 # _get(path, system, architecture)
 _get() {
 	TMP="$(mktemp -d)"
