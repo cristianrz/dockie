@@ -76,29 +76,45 @@ used.
 -v
 : Print version information and quit
 
+--gui
+: If used with exec, mounts /var/lib/dbus/machine-id, /run/shm, /proc and /dev
+from the host
+
+--install
+: If used with exec, this option is useful to safely create and install packages into the guest
+rootfs. It mounts the following files/directories from the host: /etc/host.conf,
+/etc/hosts, /etc/nsswitch.conf, /etc/resolv.conf, /dev/, /sys/, /proc/, /tmp/,
+/run/shm, HOME and path. It is equivalent to proot -S.
+
+--user
+: If used with exec, specify the username.
+
 ## Subcommands
 
-exec
-: Run a command in a root filesystem
+exec _id_ _command_
+: Run a command in a root filesystem identified by an id.
 
-image
+image ls
 : List images
 
-ls
-: List root filesystems
+image rm
+: Remove one or more images
 
-import
+ls
+: List guest filesystems
+
+import _file_
 : Import the contents from a tarball to create an image
 
-pull
+pull _image_
 : Pull an image
 
-rm
+rm _id_
 : Remove one or more root filesystems
 
-run
+run _id_ _command_
 : Run a command in a new root filesystem
 
 search
-: Search the image server for images
+: Print the URL of the remote repository
 

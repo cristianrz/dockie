@@ -78,28 +78,46 @@ Print usage
 .TP
 -v
 Print version information and quit
+.TP
+\[en]gui
+If used with exec, mounts /var/lib/dbus/machine-id, /run/shm, /proc and
+/dev from the host
+.TP
+\[en]install
+If used with exec, this option is useful to safely create and install
+packages into the guest rootfs.
+It mounts the following files/directories from the host: /etc/host.conf,
+/etc/hosts, /etc/nsswitch.conf, /etc/resolv.conf, /dev/, /sys/, /proc/,
+/tmp/, /run/shm, HOME and path.
+It is equivalent to proot -S.
+.TP
+\[en]user
+If used with exec, specify the username.
 .SS Subcommands
 .TP
-exec
-Run a command in a root filesystem
+exec \f[I]id\f[R] \f[I]command\f[R]
+Run a command in a root filesystem identified by an id.
 .TP
-image
+image ls
 List images
 .TP
-ls
-List root filesystems
+image rm
+Remove one or more images
 .TP
-import
+ls
+List guest filesystems
+.TP
+import \f[I]file\f[R]
 Import the contents from a tarball to create an image
 .TP
-pull
+pull \f[I]image\f[R]
 Pull an image
 .TP
-rm
+rm \f[I]id\f[R]
 Remove one or more root filesystems
 .TP
-run
+run \f[I]id\f[R] \f[I]command\f[R]
 Run a command in a new root filesystem
 .TP
 search
-Search the image server for images
+Print the URL of the remote repository

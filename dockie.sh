@@ -5,6 +5,8 @@
 # Import the contents from a tarball to create an image
 #
 _import() {
+	[ "$#" -ne 1 ] && _usage "import"
+
 	case "$1" in
 	*.tar)
 		image_name="${1##*/}"
@@ -110,7 +112,7 @@ _exec() {
 }
 
 _image_ls(){
-	[ "$#" -eq 0 ] || _usage "image"
+	[ "$#" -eq 0 ] || _usage "image C"
 
 	echo "REPOSITORY          CREATED               SIZE"
 	cat "$DOCKIE_IMAGES"/*/info 2>/dev/null
@@ -122,9 +124,9 @@ _image_ls(){
 #
 # Commands:
 #   ls    List images
-#   pull  Pull an image
-#   rm    Remove one or more images" >&2
+#   rm    Remove one or more images
 #
+
 _image() {
 	case "${1-}" in
 	ls) _image_ls "$@" ;;
@@ -133,7 +135,7 @@ _image() {
 		[ ! -d "$DOCKIE_IMAGES/$2" ] && _log_fatal "no such image: $2"
 		rm -rf "${DOCKIE_IMAGES:?}/$2"
 		;;
-	*) _usage "image" ;;
+	*) _usage "image C" ;;
 	esac
 }
 
@@ -269,14 +271,14 @@ mkdir -p "$DOCKIE_GUESTS"
 
 _usage() {
 	# grab usages from comments
-	_log_fatal "$(awk '
-	/^# Usage: dockie '"$1"'/, $0 !~ /^#/ {
-		if ( $0 ~ /^#/ ) {
-			gsub(/# ?/,"")
-			print
-		}
+	awk '
+	/^# Usage: dockie '"$1"'/, 0 {
+		if ( $1 != "#" ) exit
+
+		gsub(/# ?/,"")
+		print ""$0
 	}
-	' "$0")"
+	' "$0" && exit 1
 }
 
 [ "$#" -eq 0 ] && _usage "\[O"
