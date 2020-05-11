@@ -1,3 +1,5 @@
+<img src="docs/whale_small.jpg" alt="Dockie Logo" class="center"> 
+
 # Dockie
 
 Dockie is a wrapper around PRoot to manage unprivileged chroots with a
