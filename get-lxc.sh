@@ -1,5 +1,6 @@
 # shellcheck shell=sh
-REMOTE="https://us.images.linuxcontainers.org/images"
+
+REMOTE="https://images.linuxcontainers.org/images"
 
 _get_latest() {
 	curl -sL "$url" | awk -F"/" '
@@ -16,7 +17,7 @@ _get_latest() {
 #
 # Search the LXC image server for images
 #
-_search() { echo 'https://images.linuxcontainers.org/images/'; }
+_search() { printf %s\\n "$REMOTE"; }
 
 # _get(path, system, architecture)
 _get() {
@@ -27,7 +28,7 @@ _get() {
 	system="${2%:*}"
 
 	url="$REMOTE/$system/$version"
-	url="$url/${ARCH-amd64}/default"
+	url="$url/${DOCKIE_ARCH-amd64}/default"
 	curl --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
 
 	_contains "$(file "$1/rootfs.tar.xz")" "HTML" &&
