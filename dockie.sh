@@ -177,9 +177,13 @@ _tag_image(){
 _pull() {
 	[ "$#" -ne 1 ] && _usage "pull"
 
-	image_path="$DOCKIE_IMAGES/$1"
+	! _contains "$1" ':' && _log_fatal "need to specify [image]:[version]"
 
-	 ! _contains "$1" ':' && _log_fatal "need to specify [image]:[version]"
+	if _contains "$1" '/'; then
+		image_path="$DOCKIE_IMAGES/${1#*/}-${1%/*}"
+	else
+		image_path="$DOCKIE_IMAGES/$1"
+	fi
 
 	rm -rf "${image_path:?}"
 	mkdir -p "$image_path"
