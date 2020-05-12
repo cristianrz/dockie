@@ -169,7 +169,7 @@ _ps() { _ls "$@"; }
 
 # _tag_image(path, name)
 _tag_image(){
-	printf '%-20s%-22s%s\n' "$2" "$(date '+%Y-%m-%d %H:%M:%S')" \
+	printf '%-20s%-22s%s\n' "$2 " "$(date '+%Y-%m-%d %H:%M:%S')" \
 		"$(du -h "$1/rootfs.tar" | awk '{print $1"B"}')" > "$1/info"
 }
 
