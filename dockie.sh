@@ -101,11 +101,12 @@ _exec() {
 
 	flags="-w ${guest_home:-/} $flags"
 
-	[ ! -f "$guest_path/lock" ] && touch "$guest_path/lock"
+	# it's not catastrophic if the lock can't be created
+	[ ! -f "$guest_path/lock" ] && touch "$guest_path/lock" || true
 
-	trap 'rm $guest_path/lock' EXIT
+	trap 'rm -f $guest_path/lock' EXIT
 
-	envs="DISPLAY=${DISPLAY-} TERM=${TERM-} BASH_ENV=/etc/profile ENV=/etc/profile HOME=$guest_home"
+	envs="DISPLAY=${DISPLAY-} TERM=${TERM-} BASH_ENV=/etc/profile ENV=/etc/profile HOME=${guest_home-}"
 
 	# shellcheck disable=SC2086
 	env -i $envs "$(which proot)" $flags "$guest_prefix" "$@"
@@ -180,7 +181,7 @@ _pull() {
 	! _contains "$1" ':' && _log_fatal "need to specify [image]:[version]"
 
 	if _contains "$1" '/'; then
-		image_path="$DOCKIE_IMAGES/${1#*/}-${1%/*}"
+		image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
 	else
 		image_path="$DOCKIE_IMAGES/$1"
 	fi
