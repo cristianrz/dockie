@@ -264,7 +264,7 @@ VERSION="v0.6.1"
 : "${DOCKIE_PATH:=$HOME/.local/var/lib/dockie}"
 
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
-_init_dir "$DOCKIE_GUESTS/guests" DOCKIE_GUESTS
+_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
 [ "$#" -eq 0 ] && _usage "\[O"
 [ "$1" = "-v" ] && printf 'Dockie version %s\n' "$VERSION" && exit 0
