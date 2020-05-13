@@ -71,35 +71,19 @@ _bootstrap() {
 _exec() {
 	[ "$#" -lt 2 ] && _usage "exec"
 
-	# check if starts with -
-	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
-		case x"$arg" in
-		x--gui)
-			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
-			;;
-		x--user) user="$1" && shift ;;
-		x--install) flags="-S" ;;
-		*) _log_fatal "invalid option '$arg'" ;;
-		esac
-	done
-
 	[ "$#" -eq 0 ] && _usage exec
 
-	guest_path="$DOCKIE_GUESTS/$arg"
+	guest_path="$DOCKIE_GUESTS/$1"
 	guest_prefix="$guest_path/rootfs"
 
-	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $arg"
+	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $1"
 
 	passwd="$guest_prefix/etc/passwd"
 
-	if [ -f "$passwd" ]; then
-		id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")"
-		guest_home="$(awk -F ':' '$1 == "'"${user-root}"'" { print $6 }' "$passwd")"
-	fi
+	[ -f "$passwd" ] &&
+		guest_home="$(awk -F ':' '$1 == "root" { print $6 }' "$passwd")"
 
-	[ -z "${flags-}" ] && flags="${mounts-} -i ${id:-0} -r"
-
-	flags="-w ${guest_home:-/} $flags"
+	flags="--mount --uts --ipc --pid --fork --user --map-root-user /usr/sbin/chroot"
 
 	# shellcheck disable=SC2015
 	# it's not catastrophic if the lock can't be created
@@ -110,7 +94,7 @@ _exec() {
 	envs="DISPLAY=${DISPLAY-} TERM=${TERM-} BASH_ENV=/etc/profile ENV=/etc/profile HOME=${guest_home-}"
 
 	# shellcheck disable=SC2086
-	env -i $envs "$(which proot)" $flags "$guest_prefix" "$@"
+	env -i $envs "$(which unshare)" $flags "$guest_prefix" "$@"
 }
 
 _image_ls(){
