@@ -26,14 +26,11 @@ If you want to build from source:
 * `git`
 * `make`
 
-<!-- For the fakechroot version:
-
-* `fakechroot`
-* `fakeroot` -->
-
 For the Docker version:
 
 * `jq`
+
+There is an experimental branch called "unshare" which needs no dependencies except for a Linux kernel that supports namespaces. If you are not able to install PRoot, you should check that out. 
 
 ## Installation
 
