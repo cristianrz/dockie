@@ -1,5 +1,11 @@
 # shellcheck shell=sh
 
+# _init_dir(path, variable name)
+_init_dir(){
+	eval "$2=$1"
+	mkdir -p "$1"
+}
+
 # Usage: dockie import file
 # 
 # Import the contents from a tarball to create an image
@@ -7,30 +13,25 @@
 _import() {
 	[ "$#" -ne 1 ] && _usage "import"
 
-	case "$1" in
-	*.tar)
-		image_name="${1##*/}"
-		image_name="${image_name%.*}"
-		image_path="$DOCKIE_IMAGES/$image_name"
+	[ "$1" = "${1%.tar}" ] && _log_fatal "extension must be .tar" 
 
-		mkdir -p "$image_path"
-		cp "$1" "$image_path/rootfs.tar"
+	image_name="${1##*/}"
+	image_name="${image_name%.*}"
 
-		_tag_image "$image_path" "$image_name"
-		;;
-	*) _log_fatal "extension must be .tar" ;;
-	esac
+	_initdir "$DOCKIE_IMAGES/$image_name" image_path
+
+	cp "$1" "$image_path/rootfs.tar"
+
+	_tag_image "$image_path" "$image_name"
 }
 
 # _bootstrap(system, id, name)
 _bootstrap() {
 	guest_path="$DOCKIE_GUESTS/$2"
 	image_path="$DOCKIE_IMAGES/$1"
-	guest_prefix="$guest_path/rootfs"
+	_init_dir "$guest_path/rootfs" guest_prefix
 
 	[ ! -d "$image_path" ] && _pull "$1"
-
-	mkdir -p "$guest_prefix"
 
 	cd "$guest_prefix" || exit 1
 	# sometimes tar has errors and this is ok
@@ -96,11 +97,11 @@ _exec() {
 		guest_home="$(awk -F ':' '$1 == "'"${user-root}"'" { print $6 }' "$passwd")"
 	fi
 
-	[ -z "${flags-}" ] &&
-		flags="${mounts-} -i ${id:-0} -r"
+	[ -z "${flags-}" ] && flags="${mounts-} -i ${id:-0} -r"
 
 	flags="-w ${guest_home:-/} $flags"
 
+	# shellcheck disable=SC2015
 	# it's not catastrophic if the lock can't be created
 	[ ! -f "$guest_path/lock" ] && touch "$guest_path/lock" || true
 
@@ -178,9 +179,9 @@ _tag_image(){
 _pull() {
 	[ "$#" -ne 1 ] && _usage "pull"
 
-	! _contains "$1" ':' && _log_fatal "need to specify [image]:[version]"
+	! _match "$1" ':' && _log_fatal "need to specify [image]:[version]"
 
-	if _contains "$1" '/'; then
+	if _match "$1" '/'; then
 		image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
 	else
 		image_path="$DOCKIE_IMAGES/$1"
@@ -234,15 +235,25 @@ _run() {
 
 	image_name="$1" && shift
 
-	id="$(_uuid)"
-
-	_bootstrap "$image_name" "$id" "${guest_name:-$image_name}"
+	_bootstrap "$image_name" "$(_uuid)" "${guest_name:-$image_name}"
 
 	[ "$#" -ne 0 ] && _exec "$id" "$@"
 }
 
-# _contains(string, substring)
-_contains() { case x"$1" in *"$2"*) : ;; *) return 1 ;; esac; }
+# _match(string, substring)
+_match() { case x"$1" in *"$2"*) : ;; *) return 1 ;; esac; }
+
+_usage() {
+	# grab usages from comments
+	awk '
+	/^# Usage: dockie '"$1"'/, 0 {
+		if ( $1 != "#" ) exit
+
+		gsub(/# ?/,"")
+		print ""$0
+	}
+	' "$0" && exit 1
+}
 
 # Usage: dockie [OPTIONS] COMMAND [ARG...]
 #
@@ -264,33 +275,19 @@ _contains() { case x"$1" in *"$2"*) : ;; *) return 1 ;; esac; }
 # Run 'dockie COMMAND' for more information on a command.
 #
 
-VERSION="v0.6.0"
+VERSION="v0.6.1"
 
-[ -z "${DOCKIE_PATH-}" ] && DOCKIE_PATH="$HOME/.local/var/lib/dockie"
+: "${DOCKIE_PATH:=$HOME/.local/var/lib/dockie}"
 
-DOCKIE_IMAGES="$DOCKIE_PATH/images"
-mkdir -p "$DOCKIE_IMAGES"
-
-DOCKIE_GUESTS="$DOCKIE_PATH/guests"
-mkdir -p "$DOCKIE_GUESTS"
-
-_usage() {
-	# grab usages from comments
-	awk '
-	/^# Usage: dockie '"$1"'/, 0 {
-		if ( $1 != "#" ) exit
-
-		gsub(/# ?/,"")
-		print ""$0
-	}
-	' "$0" && exit 1
-}
+_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
+_init_dir "$DOCKIE_GUESTS/guests" DOCKIE_GUESTS
 
 [ "$#" -eq 0 ] && _usage "\[O"
 [ "$1" = "-v" ] && printf 'Dockie version %s\n' "$VERSION" && exit 0
 [ "$1" = "-d" ] && set -x && shift
 
-cmd="_$1" && shift
-type "$cmd" >/dev/null 2>&1 || _usage "\[O"
-"$cmd" "$@"
+type "_$1" >/dev/null 2>&1 || _usage "\[O"
+
+# shellcheck disable=SC2145
+"_$@" 
 
