@@ -60,13 +60,14 @@ _bootstrap() {
 
 # Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
 #
-# Run a command in an existing rootfs
+# Run a command in an existing guest
 #
 # Options:
-# 	--gui      Use when a GUI is going to be run, mounts
-#	               /var/lib/dbus/machine-id, /run/shm, /proc and /dev
-# 	--install  Needed for most of package managers to work
-# 	--user     Specify username
+# 	-g, --gui      Needed for some graphical programs to run. Will mount
+#	                 /dev, /var/lib/dbus/machine-id, /run/shm and /proc
+# 	-i, --install  Needed for some package managers to work. Will mount /dev,
+#	                 /sys, /proc, /tmp and /run/shm
+# 	-u, --user     Specify username
 #
 _exec() {
 	[ "$#" -lt 2 ] && _usage "exec"
@@ -74,11 +75,11 @@ _exec() {
 	# check if starts with -
 	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
 		case x"$arg" in
-		x--gui)
+		x--gui | x-g)
 			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
 			;;
-		x--user) user="$1" && shift ;;
-		x--install) flags="-S" ;;
+		x--user | x-u) user="$1" && shift ;;
+		x--install | x-i) flags="-b /etc/host.conf" ;;
 		*) _log_fatal "invalid option '$arg'" ;;
 		esac
 	done
@@ -145,7 +146,7 @@ _images() { _image_ls "$@"; }
 
 # Usage: dockie image rm [OPTIONS] ROOTFS
 #
-# Remove one or more rootfs'.
+# Remove a guest.
 #
 _log_fatal() {
 	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
@@ -153,7 +154,7 @@ _log_fatal() {
 
 # Usage: dockie ls
 #
-# List rootfs
+# List guests
 #
 _ls() {
 	[ "$#" -eq 0 ] || _usage "ls"
@@ -221,7 +222,7 @@ _uuid(){
 
 # Usage: dockie run [OPTIONS] SYSTEM [COMMAND] [ARG...]
 #
-# Run a command in a new rootfs
+# Run a command in a new guest.
 #
 # Options:
 #     --name string    Assign a name to the guest'
