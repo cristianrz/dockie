@@ -39,7 +39,7 @@ _bootstrap() {
 
 	d="$(date '+%Y-%m-%d %H:%M:%S')"
 
-	printf "%-14s%-20s%-21s%s\n" "$id" "$1" "$d" "$3" >"$guest_path/info"
+	printf "%-14s%-20s%-21s%s\n" "$2" "$1" "$d" "$3" >"$guest_path/info"
 
 	{
 		# shellcheck disable=SC2016
@@ -234,8 +234,9 @@ _run() {
 	[ "$1" = "--name" ] && guest_name="$2" && shift 2
 
 	image_name="$1" && shift
+	id="$(_uuid)"
 
-	_bootstrap "$image_name" "$(_uuid)" "${guest_name:-$image_name}"
+	_bootstrap "$image_name" "$id" "${guest_name:-$image_name}" >/dev/null
 
 	[ "$#" -ne 0 ] && _exec "$id" "$@"
 }
