@@ -16,3 +16,13 @@ lxc | "" )
 	;;
 *) echo invalid option >&2 && exit 1 ;;
 esac
+
+printf 'Where should dockie be installed? [%s/.local] ' "$HOME"
+read -r PREFIX
+
+PREFIX="$(
+	# escape slashes
+	echo "${PREFIX:-$HOME/.local}" | sed 's/\//\\\//g'
+)"
+
+sed -i 's/^PREFIX.*/PREFIX ?= '"$PREFIX"'/g' Makefile
