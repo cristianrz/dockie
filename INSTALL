@@ -2,7 +2,7 @@
 
 set -eu
 
-printf "images source? (lxc, docker) [lxc] "
+printf "Images source? (lxc or docker) [lxc] "
 read -r HUB
 
 case "$HUB" in
@@ -16,3 +16,10 @@ lxc | "" )
 	;;
 *) echo invalid option >&2 && exit 1 ;;
 esac
+
+printf 'Where to install? [%s/.local/bin] ' "$HOME"
+read -r PREFIX
+: "${PREFIX:=$HOME/.local/bin}"
+
+make 
+make PREFIX="$PREFIX" install 
