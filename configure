@@ -2,7 +2,7 @@
 
 set -eu
 
-printf "images source? (lxc, docker) [lxc] "
+printf "Images source? (lxc, docker) [lxc] "
 read -r HUB
 
 case "$HUB" in
