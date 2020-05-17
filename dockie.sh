@@ -277,6 +277,8 @@ _usage() {
 # Run 'dockie COMMAND' for more information on a command.
 #
 
+set -eu
+
 VERSION="v0.6.1"
 
 : "${DOCKIE_PATH:=$HOME/.dockie}"
