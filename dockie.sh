@@ -281,6 +281,10 @@ set -eu
 
 VERSION="v0.6.1"
 
+HERE="$(
+	cd "$(dirname "$0")"; pwd
+)"
+
 : "${DOCKIE_PATH:=$HOME/.dockie}"
 
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
