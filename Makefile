@@ -18,15 +18,15 @@ dockie.1: dockie.1.md
 	@echo dockie.1
 
 install:
-	@mkdir -p $(DESTDIR)$(PREFIX)/bin
-	@mkdir -p $(DESTDIR)$(PREFIX)/share/man/man1
-	@cp dockie $(DESTDIR)$(PREFIX)/bin
-	@cp dockie.1 $(DESTDIR)$(PREFIX)/share/man/man1
-	@# cp -p contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/bin
+	@mkdir -m 755 -p $(DESTDIR)$(PREFIX)/bin
+	@mkdir -m 755 -p $(DESTDIR)$(PREFIX)/lib/dockie
+	@mkdir -m 755 -p $(DESTDIR)$(PREFIX)/share/man/man1
+	@cp dockie                  $(DESTDIR)$(PREFIX)/bin
+	@# cp contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/lib/dockie
+	@cp dockie.1                $(DESTDIR)$(PREFIX)/share/man/man1
 	@chmod 755 $(DESTDIR)$(PREFIX)/bin/dockie
+	@chmod 644 $(DESTDIR)$(PREFIX)/lib/dockie/docker-hub-pull
 	@chmod 644 $(DESTDIR)$(PREFIX)/share/man/man1/dockie.1
-	@echo $(DESTDIR)$(PREFIX)/bin/dockie
-	@echo $(DESTDIR)$(PREFIX)/share/man/man1/dockie.1
 
 
 clean:
@@ -34,7 +34,8 @@ clean:
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/dockie
-	rm -f $(DESTDIR)$(PREFIX)/bin/docker-hub-pull
+	rm -f $(DESTDIR)$(PREFIX)/lib/dockie/docker-hub-pull
+	rmdir $(DESTDIR)$(PREFIX)/lib/dockie
 	rm -f $(DESTDIR)$(PREFIX)/share/man/man1/dockie.1
 
 .PHONY: all install clean uninstall
