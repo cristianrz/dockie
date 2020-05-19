@@ -239,7 +239,8 @@ _run() {
 
 	_bootstrap "$image_name" "$id" "${guest_name:-$image_name}" >/dev/null
 
-	[ "$#" -ne 0 ] && _exec "$id" "$@"
+	[ "$#" -eq 0 ] && printf %s\\n "$id" && exit 0
+	_exec "$id" "$@"
 }
 
 # _match(string, substring)
