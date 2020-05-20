@@ -291,9 +291,11 @@ HERE="$(
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
 _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
-[ "$#" -eq 0 ] && _usage "\[O"
-[ "$1" = "-v" ] && printf 'Dockie version %s\n' "$VERSION" && exit 0
-[ "$1" = "-d" ] && set -x && shift
+case "x${1-}" in
+x-v) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
+x-d) set -x && shift ;;
+"" | x-*) _usage "\[O" ;;
+esac
 
 type "_$1" >/dev/null 2>&1 || _usage "\[O"
 
