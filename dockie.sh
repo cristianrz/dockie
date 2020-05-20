@@ -157,7 +157,7 @@ _log_fatal() {
 # List guests
 #
 _ls() {
-	[ "$#" -eq 0 ] || _usage "ls"
+	[ "$#" -ne 0 ] || _usage "ls"
 
 	echo "ROOTFS ID     IMAGE               CREATED              NAME"
 	cat "$DOCKIE_GUESTS"/*/info 2>/dev/null
@@ -182,11 +182,8 @@ _pull() {
 
 	! _match "$1" ':' && _log_fatal "need to specify [image]:[version]"
 
-	if _match "$1" '/'; then
-		image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
-	else
-		image_path="$DOCKIE_IMAGES/$1"
-	fi
+	if _match "$1" '/'; then image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
+	else image_path="$DOCKIE_IMAGES/$1"; fi
 
 	rm -rf "${image_path:?}"
 	mkdir -p "$image_path"
@@ -225,14 +222,15 @@ _uuid(){
 # Run a command in a new guest.
 #
 # Options:
-#     --name string    Assign a name to the guest'
+#     -n, --name string    Assign a name to the guest'
 #
 
 # _run(options..., image_name)
 _run() {
-	[ "$#" -eq 0 ] && _usage "run"
-
-	[ "$1" = "--name" ] && guest_name="$2" && shift 2
+	case "x${1-}" in
+	x--name | x-n ) guest_name="$2" && shift 2 ;;
+	"" | x-*) _usage "run" ;;
+	esac	
 
 	image_name="$1" && shift
 	id="$(_uuid)"
