@@ -25,7 +25,7 @@ install:
 	@# cp contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/lib/dockie
 	@cp dockie.1                $(DESTDIR)$(PREFIX)/share/man/man1
 	@chmod 755 $(DESTDIR)$(PREFIX)/bin/dockie
-	@chmod 644 $(DESTDIR)$(PREFIX)/lib/dockie/docker-hub-pull
+	@# chmod 644 $(DESTDIR)$(PREFIX)/lib/dockie/docker-hub-pull
 	@chmod 644 $(DESTDIR)$(PREFIX)/share/man/man1/dockie.1
 
 
