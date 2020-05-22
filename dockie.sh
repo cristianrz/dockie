@@ -115,7 +115,7 @@ _exec() {
 }
 
 _image_ls(){
-	[ "$#" -eq 0 ] || _usage "image C"
+	[ "$#" -ne 0 ] && _usage "image C"
 
 	echo "REPOSITORY          CREATED               SIZE"
 	cat "$DOCKIE_IMAGES"/*/info 2>/dev/null
@@ -131,7 +131,8 @@ _image_ls(){
 #
 
 _image() {
-	case "${1-}" in
+	cmd="${1-}" && shift
+	case "$cmd" in
 	ls) _image_ls "$@" ;;
 	rm)
 		[ "$#" -ne 2 ] && _usage "image rm"
