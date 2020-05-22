@@ -157,7 +157,7 @@ _log_fatal() {
 # List guests
 #
 _ls() {
-	[ "$#" -ne 0 ] || _usage "ls"
+	[ "$#" -ne 0 ] && _usage "ls"
 
 	echo "ROOTFS ID     IMAGE               CREATED              NAME"
 	cat "$DOCKIE_GUESTS"/*/info 2>/dev/null
