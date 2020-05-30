@@ -119,17 +119,17 @@ will efectively prevent that guest from being removed from Dockie.
 -v
 : Print version information and quit
 
---gui
+\--gui
 : If used with exec, mounts /var/lib/dbus/machine-id, /run/shm, /proc and /dev
 from the host
 
---install
+\--install
 : If used with exec, this option is useful to safely create and install packages into the guest
 rootfs. It mounts the following files/directories from the host: /etc/host.conf,
 /etc/hosts, /etc/nsswitch.conf, /etc/resolv.conf, /dev/, /sys/, /proc/, /tmp/,
 /run/shm, HOME and path. It is equivalent to proot -S.
 
---user
+\--user
 : If used with exec, specify the username.
 
 ## Subcommands
