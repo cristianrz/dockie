@@ -4,7 +4,9 @@
 
 **Website:** https://dockie.org
 
-**Wiki:** https://github.com/cristianrz/dockie/wiki
+**Get started:** https://github.com/cristianrz/dockie/wiki
+
+**FAQ:** https://github.com/cristianrz/dockie/wiki/FAQ
 
 Dockie is a wrapper around PRoot to manage unprivileged chroots with a
 familiar interface.
