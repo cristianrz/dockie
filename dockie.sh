@@ -133,7 +133,7 @@ _image_ls(){
 #
 
 _image() {
-	[ "$#" -eq 0 ] && _image_ls "$@" 
+	[ "$#" -eq 0 ] && _image_ls "$@" && exit
 	cmd="${1-}" && shift
 	case "$cmd" in
 	ls) _image_ls "$@" ;;
