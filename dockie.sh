@@ -134,13 +134,13 @@ _image_ls(){
 
 _image() {
 	[ "$#" -eq 0 ] && _image_ls "$@" && exit
-	cmd="${1-}" && shift
+	cmd="$1" && shift
 	case "$cmd" in
 	ls) _image_ls "$@" ;;
 	rm)
 		[ "$#" -ne 1 ] && _usage "image rm"
-		[ ! -d "$DOCKIE_IMAGES/$2" ] && _log_fatal "no such image: $2"
-		rm -rf "${DOCKIE_IMAGES:?}/$2"
+		[ ! -d "$DOCKIE_IMAGES/$1" ] && _log_fatal "no such image: $2"
+		rm -rf "${DOCKIE_IMAGES:?}/$1"
 		;;
 	*) _usage "image C" ;;
 	esac
