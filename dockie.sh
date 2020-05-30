@@ -281,7 +281,7 @@ _usage() {
 
 set -eu
 
-VERSION="v0.6.1"
+VERSION="v0.6.2"
 
 HERE="$(
 	cd "$(dirname "$0")"; pwd
