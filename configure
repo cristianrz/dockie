@@ -17,12 +17,5 @@ lxc | "" )
 *) echo invalid option >&2 && exit 1 ;;
 esac
 
-# printf 'Where should dockie be installed? [%s/.local] ' "$HOME"
-# read -r PREFIX
+command -v proot >/dev/null 2>&1 || echo 'error: proot is either not installed or not inside PATH' 2>&1 && exit 1
 
-# PREFIX="$(
-#	# escape slashes
-#	echo "${PREFIX:-$HOME/.local}" | sed 's/\//\\\//g'
-# )"
-
-# sed -i 's/^PREFIX.*/PREFIX ?= '"$PREFIX"'/g' Makefile
