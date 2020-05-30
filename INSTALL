@@ -1,0 +1,13 @@
+#!/bin/sh
+
+printf 'Where should dockie be installed? [/usr/local] '
+read -r PREFIX
+: "${PREFIX:=/usr/local}"
+export PREFIX
+
+./configure
+make
+make install ||
+	echo 'INSTALL: if you want to install to /usr/local, you might need' \
+	'to run the script as root' 2>&1  && exit 1
+ 
