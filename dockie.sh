@@ -43,10 +43,10 @@ _bootstrap() {
 
 	{
 		# shellcheck disable=SC2016
-		printf 'export PS1="(%s) $PS1"\n' "$id"
+		printf 'PS1="(%s) $PS1"\n' "$id"
 
 		# not sure why PATH is not exported by default
-		echo "export PATH"
+		echo "export PATH PS1"
 	} | tee -a "$guest_prefix/etc/profile" \
 		"$guest_prefix/root/.bashrc" \
 		"$guest_prefix/etc/bash.bashrc" >/dev/null
@@ -79,7 +79,9 @@ _exec() {
 			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
 			;;
 		x--user | x-u) user="$1" && shift ;;
-		x--install | x-i) flags="-b /etc/host.conf" ;;
+		x--install | x-i)
+			flags="-b /dev -b /sys -b /proc -b /run/shm -i 0 -r"
+			;;
 		*) _log_fatal "invalid option '$arg'" ;;
 		esac
 	done
@@ -290,7 +292,10 @@ HERE="$(
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
 _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
-case "x${1-}" in
+# bash does not like ${1-}
+[ "$#" -eq 0 ] && set -- ""
+
+case "x$1" in
 x-v) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
 x-d) set -x && shift ;;
 "" | x-*) _usage "\[O" ;;
