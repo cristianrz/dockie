@@ -113,7 +113,7 @@ _exec() {
 	envs="DISPLAY=${DISPLAY-} TERM=${TERM-} BASH_ENV=/etc/profile ENV=/etc/profile HOME=${guest_home-}"
 
 	# shellcheck disable=SC2086
-	env -i $envs "$(which proot)" $flags "$guest_prefix" "$@"
+	env -i $envs "$(command -v proot)" $flags "$guest_prefix" "$@"
 }
 
 _image_ls(){
@@ -133,11 +133,12 @@ _image_ls(){
 #
 
 _image() {
+	[ "$#" -eq 0 ] && _image_ls "$@" 
 	cmd="${1-}" && shift
 	case "$cmd" in
 	ls) _image_ls "$@" ;;
 	rm)
-		[ "$#" -ne 2 ] && _usage "image rm"
+		[ "$#" -ne 1 ] && _usage "image rm"
 		[ ! -d "$DOCKIE_IMAGES/$2" ] && _log_fatal "no such image: $2"
 		rm -rf "${DOCKIE_IMAGES:?}/$2"
 		;;
@@ -232,7 +233,7 @@ _uuid(){
 _run() {
 	case "x${1-}" in
 	x--name | x-n ) guest_name="$2" && shift 2 ;;
-	"" | x-*) _usage "run" ;;
+	"x" | x-*) _usage "run" ;;
 	esac	
 
 	image_name="$1" && shift
@@ -283,9 +284,8 @@ set -eu
 
 VERSION="v0.6.2"
 
-HERE="$(
-	cd "$(dirname "$0")"; pwd
-)"
+HERE="$(cd "$(dirname "$0")"; pwd)"
+export HERE
 
 : "${DOCKIE_PATH:=$HOME/.dockie}"
 
@@ -298,7 +298,7 @@ _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 case "x$1" in
 x-v) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
 x-d) set -x && shift ;;
-"" | x-*) _usage "\[O" ;;
+x | x-*) _usage "\[O" ;;
 esac
 
 type "_$1" >/dev/null 2>&1 || _usage "\[O"
