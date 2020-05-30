@@ -17,8 +17,4 @@ lxc | "" )
 *) echo invalid option >&2 && exit 1 ;;
 esac
 
-if ! command -v proot >/dev/null 2>&1; then
-	echo 'error: proot is either not installed or not inside PATH' 2>&1
-	exit 1
-fi
 
