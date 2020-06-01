@@ -7,7 +7,7 @@ read -r PREFIX
 
 ./configure
 make
-PREFIX="${PREFIX:-$DEFAULT_PREFIX" make install ||
+PREFIX="${PREFIX:-$DEFAULT_PREFIX}" make install ||
 	echo 'INSTALL: if you want to install to /usr/local, you might need' \
 	'to run the script as root' 2>&1  && exit 1
  
