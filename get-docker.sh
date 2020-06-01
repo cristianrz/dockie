@@ -7,10 +7,15 @@ _get() {
 	echo "Pulling from Docker Hub..."
 	bash "$HERE/../lib/dockie/docker-hub-pull" "$TMP" "$2" >/dev/null || return 1
 
-	# shellcheck disable=SC2012
-	mv "$(ls -1S "$TMP"/*/layer.tar | head -n 1)" "$1/rootfs.tar.gz"
+	FS="$(mktemp -d)"
+	trap 'rm -rf $FS' EXIT
+	cd "$FS"
 
-	gzip -qdv "$1/rootfs.tar.gz" >/dev/null 2>&1 || return 1
+	for tar in "$TMP"/*/layer.tar; do
+		tar xzf "$tar"
+	done
+
+	tar cf "$1/rootfs.tar" .
 }
 
 _search() { echo 'https://hub.docker.com/search?q=&type=image'; }
