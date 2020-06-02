@@ -76,7 +76,7 @@ _exec() {
 	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
 		case x"$arg" in
 		x--gui | x-g)
-			mounts="-b /var/lib/dbus/machine-id -b /run/shm -b /proc -b /dev"
+			mounts="-b /var/lib/dbus/machine-id -b /run -b /proc -b /dev"
 			;;
 		x--user | x-u) user="$1" && shift ;;
 		x--install | x-i)
