@@ -139,7 +139,7 @@ _image() {
 	ls) _image_ls "$@" ;;
 	rm)
 		[ "$#" -ne 1 ] && _usage "image rm"
-		[ ! -d "$DOCKIE_IMAGES/$1" ] && _log_fatal "no such image: $2"
+		[ ! -d "$DOCKIE_IMAGES/$1" ] && _log_fatal "no such image: $1"
 		rm -rf "${DOCKIE_IMAGES:?}/$1"
 		;;
 	*) _usage "image C" ;;
