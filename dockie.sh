@@ -1,19 +1,19 @@
 # shellcheck shell=sh
 
 # _init_dir(path, variable name)
-_init_dir(){
+_init_dir() {
 	eval "$2=$1"
 	mkdir -p "$1"
 }
 
 # Usage: dockie import file
-# 
+#
 # Import the contents from a tarball to create an image
 #
 _import() {
 	[ "$#" -ne 1 ] && _usage "import"
 
-	[ "$1" = "${1%.tar}" ] && _log_fatal "extension must be .tar" 
+	[ "$1" = "${1%.tar}" ] && _log_fatal "extension must be .tar"
 
 	image_name="${1##*/}"
 	image_name="${image_name%.*}"
@@ -50,7 +50,6 @@ _bootstrap() {
 	} | tee -a "$guest_prefix/etc/profile" \
 		"$guest_prefix/root/.bashrc" \
 		"$guest_prefix/etc/bash.bashrc" >/dev/null
-
 
 	rm -f "${guest_prefix:?}"/etc/resolv.conf
 	cp "${PREFIX-}"/etc/resolv.conf "$guest_prefix/etc/resolv.conf"
@@ -116,7 +115,7 @@ _exec() {
 	env -i $envs "$(command -v proot)" $flags "$guest_prefix" "$@"
 }
 
-_image_ls(){
+_image_ls() {
 	[ "$#" -ne 0 ] && _usage "image C"
 
 	echo "REPOSITORY          CREATED               SIZE"
@@ -175,9 +174,9 @@ _ps() { _ls "$@"; }
 #
 
 # _tag_image(path, name)
-_tag_image(){
+_tag_image() {
 	printf '%-20s%-22s%s\n' "$2 " "$(date '+%Y-%m-%d %H:%M:%S')" \
-		"$(du -h "$1/rootfs.tar" | awk '{print $1"B"}')" > "$1/info"
+		"$(du -h "$1/rootfs.tar" | awk '{print $1"B"}')" >"$1/info"
 }
 
 # _pull(system)
@@ -186,7 +185,8 @@ _pull() {
 
 	! _match "$1" ':' && _log_fatal "need to specify [image]:[version]"
 
-	if _match "$1" '/'; then image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
+	if _match "$1" '/'; then
+		image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
 	else image_path="$DOCKIE_IMAGES/$1"; fi
 
 	rm -rf "${image_path:?}"
@@ -216,7 +216,7 @@ _rm() {
 		"manually."
 }
 
-_uuid(){
+_uuid() {
 	id="$(cat /proc/sys/kernel/random/uuid)"
 	echo "${id##*-}"
 }
@@ -232,9 +232,9 @@ _uuid(){
 # _run(options..., image_name)
 _run() {
 	case "x${1-}" in
-	x--name | x-n ) guest_name="$2" && shift 2 ;;
+	x--name | x-n) guest_name="$2" && shift 2 ;;
 	"x" | x-*) _usage "run" ;;
-	esac	
+	esac
 
 	image_name="$1" && shift
 	id="$(_uuid)"
@@ -284,7 +284,10 @@ set -eu
 
 VERSION="v0.6.2"
 
-HERE="$(cd "$(dirname "$0")"; pwd)"
+HERE="$(
+	cd "$(dirname "$0")"
+	pwd
+)"
 export HERE
 
 : "${DOCKIE_PATH:=$HOME/.dockie}"
@@ -304,5 +307,4 @@ esac
 type "_$1" >/dev/null 2>&1 || _usage "\[O"
 
 # shellcheck disable=SC2145
-"_$@" 
-
+"_$@"
