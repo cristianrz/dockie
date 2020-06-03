@@ -37,7 +37,7 @@ For the Docker version:
 * `go` / `golang`
 * `jq`
 
-There is an experimental branch called "unshare" which does not PRoot, but a Linux kernel that supports namespaces. If you are not able to install PRoot you should check that out. 
+There is an experimental branch called "unshare" which does not need PRoot, but a Linux kernel that supports namespaces. If you are not able to install PRoot you should check that out. 
 
 ## Installation
 
