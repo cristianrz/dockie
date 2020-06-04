@@ -1,6 +1,3 @@
-MDMAN = pandoc
-MDMANFLAGS = -s -f markdown -t man
-
 OBJ = dockie.sh get-lxc.sh
 PREFIX ?= /usr/local
 
@@ -12,10 +9,6 @@ dockie: $(OBJ) Makefile
 	@echo >> dockie
 	@grep -v 'shellcheck shell=' get-lxc.sh >> dockie
 	@grep -v 'shellcheck shell=' dockie.sh >> dockie
-
-dockie.1: dockie.1.md
-	@$(MDMAN) $(MDMANFLAGS) -o dockie.1 dockie.1.md
-	@echo dockie.1
 
 install:
 	@mkdir -m 755 -p $(DESTDIR)$(PREFIX)/bin
