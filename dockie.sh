@@ -43,7 +43,8 @@ _bootstrap() {
 
 	{
 		# shellcheck disable=SC2016
-		printf 'PS1="(%s) $PS1"\n' "$id"
+		printf 'PS1="(%s)$PS1"\n' "$id"
+		printf 'typeset -r PS1\n' "$id"
 
 		# not sure why PATH is not exported by default
 		echo "export PATH PS1"
