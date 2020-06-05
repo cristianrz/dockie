@@ -75,11 +75,12 @@ _exec() {
 	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
 		case x"$arg" in
 		x--gui | x-g)
-			mounts="-b /var/lib/dbus/machine-id -b /run -b /proc -b /dev"
+			mounts="${mounts-} -b /var/lib/dbus/machine-id -b /run -b /proc -b /dev"
 			;;
+		x-v) mounts="${mounts-} -b $1" && shift ;;
 		x--user | x-u) user="$1" && shift ;;
 		x--install | x-i)
-			flags="-b /dev -b /sys -b /proc -b /run/shm -i 0 -r"
+			flags="-b /dev -b /sys -b /proc -b /run -i 0 -r"
 			;;
 		*) _log_fatal "invalid option '$arg'" ;;
 		esac
