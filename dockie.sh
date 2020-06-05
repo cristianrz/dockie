@@ -47,9 +47,9 @@ _bootstrap() {
 
 		# not sure why PATH is not exported by default
 		echo "export PATH PS1"
-	} | tee -a "$guest_prefix/etc/profile" \
-		"$guest_prefix/root/.bashrc" \
-		"$guest_prefix/etc/bash.bashrc" >/dev/null
+	} >>"$guest_prefix/etc/profile" 
+		# "$guest_prefix/root/.bashrc" \
+		# "$guest_prefix/etc/bash.bashrc" >/dev/null
 
 	rm -f "${guest_prefix:?}"/etc/resolv.conf
 	cp "${PREFIX-}"/etc/resolv.conf "$guest_prefix/etc/resolv.conf"
