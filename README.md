@@ -19,7 +19,7 @@ as such. PRoot should only be used as a "soft sandbox" where you can:
 * build packages from source without polluting your environment
 
 knowing that whatever gets into your PRoot will be able to get out into your
-host OS.
+host OS. If you really want isolation have a look at the [Isolation section](https://github.com/cristianrz/dockie/wiki/Isolation) in the wiki.
 
 ## Dependencies
 
