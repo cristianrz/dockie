@@ -68,6 +68,7 @@ _bootstrap() {
 # 	-i, --install  Needed for some package managers to work. Will mount /dev,
 #	                 /sys, /proc, /tmp and /run/shm
 # 	-u, --user     Specify username
+#       -v, --volume   mount a volume from the host to the guest, e.g -v /src:/dst
 #
 _exec() {
 	[ "$#" -lt 2 ] && _usage "exec"
@@ -78,7 +79,7 @@ _exec() {
 		x--gui | x-g)
 			mounts="${mounts-} -b /var/lib/dbus/machine-id -b /run -b /proc -b /dev"
 			;;
-		x-v) mounts="${mounts-} -b $1" && shift ;;
+		x-v | x--volume) mounts="${mounts-} -b $1" && shift ;;
 		x--user | x-u) user="$1" && shift ;;
 		x--install | x-i)
 			flags="-b /dev -b /sys -b /proc -b /run -i 0 -r"
