@@ -106,8 +106,6 @@ can warn against removing locked guests. If the file is prevented from being
 deleted (e.g. using chattr or making the parent directory read-only), this
 will efectively prevent that guest from being removed from Dockie.
 
-
-
 ## Options
 
 -d
@@ -119,18 +117,22 @@ will efectively prevent that guest from being removed from Dockie.
 -v
 : Print version information and quit
 
-\--gui
+\-g --gui
 : If used with exec, mounts /var/lib/dbus/machine-id, /run/shm, /proc and /dev
 from the host
 
-\--install
+\-i --install
 : If used with exec, this option is useful to safely create and install packages into the guest
 rootfs. It mounts the following files/directories from the host: /etc/host.conf,
 /etc/hosts, /etc/nsswitch.conf, /etc/resolv.conf, /dev/, /sys/, /proc/, /tmp/,
 /run/shm, HOME and path. It is equivalent to proot -S.
 
-\--user
+\-u --user
 : If used with exec, specify the username.
+
+\-v --volume
+: If used with exec, Dockie will instruct PRoot to mount a directory or file from the host to
+the guest. The file/directory must be specified in the form of /src_dir:/dst_dir
 
 ## Subcommands
 
