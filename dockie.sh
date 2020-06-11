@@ -15,6 +15,7 @@ _import() {
 
 	[ "$1" = "${1%.tar}" ] && _log_fatal "extension must be .tar"
 
+	# remove dirs and extensions
 	image_name="${1##*/}"
 	image_name="${image_name%.*}"
 
@@ -34,6 +35,7 @@ _bootstrap() {
 	[ ! -d "$image_path" ] && _pull "$1"
 
 	cd "$guest_prefix" || exit 1
+
 	# sometimes tar has errors and this is ok
 	tar xf "$image_path/rootfs.tar" || true
 
@@ -44,14 +46,16 @@ _bootstrap() {
 	{
 		# shellcheck disable=SC2016
 		printf 'PS1="(%s)$PS1"\n' "$id"
-		printf 'typeset -r PS1\n' "$id"
+
+		# if typeset exists, make PS1 immutable
+		printf 'command -v typeset >/dev/null 2>&1 && typeset -r PS1\n'
 
 		# not sure why PATH is not exported by default
 		echo "export PATH PS1"
-	} >>"$guest_prefix/etc/profile" 
-		# "$guest_prefix/root/.bashrc" \
-		# "$guest_prefix/etc/bash.bashrc" >/dev/null
 
+	} >>"$guest_prefix/etc/profile"
+
+	# some distros have a symlink here, easier to just remove it
 	rm -f "${guest_prefix:?}"/etc/resolv.conf
 	cp "${PREFIX-}"/etc/resolv.conf "$guest_prefix/etc/resolv.conf"
 
@@ -191,7 +195,9 @@ _pull() {
 
 	if _match "$1" '/'; then
 		image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
-	else image_path="$DOCKIE_IMAGES/$1"; fi
+	else
+		image_path="$DOCKIE_IMAGES/$1"
+	fi
 
 	rm -rf "${image_path:?}"
 	mkdir -p "$image_path"
@@ -291,20 +297,18 @@ VERSION="v0.6.2"
 HERE="$(
 	cd "$(dirname "$0")"
 	pwd
-)"
-export HERE
+)" export HERE
 
 : "${DOCKIE_PATH:=$HOME/.dockie}"
 
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
 _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
-# bash does not like ${1-}
-[ "$#" -eq 0 ] && set -- ""
+[ "$#" -eq 0 ] && _usage "\[O"
 
 case "x$1" in
-x-v) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
-x-d) set -x && shift ;;
+x-v | x--version) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
+x-d | x--debug) set -x && shift ;;
 x | x-*) _usage "\[O" ;;
 esac
 
