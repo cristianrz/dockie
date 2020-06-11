@@ -21,9 +21,8 @@ install:
 	@# chmod 644 $(DESTDIR)$(PREFIX)/lib/dockie/docker-hub-pull
 	@chmod 644 $(DESTDIR)$(PREFIX)/share/man/man1/dockie.1
 
-
 clean:
-	rm -f dockie dockie.1
+	rm -f dockie
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/dockie
