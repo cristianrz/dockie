@@ -4,13 +4,9 @@ REMOTE="https://images.linuxcontainers.org/images"
 
 _get_latest() {
 	curl -sL "$url" | awk -F"/" '
-		/\[DIR\]/ {
-			gsub(/<[^>]*>/,"")
-			last = $1
-		}
+		/\[DIR\]/ { gsub(/<[^>]*>/,""); last = $1; }
 		
-		END { print last }
-		'
+		END { print last }'
 }
 
 # Usage: dockie search [OPTIONS] TERM
@@ -29,7 +25,9 @@ _get() {
 
 	url="$REMOTE/$system/$version"
 	url="$url/${DOCKIE_ARCH-amd64}/default"
-	curl -L --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" >"$1/rootfs.tar.xz"
+
+	curl -L --progress-bar "$url/$(_get_latest)/rootfs.tar.xz" \
+		>"$1/rootfs.tar.xz"
 
 	_match "$(file "$1/rootfs.tar.xz")" "HTML" &&
 		_log_fatal "could not find remote image '$2'"
