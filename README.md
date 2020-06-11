@@ -25,16 +25,13 @@ host OS. If you really want isolation have a look at the [Isolation section](htt
 
 * `curl`
 * `file`
+* `make`
 * `proot`
 
-If you want to build from source:
-
-* `make`
-
-For the Docker version:
+For the Docker Hub version:
 
 * `bash`
-* `go` / `golang`
+* `go` 
 * `jq`
 
 There is an [experimental branch](https://github.com/cristianrz/dockie/tree/unshare) available called "unshare" which does not need PRoot, but a Linux kernel that supports namespaces. If you are not able to install PRoot you should check that out. 
