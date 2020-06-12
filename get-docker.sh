@@ -9,7 +9,7 @@ _get() {
 
 	FS="$(mktemp -d)"
 	trap 'rm -rf $FS' EXIT
-	cd "$FS"
+	cd "$FS" || exit 1
 
 	for tar in "$TMP"/*/layer.tar; do
 		tar xzf "$tar"
