@@ -176,7 +176,7 @@ _ps() { _ls "$@"; }
 
 # Usage: dockie pull [OPTIONS] NAME
 #
-# Pull an image or a repository from a registry
+# Pull a rootfs from a repository
 #
 
 # _tag_image(path, name)
