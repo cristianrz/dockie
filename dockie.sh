@@ -75,7 +75,7 @@ _bootstrap() {
 #       -v, --volume   mount a volume from the host to the guest, e.g -v /src:/dst
 #
 _exec() {
-	[ "$#" -lt 2 ] && _usage "exec"
+	[ "$#" -lt 1 ] && _usage "exec"
 
 	# check if starts with -
 	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
@@ -91,8 +91,6 @@ _exec() {
 		*) _log_fatal "invalid option '$arg'" ;;
 		esac
 	done
-
-	[ "$#" -eq 0 ] && _usage exec
 
 	guest_path="$DOCKIE_GUESTS/$arg"
 	guest_prefix="$guest_path/rootfs"
@@ -251,7 +249,6 @@ _run() {
 
 	_bootstrap "$image_name" "$id" "${guest_name:-$image_name}" >/dev/null
 
-	[ "$#" -eq 0 ] && printf %s\\n "$id" && exit 0
 	_exec "$id" "$@"
 }
 
