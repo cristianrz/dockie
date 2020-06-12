@@ -34,8 +34,6 @@ For the Docker Hub version:
 * `go` 
 * `jq`
 
-There is an [experimental branch](https://github.com/cristianrz/dockie/tree/unshare) available called "unshare" which does not need PRoot, but a Linux kernel that supports namespaces. If you are not able to install PRoot you should check that out. 
-
 ## Installation
 
 [See "Installation" on the wiki.](https://github.com/cristianrz/dockie/wiki#installation)
