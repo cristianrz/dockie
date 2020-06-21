@@ -19,7 +19,7 @@ _import() {
 	image_name="${1##*/}"
 	image_name="${image_name%.*}"
 
-	_initdir "$DOCKIE_IMAGES/$image_name" image_path
+	_init_dir "$DOCKIE_IMAGES/$image_name" image_path
 
 	cp "$1" "$image_path/rootfs.tar"
 
