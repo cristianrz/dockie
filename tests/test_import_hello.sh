@@ -11,8 +11,8 @@ cd "$testdir"
 
 "$testhere"/graboid hello-world >/dev/null 2>&1
 
-tar xzf *gz
-mv *tar hello-world.tar
+tar xzf ./*gz
+mv ./*tar hello-world.tar
 
 cd "$testhere"
 
