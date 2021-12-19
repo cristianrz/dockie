@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=dockie
+Exec=dockie
+Icon=dockie
+Categories=Development;
+Terminal=true
