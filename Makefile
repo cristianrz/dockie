@@ -1,4 +1,4 @@
-OBJ = dockie.sh get-lxc.sh
+OBJ = dockie.sh get-docker.sh
 PREFIX ?= /usr/local
 
 all: dockie dockie.1
@@ -7,7 +7,7 @@ dockie: $(OBJ) Makefile
 	@echo "#!/bin/sh" > dockie
 	@sed "s/^/# /g" LICENSE >> dockie
 	@echo >> dockie
-	@grep -v 'shellcheck shell=' get-lxc.sh >> dockie
+	@grep -v 'shellcheck shell=' get-docker.sh >> dockie
 	@grep -v 'shellcheck shell=' dockie.sh >> dockie
 
 install:
@@ -15,7 +15,7 @@ install:
 	@mkdir -m 755 -p $(DESTDIR)$(PREFIX)/lib/dockie
 	@mkdir -m 755 -p $(DESTDIR)$(PREFIX)/share/man/man1
 	@cp dockie                  $(DESTDIR)$(PREFIX)/bin
-	@# cp contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/lib/dockie
+	@cp contrib/docker-hub-pull $(DESTDIR)$(PREFIX)/lib/dockie
 	@cp dockie.1                $(DESTDIR)$(PREFIX)/share/man/man1
 	@chmod 755 $(DESTDIR)$(PREFIX)/bin/dockie
 	@# chmod 644 $(DESTDIR)$(PREFIX)/lib/dockie/docker-hub-pull
