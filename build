@@ -4,12 +4,14 @@ set -eu
 
 get_graboid(){
 	wget https://github.com/blacktop/graboid/releases/download/0.15.8/graboid_0.15.8_linux_x86_64.tar.gz
+	tar xzvf graboid*gz graboid
+	rm ./graboid*gz
 }
 
 get_proot() {
-	curl -sL https://gitlab.com/proot/proot/-/jobs/537307719/artifacts/download >artifacts.zip
-	unzip -o artifacts.zip
-	cp dist/proot .
+	wget https://github.com/proot-me/proot/releases/download/v5.2.0/proot-v5.2.0-x86_64-static
+	mv proot-v* proot
+	chmod +x proot
 }
 
 get_appimagetool() {
@@ -22,6 +24,8 @@ make_image() {
 	get_appimagetool
 	echo "[+] Getting proot..."
 	get_proot
+	echo "[+] Getting graboid..."
+	get_graboid
 	echo "[+] Building AppDir..."
 	mkdir -p AppDir/usr/bin
 	mkdir -p AppDir/usr/lib/dockie
@@ -29,8 +33,8 @@ make_image() {
 	cp dockie.desktop AppDir/
 	cp dockie.png     AppDir/
 	cp dockie         AppDir/usr/bin
-	cp proot          AppDir/usr/bin
-	cp graboid        AppDir/usr/bin
+	mv proot          AppDir/usr/bin
+	mv graboid        AppDir/usr/bin
 	echo "[+] Building AppImage..."
 	ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir >/dev/null
 	echo "[+] All done!"
@@ -41,12 +45,15 @@ make_image() {
 
 clean() {
 	rm -rf AppDir
-	rm -rf proot
-	rm -rf graboid
+	rm -f proot
+	rm -f graboid*
+	rm -f dockie*AppImage
+	rm -f appimagetool*
 }
 
 case "${1-}" in
 clean) clean ;;
+test) get_graboid; get_proot ;;
 "") make_image ;;
 *) echo 'unrecognised argument' >&2 && exit 1 ;;
 esac
