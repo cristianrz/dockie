@@ -9,7 +9,7 @@ case "${#id}" in
 *) echo "id: '$id'?"; exit 1 ;;
 esac
 
-out="$(dockie exec "$id" ls)"
+out="$(dockie exec "$id" ls 2>&1)"
 
 case "$out" in
 *sbin*) exit 0 ;;
