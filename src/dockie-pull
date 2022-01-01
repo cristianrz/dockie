@@ -29,6 +29,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+_log_fatal() {
+	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
+}
+
 # Gets an image using graboid and extracts the whole file system on a given path
 # _get(path, system)
 _get() {
@@ -130,4 +134,3 @@ case "${1-}" in
 test) : ;;
 *) main "$@" ;;
 esac
-
