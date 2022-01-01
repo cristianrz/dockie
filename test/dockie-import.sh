@@ -2,8 +2,6 @@
 
 set -eu
 
-rm -rf "$HOME/.dockie"
-
 testhere="$(pwd)"
 
 testdir="$(mktemp -d)"
