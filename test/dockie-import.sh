@@ -9,7 +9,7 @@ testhere="$(pwd)"
 testdir="$(mktemp -d)"
 cd "$testdir"
 
-"$testhere/graboid" hello-world 
+"$testhere/build/graboid" hello-world 
 
 tar xzf ./*gz
 mv ./*tar hello-world.tar

@@ -2,7 +2,7 @@
 
 rm  library_hello*
 trap "rm library_hello*" EXIT
-./graboid hello-world
+./build/graboid hello-world
 result="$(file library_hello*)"
 
 case "$result" in
