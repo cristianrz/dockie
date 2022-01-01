@@ -28,10 +28,12 @@ make_image() {
 	echo "[+] Building AppImage..."
 	mkdir -p "AppDir/usr/bin"
 	cp ../src/dockie-* ../src/dockie "AppDir/usr/bin"
+  cd AppDir
+  ln -s usr/bin/dockie AppRun 
+  cd ..
 	ARCH=x86_64 linuxdeploy \
 		--appdir AppDir \
 		-d ../src/dockie.desktop \
-		--custom-apprun ../src/AppRun \
 		--output appimage \
 		-i ../src/dockie-icon.png
 

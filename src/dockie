@@ -64,8 +64,10 @@ _usage() {
 main() {
 	set -eu
 
+	SELF="$(readlink -f "$0")"
+
 	HERE="$(
-		cd "$(dirname "$0")" || exit 1
+		cd "$(dirname "$SELF")" || exit 1
 		pwd
 	)" export HERE
 
@@ -80,8 +82,8 @@ main() {
 	x | x-*) _usage "\[O" ;;
 	esac
 
-  cmd="$1"
-  shift
+	cmd="$1"
+	shift
 
 	type "dockie-$cmd" > /dev/null 2>&1 || _usage "\[O"
 
