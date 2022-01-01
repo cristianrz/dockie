@@ -35,7 +35,7 @@ _get() {
 	trap 'rm -rf "$TMP"' EXIT
 	cd "$TMP"
 
-	"$HERE/graboid" "$2" 2> /dev/null || return 1
+	"$GRABOID" "$2" 2> /dev/null || return 1
 	tar xzf ./*tar.gz
 
 	FS="$(mktemp -d)"
@@ -160,7 +160,7 @@ _exec() {
 	[ -n "${PROOT_TMP_DIR-}" ] && envs="PROOT_TMP_DIR=$PROOT_TMP_DIR $envs"
 
 	# shellcheck disable=SC2086
-	env -i $envs "$HERE/proot" $flags "$guest_prefix" "$@"
+	env -i $envs "$PROOT" $flags "$guest_prefix" "$@"
 }
 
 _image_ls() {
@@ -331,8 +331,6 @@ _usage() {
 main() {
 	set -eu
 
-	VERSION="v1.0.0"
-
 	: "${DOCKIE_PATH:=$HOME/.dockie}"
 
 	_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
@@ -341,15 +339,10 @@ main() {
 	[ "$#" -eq 0 ] && _usage "\[O"
 
 	case "x$1" in
-	x-v | x--version) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
-	x-d | x--debug) set -x && shift ;;
-	x | x-*) _usage "\[O" ;;
+	x | x-*) _usage "image" ;;
 	esac
 
-	type "_$1" > /dev/null 2>&1 || _usage "\[O"
-
-	# shellcheck disable=SC2145
-	"_$@"
+	"_image" "$@"
 }
 
 HERE="$(
@@ -359,7 +352,7 @@ HERE="$(
 
 # Allows sourcing without executing
 case "${1-}" in
-test) HERE="$HERE/.." export HERE ;;
+test) : ;;
 *) main "$@" ;;
 esac
 

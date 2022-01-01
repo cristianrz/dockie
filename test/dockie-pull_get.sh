@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -- test
-. ./dockie 
+. ./src/dockie-pull
 
 testdir="$(mktemp -d)"
 _get "$testdir" hello-world 

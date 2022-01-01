@@ -1,7 +1,8 @@
 #!/bin/sh
 
-trap 'rm -rf ~/.dockie/*' EXIT
-result="$(./dockie run alpine ls -l )"
+rm -rf ~/.dockie/*
+
+result="$(./src/dockie-run alpine /bin/ls -l)"
 
 case "$result" in
 	*sbin*) return 0 ;;

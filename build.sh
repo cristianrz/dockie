@@ -7,14 +7,14 @@ get_graboid() {
 		curl -L 'https://github.com/blacktop/graboid/releases/download/0.15.8/graboid_0.15.8_linux_x86_64.tar.gz' > graboid.tgz
 		tar xzvf graboid.tgz graboid
 		rm ./graboid*gz
-	fi	
+	fi
 }
 
 get_proot() {
 	if [ ! -f proot ]; then
 		curl -L 'https://github.com/proot-me/proot/releases/download/v5.2.0/proot-v5.2.0-x86_64-static' > proot
 		chmod +x proot
-	fi	
+	fi
 }
 
 download() {
@@ -27,14 +27,14 @@ download() {
 make_image() {
 	echo "[+] Building AppImage..."
 	mkdir -p AppDir/usr/bin
-	cp dockie proot graboid AppDir/usr/bin
+	cp src/dockie-* src/dockie AppDir/usr/bin
 	ARCH=x86_64 linuxdeploy \
 		--appdir AppDir \
 		-d dockie.desktop \
 		--custom-apprun AppRun \
 		--output appimage \
-		-i dockie-icon.png 
-		
+		-i dockie-icon.png
+
 	echo "[+] All done!"
 	echo
 	echo "You can now use Dockie with ./dockie-x86_64.AppImage or copy it somewhere in your PATH"
@@ -42,10 +42,11 @@ make_image() {
 }
 
 clean() {
-	rm -rf AppDir
-	rm -f proot
-	rm -f graboid*
+	rm -f dockie
 	rm -f dockie*AppImage
+	rm -f graboid*
+	rm -f proot
+	rm -rf AppDir
 }
 
 case "${1-}" in
