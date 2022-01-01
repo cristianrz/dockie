@@ -2,6 +2,6 @@
 Type=Application
 Name=dockie
 Exec=dockie
-Icon=dockie
+Icon=dockie-icon
 Categories=Development;
 Terminal=true
