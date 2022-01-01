@@ -29,27 +29,29 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set -eu
+
 # _init_dir(path, variable name)
 # Creates the directory and assigns its path to the variable name
 _init_dir() {
-        eval "$2=$1"
-        mkdir -p "$1"
+	eval "$2=$1"
+	mkdir -p "$1"
 }
 
-_log_fatal() {                                                                  
-        printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1   
+_log_fatal() {
+	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
 }
 
-# grab usages from comments                                             
-_usage() {                                                                      
-        awk '                                                                   
+# grab usages from comments
+_usage() {
+	awk '                                                                   
         /^# Usage: dockie '"$1"'/, 0 {                                          
                 if ( $1 != "#" ) exit                                           
                                                                                 
                 gsub(/# ?/,"")                                                  
                 print ""$0                                                      
         }                                                                       
-        ' "$0" && exit 1                                                        
+        ' "$0" && exit 1
 }
 
 # Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
@@ -79,7 +81,7 @@ _exec() {
 
 			passwd="$guest_prefix/etc/passwd"
 
-			[ -f "$passwd" ] && \
+			[ -f "$passwd" ] &&
 				id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")"
 
 			;;
@@ -113,6 +115,7 @@ _exec() {
 	env -i $envs "$PROOT" $flags "$guest_prefix" "$@"
 }
 
+
 PROOT="$(command -v proot)"
 
 case "$PROOT" in
@@ -124,18 +127,15 @@ HERE="$(
 	pwd
 )" export HERE
 
-set -eu
-
 : "${DOCKIE_PATH:=$HOME/.dockie}"
 
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
 _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
-[ "$#" -eq 0 ] && _usage "\[O"
+[ "$#" -eq 0 ] && _usage "exec"
 
 # Allows sourcing without executing
 case "${1-}" in
 test) : ;;
 *) _exec "$@" ;;
 esac
-
