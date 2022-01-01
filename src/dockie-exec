@@ -73,7 +73,7 @@ EOF
 #       -v, --volume   mount a directory from the host to the guest, e.g -v /src:/dst
 #
 _exec() {
-	[ "$#" -lt 1 ] && _usage "exec"
+	[ "$#" -eq 0 ] && _usage "exec"
 
 	# check if starts with -
 	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
@@ -82,15 +82,7 @@ _exec() {
 			mounts="${mounts-} -b /var/lib/dbus/machine-id -b /run -b /proc -b /dev"
 			;;
 		x-v | x--volume) mounts="${mounts-} -b $1" && shift ;;
-		x--user | x-u)
-			user="$1" && shift
-
-			passwd="$guest_prefix/etc/passwd"
-
-			[ -f "$passwd" ] &&
-				id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")"
-
-			;;
+		x--user | x-u) user="$1" && shift ;;
 		x--install | x-i)
 			flags="-b /dev -b /sys -b /proc -b /run -i 0 -r"
 			;;
@@ -102,6 +94,11 @@ _exec() {
 	guest_prefix="$guest_path/rootfs"
 
 	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $arg"
+
+	passwd="$guest_prefix/etc/passwd"
+
+	[ -f "$passwd" ] &&
+		id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")"
 
 	[ -z "${flags-}" ] && flags="${mounts-} -i ${id:-0} -r"
 
