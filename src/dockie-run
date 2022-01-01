@@ -50,8 +50,11 @@ _bootstrap() {
 	# shellcheck disable=SC2154
 	cd "$guest_prefix" || exit 1
 
-	# sometimes tar has errors and this is ok
-	tar xf "$image_path/rootfs.tar" || true
+  # files are gzipped but graboid gets them with .tar...
+  for i in "$image_path"/*.tar; do
+    # sometimes tar has errors and this is ok
+    tar xzf "$i" || true
+  done
 
 	d="$(date '+%Y-%m-%d %H:%M:%S')"
 
@@ -90,8 +93,6 @@ _run() {
 
 	case "$background" in
 	false)
-		echo "$HERE/dockie-exec" "$id" "$@"
-		ls -l ~/.dockie/images
 		"$HERE/dockie-exec" "$id" "$@"
 		;;
 	*) printf '%s\n' "$id" ;;
