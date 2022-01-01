@@ -26,32 +26,30 @@ download() {
 
 make_image() {
 	echo "[+] Building AppImage..."
-	mkdir -p AppDir/usr/bin
-	cp src/dockie-* src/dockie AppDir/usr/bin
+	mkdir -p "AppDir/usr/bin"
+	cp ../src/dockie-* ../src/dockie "AppDir/usr/bin"
 	ARCH=x86_64 linuxdeploy \
 		--appdir AppDir \
-		-d dockie.desktop \
-		--custom-apprun AppRun \
+		-d ../src/dockie.desktop \
+		--custom-apprun ../src/AppRun \
 		--output appimage \
-		-i dockie-icon.png
+		-i ../src/dockie-icon.png
 
 	echo "[+] All done!"
 	echo
-	echo "You can now use Dockie with ./dockie-x86_64.AppImage or copy it somewhere in your PATH"
-	echo
+	printf "build/"
+  echo dockie*AppImage
 }
 
 clean() {
-	rm -f dockie
-	rm -f dockie*AppImage
-	rm -f graboid*
-	rm -f proot
-	rm -rf AppDir
+	rm -rf ./build
 }
 
 case "${1-}" in
 clean) clean ;;
 "")
+  mkdir -p build
+  cd build
 	download
 	make_image
 	;;
