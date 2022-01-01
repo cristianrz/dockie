@@ -44,14 +44,20 @@ _log_fatal() {
 
 # grab usages from comments
 _usage() {
-	awk '                                                                   
-        /^# Usage: dockie '"$1"'/, 0 {                                          
-                if ( $1 != "#" ) exit                                           
-                                                                                
-                gsub(/# ?/,"")                                                  
-                print ""$0                                                      
-        }                                                                       
-        ' "$0" && exit 1
+	cat << EOF >&2
+Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
+
+Run a command in an existing guest
+
+Options:
+      -g, --gui      Needed for some graphical programs to run. Will mount
+                       /dev, /var/lib/dbus/machine-id, /run/shm and /proc
+      -i, --install  Needed for some package managers to work. Will mount /dev,
+                 /sys, /proc, /tmp and /run/shm
+      -u, --user     Specify username
+      -v, --volume   mount a directory from the host to the guest, e.g -v /src:/dst
+EOF
+	exit 1
 }
 
 # Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
@@ -114,7 +120,6 @@ _exec() {
 	# shellcheck disable=SC2086
 	env -i $envs "$PROOT" $flags "$guest_prefix" "$@"
 }
-
 
 PROOT="$(command -v proot)"
 
