@@ -3,7 +3,7 @@
 # Dockie
 
 * **Installation**: https://github.com/cristianrz/dockie/#installation
-* **Usage**: https://github.com/cristianrz/dockie/wiki#usage
+* **Usage**: https://github.com/cristianrz/dockie/#usage
 * **FAQ:** https://github.com/cristianrz/dockie/wiki/FAQ
 
 Dockie is a wrapper around PRoot and Graboid to manage unprivileged chroots
