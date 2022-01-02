@@ -128,7 +128,7 @@ $ dockie run --name my_alpine alpine:3.11 /bin/sh -l
 (bdf6d5c8bd01) localhost:~#
 ```
 
-From the previous command, the target image has two parts, `alpine` and `3.11`. The first is the name of the distro. `3.11` is the tag of the image, if you [click on the respective image](https://uk.images.linuxcontainers.org/images/alpine/), you can find the different tags.
+From the previous command, the target image has two parts, `alpine` and `3.11`. The first is the name of the distro. `3.11` is the tag of the image.
 
 Now we are inside alpine, lets print something and leave:
 
@@ -138,17 +138,6 @@ Mon May 11 16:29:23 UTC 2020
 (bdf6d5c8bd01) localhost:~# exit
 $
 ```
-
-You can find what images are available depending on which version of Dockie you are using:
-
-```
-$ dockie search alpine
-You can open
-	https://hub.docker.com/search?q=alpine&type=image
-on your favorite browser
-```
-
-The previous command will point you to the URL from where Dockie is pulling the images. You can check the available images from the browser. 
  
 Having said that, let's now get a Void Linux current image without using it for now:
 
