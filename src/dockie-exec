@@ -78,9 +78,6 @@ _exec() {
 	# check if starts with -
 	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
 		case x"$arg" in
-		x--gui | x-g)
-			mounts="${mounts-} -b /var/lib/dbus/machine-id -b /run -b /proc -b /dev"
-			;;
 		x-v | x--volume) mounts="${mounts-} -b $1" && shift ;;
 		x--user | x-u) user="$1" && shift ;;
 		x--install | x-i)
@@ -124,17 +121,10 @@ case "$PROOT" in
 "") _log_fatal "proot not found" ;;
 esac
 
-HERE="$(
-	cd "$(dirname "$0")" || exit 1
-	pwd
-)" export HERE
-
 : "${DOCKIE_PATH:=$HOME/.dockie}"
 
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
 _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
-
-[ "$#" -eq 0 ] && _usage "exec"
 
 # Allows sourcing without executing
 case "${1-}" in
