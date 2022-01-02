@@ -11,6 +11,13 @@
 Dockie is a wrapper around PRoot and Graboid to manage unprivileged chroots
 with a familiar interface.
 
+Dockie can pull and run Docker images with:
+
+* no root
+* no daemons
+* user namespaces disabled
+* only downloading an AppImage file
+
 PRoot, and therefore Dockie, are not security features and should not be used
 as such. PRoot should only be used as a "soft sandbox" where you can:
 
@@ -20,9 +27,8 @@ as such. PRoot should only be used as a "soft sandbox" where you can:
 * as a dev environment to keep your main system clean
 
 knowing that whatever gets into your PRoot will be able to get out into your
-host OS. If you really want isolation have a look at the
-[Isolation section](https://github.com/cristianrz/dockie/wiki/Isolation)
-in the wiki.
+host OS. If you really want isolation you should run Dockie
+[inside a VM](https://github.com/cristianrz/dockie/wiki/Isolation).
 
 ## Dependencies
 
