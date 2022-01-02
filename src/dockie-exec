@@ -42,7 +42,6 @@ _log_fatal() {
 	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
 }
 
-# grab usages from comments
 _usage() {
 	cat << EOF >&2
 Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
@@ -126,8 +125,10 @@ esac
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
 _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
+_exec "$@"
+
 # Allows sourcing without executing
-case "${1-}" in
-test) : ;;
-*) _exec "$@" ;;
-esac
+# case "${1-}" in
+# test) : ;;
+# *) _exec "$@" ;;
+# esac

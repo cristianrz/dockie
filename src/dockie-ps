@@ -29,6 +29,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set -eu
 # _init_dir(path, variable name)
 # Creates the directory and assigns its path to the variable name
 _init_dir() {
@@ -36,10 +37,6 @@ _init_dir() {
 	mkdir -p "$1"
 }
 
-# Usage: dockie ps
-#
-# List guests
-#
 _ps() {
 	[ "$#" -ne 0 ] && _usage "ls"
 
@@ -48,38 +45,25 @@ _ps() {
 }
 
 _usage() {
-	# grab usages from comments
-	awk '
-	/^# Usage: dockie '"$1"'/, 0 {
-		if ( $1 != "#" ) exit
+	cat << EOF >&2
+Usage: dockie ps
 
-		gsub(/# ?/,"")
-		print ""$0
-	}
-	' "$0" && exit 1
+List guests
+EOF
+	exit 1
 }
-
-main() {
-	set -eu
-
-	: "${DOCKIE_PATH:=$HOME/.dockie}"
-
-	_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
-	_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
-
-	[ "$#" -ne 0 ] && _usage "ps"
-
-	_ps
-}
-
-HERE="$(
-	cd "$(dirname "$0")"
-	pwd
-)" export HERE
 
 # Allows sourcing without executing
-case "${1-}" in
-test) : ;;
-*) main "$@" ;;
-esac
+# case "${1-}" in
+# test) : ;;
+# *) main "$@" ;;
+# esac
 
+: "${DOCKIE_PATH:=$HOME/.dockie}"
+
+_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
+_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
+
+[ "$#" -ne 0 ] && _usage "ps"
+
+_ps

@@ -45,8 +45,6 @@ _image_ls() {
 	cat "$DOCKIE_IMAGES"/*/info 2> /dev/null
 }
 
-#
-
 _image() {
 	[ "$#" -eq 0 ] && _image_ls "$@" && exit
 	cmd="$1" && shift
@@ -87,8 +85,10 @@ EOF
 _init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
 _init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
+_image "$@"
+
 # Allows sourcing without executing
-case "${1-}" in
-test) : ;;
-*) _image "$@" ;;
-esac
+# case "${1-}" in
+# test) : ;;
+# *) _image "$@" ;;
+# esac

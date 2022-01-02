@@ -71,7 +71,7 @@ _uuid() {
 
 # _run(options..., image_name)
 _run() {
-  [ "$#" -eq 0 ] && _usage "run"
+	[ "$#" -eq 0 ] && _usage "run"
 
 	background=false
 
@@ -87,9 +87,7 @@ _run() {
 	_bootstrap "$image_name" "$id" "${guest_name:-$image_name}"
 
 	case "$background" in
-	false)
-		"$HERE/dockie-exec" "$id" "$@"
-		;;
+	false) "$HERE/dockie-exec" "$id" "$@" ;;
 	*) printf '%s\n' "$id" ;;
 	esac
 
@@ -118,8 +116,10 @@ HERE="$(
 	pwd
 )" export HERE
 
+_run "$@"
+
 # Allows sourcing without executing
-case "${1-}" in
-test) : ;;
-*) _run "$@" ;;
-esac
+# case "${1-}" in
+# test) : ;;
+# *) _run "$@" ;;
+# esac

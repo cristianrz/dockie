@@ -29,6 +29,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set -eu
+
 _log_fatal() {
 	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
 }
@@ -43,7 +45,7 @@ _get() {
 	"$GRABOID" "$2" >&2 || return 1
 	tar xzf ./*tar.gz
 
-  mv ./*.tar "$1"
+	mv ./*.tar "$1"
 }
 
 # Creates the directory and assigns its path to the variable name
@@ -88,40 +90,20 @@ _uuid() {
 # _match(string, substring)
 _match() { case x"$1" in *"$2"*) : ;; *) return 1 ;; esac }
 
-# _usage grabs usages from comments
 _usage() {
-	awk '
-	/^# Usage: dockie '"$1"'/, 0 {
-		if ( $1 != "#" ) exit
+	cat << EOF >&2
+Usage: dockie pull [OPTIONS] NAME
 
-		gsub(/# ?/,"")
-		print ""$0
-	}
-	' "$0" && exit 1
-}
-
-main() {
-	set -eu
-
-	: "${DOCKIE_PATH:=$HOME/.dockie}"
-
-	_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
-	_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
-
-	[ "$#" -eq 0 ] && _usage "\[O"
-
-	_pull "$@"
+Pull a rootfs from a repository
+EOF
+	exit 1
 }
 
 GRABOID="$(command -v graboid)"
 
-HERE="$(
-	cd "$(dirname "$0")"
-	pwd
-)" export HERE
+: "${DOCKIE_PATH:=$HOME/.dockie}"
 
-# Allows sourcing without executing
-case "${1-}" in
-test) : ;;
-*) main "$@" ;;
-esac
+_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
+_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
+
+_pull "$@"

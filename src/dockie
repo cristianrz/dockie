@@ -29,70 +29,60 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# grab usages from comments
+set -eu
+
 _usage() {
-	awk '
-        /^# Usage: dockie '"$1"'/, 0 {
-                if ( $1 != "#" ) exit
+	cat << EOF >&2
+Usage: dockie [OPTIONS] COMMAND [ARG...]
 
-                gsub(/# ?/,"")
-                print ""$0
-        }
-        ' "$0" && exit 1
+Options:
+ -d        Debug mode
+ -h        Print usage
+ -v        Print version information and quit
+
+Commands:
+ exec      Run a command in a root filesystem
+ image     List images
+ import    Import the contents from a tarball to create an image
+ ps        List root filesystems
+ pull      Pull an image
+ rm        Remove one or more root filesystems
+ run       Run a command in a new root filesystem
+ search    Search the image server for images
+EOF
+	exit 1
 }
 
-# Usage: dockie [OPTIONS] COMMAND [ARG...]
-#
-# Options:
-#  -d        Debug mode
-#  -h        Print usage
-#  -v        Print version information and quit
-#
-# Commands:
-#  exec      Run a command in a root filesystem
-#  image     List images
-#  import    Import the contents from a tarball to create an image
-#  ps        List root filesystems
-#  pull      Pull an image
-#  rm        Remove one or more root filesystems
-#  run       Run a command in a new root filesystem
-#  search    Search the image server for images
-#
-# Run 'dockie COMMAND' for more information on a command.
 #
 
-main() {
-	set -eu
+SELF="$(readlink -f "$0")"
 
-	SELF="$(readlink -f "$0")"
+HERE="$(
+	cd "$(dirname "$SELF")" || exit 1
+	pwd
+)" export HERE
 
-	HERE="$(
-		cd "$(dirname "$SELF")" || exit 1
-		pwd
-	)" export HERE
+VERSION="v2.0.0"
 
-	VERSION="v1.0.0"
+PATH="$HERE:$PATH" export PATH
 
-	PATH="$HERE:$PATH" export PATH
+[ "$#" -eq 0 ] && _usage
 
-	[ "$#" -eq 0 ] && _usage "\[O"
+case "x$1" in
+x-v | x--version) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
+x | x-*) _usage ;;
+esac
 
-	case "x$1" in
-	x-v | x--version) printf 'Dockie version %s\n' "$VERSION" && exit 0 ;;
-	x | x-*) _usage "\[O" ;;
-	esac
+cmd="$1"
+shift
 
-	cmd="$1"
-	shift
+type "dockie-$cmd" > /dev/null 2>&1 || _usage
 
-	type "dockie-$cmd" > /dev/null 2>&1 || _usage "\[O"
-
-	# shellcheck disable=SC2145
-	"dockie-$cmd" "$@"
-}
+# shellcheck disable=SC2145
+"dockie-$cmd" "$@"
 
 # Allows sourcing without executing
-case "${1-}" in
-test) : ;;
-*) main "$@" ;;
-esac
+# case "${1-}" in
+# test) : ;;
+# *) main "$@" ;;
+# esac
