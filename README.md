@@ -30,6 +30,9 @@ knowing that whatever gets into your PRoot will be able to get out into your
 host OS. If you really want isolation you should run Dockie
 [inside a VM](https://github.com/cristianrz/dockie/wiki/Isolation).
 
+Also, it allows you to have user environments whilst keeping user namespaces
+disabled and therefore reducing your attack surface.
+
 ## Dependencies
 
 * `curl`

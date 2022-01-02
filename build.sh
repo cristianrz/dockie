@@ -7,14 +7,14 @@ get_graboid() {
 		curl -L 'https://github.com/blacktop/graboid/releases/download/0.15.8/graboid_0.15.8_linux_x86_64.tar.gz' > graboid.tgz
 		tar xzvf graboid.tgz graboid
 		rm ./graboid*gz
-	fi	
+	fi
 }
 
 get_proot() {
 	if [ ! -f proot ]; then
 		curl -L 'https://github.com/proot-me/proot/releases/download/v5.2.0/proot-v5.2.0-x86_64-static' > proot
 		chmod +x proot
-	fi	
+	fi
 }
 
 download() {
@@ -26,31 +26,32 @@ download() {
 
 make_image() {
 	echo "[+] Building AppImage..."
-	mkdir -p AppDir/usr/bin
-	cp dockie proot graboid AppDir/usr/bin
+	mkdir -p "AppDir/usr/bin"
+	cp ../src/dockie-* ../src/dockie "AppDir/usr/bin"
+  cd AppDir
+  ln -s usr/bin/dockie AppRun 
+  cd ..
 	ARCH=x86_64 linuxdeploy \
 		--appdir AppDir \
-		-d dockie.desktop \
-		--custom-apprun AppRun \
+		-d ../src/dockie.desktop \
 		--output appimage \
-		-i dockie-icon.png 
-		
+		-i ../src/dockie-icon.png
+
 	echo "[+] All done!"
 	echo
-	echo "You can now use Dockie with ./dockie-x86_64.AppImage or copy it somewhere in your PATH"
-	echo
+	printf "build/"
+  echo dockie*AppImage
 }
 
 clean() {
-	rm -rf AppDir
-	rm -f proot
-	rm -f graboid*
-	rm -f dockie*AppImage
+	rm -rf ./build
 }
 
 case "${1-}" in
 clean) clean ;;
 "")
+  mkdir -p build
+  cd build
 	download
 	make_image
 	;;
