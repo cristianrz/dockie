@@ -29,6 +29,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set -eu
+
 # _init_dir(path, variable name)
 # Creates the directory and assigns its path to the variable name
 _init_dir() {
@@ -38,8 +40,9 @@ _init_dir() {
 
 # _bootstrap(system, id, name)
 _bootstrap() {
-	guest_path="$DOCKIE_GUESTS/$2"
 	image_path="$DOCKIE_IMAGES/$1"
+	guest_path="$DOCKIE_GUESTS/$2"
+
 	_init_dir "$guest_path/rootfs" guest_prefix
 
 	if [ ! -d "$image_path" ]; then
@@ -50,17 +53,15 @@ _bootstrap() {
 	# shellcheck disable=SC2154
 	cd "$guest_prefix" || exit 1
 
-  # files are gzipped but graboid gets them with .tar...
-  for i in "$image_path"/*.tar; do
-    # sometimes tar has errors and this is ok
-    tar xzf "$i" || true
-  done
+	# files are gzipped but graboid gets them with .tar...
+	for i in "$image_path"/*.tar; do
+		# sometimes tar has errors and this is ok
+		tar xzf "$i" || true
+	done
 
 	d="$(date '+%Y-%m-%d %H:%M:%S')"
 
 	printf "%-14s%-20s%-21s%s\n" "$2" "$1" "$d" "$3" > "$guest_path/info"
-
-	echo "$id" > "${guest_prefix:?}"/etc/hostname
 }
 
 _uuid() {
@@ -68,16 +69,10 @@ _uuid() {
 	echo "${id##*-}"
 }
 
-# Usage: dockie run [OPTIONS] SYSTEM [COMMAND] [ARG...]
-#
-# Run a command in a new guest.
-#
-# Options:
-#     -n, --name string    Assign a name to the guest
-#     -d, --detach         Run guest in background and print guest ID
-
 # _run(options..., image_name)
 _run() {
+  [ "$#" -eq 0 ] && _usage "run"
+
 	background=false
 
 	case "x${1-}" in
@@ -100,30 +95,23 @@ _run() {
 
 }
 
-# _usage grabs usages from comments
 _usage() {
-	awk '
-	/^# Usage: dockie '"$1"'/, 0 {
-		if ( $1 != "#" ) exit
+	cat << EOF >&2
+Usage: dockie run [OPTIONS] SYSTEM [COMMAND] [ARG...]
 
-		gsub(/# ?/,"")
-		print ""$0
-	}
-	' "$0" >&2 && exit 1
+Run a command in a new guest.
+
+Options:
+    -n, --name string    Assign a name to the guest
+    -d, --detach         Run guest in background and print guest ID
+EOF
+	exit 1
 }
 
-main() {
-	set -eu
+: "${DOCKIE_PATH:=$HOME/.dockie}"
 
-	: "${DOCKIE_PATH:=$HOME/.dockie}"
-
-	_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
-	_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
-
-	[ "$#" -eq 0 ] && _usage "run"
-
-	_run "$@"
-}
+_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
+_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
 
 HERE="$(
 	cd "$(dirname "$0")"
@@ -133,6 +121,5 @@ HERE="$(
 # Allows sourcing without executing
 case "${1-}" in
 test) : ;;
-*) main "$@" ;;
+*) _run "$@" ;;
 esac
-
