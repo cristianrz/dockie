@@ -69,7 +69,6 @@ or, if you don't have root privileges and `$HOME/bin` is inside your `PATH` vari
 
 ```
 $ cp ./dockie-x86_64.AppImage "$HOME/bin/dockie"
-
 ```
 
 or use it directly with
