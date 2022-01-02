@@ -24,6 +24,9 @@ host OS. If you really want isolation have a look at the
 [Isolation section](https://github.com/cristianrz/dockie/wiki/Isolation)
 in the wiki.
 
+Also, it allows you to have user environments whilst keeping user namespaces
+disabled and therefore reducing your attack surface.
+
 ## Dependencies
 
 * `curl`
