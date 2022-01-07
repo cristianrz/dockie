@@ -6,7 +6,7 @@ Dockie - manage unprivileged chroot environments
 
 # SYNOPSIS
 
-dockie [-dhv] {exec | image | ls | import | pull | rm | run | search}
+dockie [-hv] {exec | image | ps | import | pull | rm | run}
 
 # DESCRIPTION
 
@@ -25,12 +25,10 @@ host OS.
 
 ## Pulling
 
-Dockie is able to pull packages from either the LXC image server or from the
-Docker Hub. LXC support is native to Dockie and Docker Hub's is done through
-a contrib script included with the Dockie releases.
+Dockie is able to pull packages from the Docker Hub. 
 
 Dockie stores its data inside DOCKER_PATH, if the environment variable is set,
-otherwise inside HOME/.local/var/lib/dockie.
+otherwise inside HOME/.dockie.
 
 To pull images the image and version need to be speicifed from the command line
 in the form of image:version. Images that have been either pulled from a remote
@@ -38,8 +36,7 @@ repository are stored inside the images directory as a tarball together with a
 file containing its formatted metadata.
 
 As the repositories are provided by third-parties there is no built-in search
-mechanism. The search comnmand will output the URL of the repository where the
-user can browse the available images.
+mechanism. 
 
 Images are not hashed or identified uniquely in any way. This means that if
 an ubuntu:latest image is downloaded and later on another ubuntu:latest image
@@ -117,22 +114,20 @@ will efectively prevent that guest from being removed from Dockie.
 -v
 : Print version information and quit
 
-\-g --gui
-: If used with exec, mounts /var/lib/dbus/machine-id, /run/shm, /proc and /dev
-from the host
-
 \-i --install
-: If used with exec, this option is useful to safely create and install packages into the guest
-rootfs. It mounts the following files/directories from the host: /etc/host.conf,
-/etc/hosts, /etc/nsswitch.conf, /etc/resolv.conf, /dev/, /sys/, /proc/, /tmp/,
-/run/shm, HOME and path. It is equivalent to proot -S.
+: If used with exec, this option is useful to safely create and install
+packages into the guest rootfs. It mounts the following files/directories from
+the host: /etc/host.conf, /etc/hosts, /etc/nsswitch.conf, /etc/resolv.conf,
+/dev/, /sys/, /proc/, /tmp/, /run/shm, HOME and path. It is equivalent to proot
+-S.
 
 \-u --user
 : If used with exec, specify the username.
 
 \-v --volume
-: If used with exec, Dockie will instruct PRoot to mount a directory or file from the host to
-the guest. The file/directory must be specified in the form of /src_dir:/dst_dir
+: If used with exec, Dockie will instruct PRoot to mount a directory or file
+from the host to the guest. The file/directory must be specified in the form of
+/src_dir:/dst_dir
 
 ## Subcommands
 
@@ -145,7 +140,7 @@ image ls
 image rm
 : Remove one or more images
 
-ls
+ps
 : List guest filesystems
 
 import _file_
@@ -160,17 +155,11 @@ rm _id_
 run _id_ _command_
 : Run a command in a new root filesystem
 
-search
-: Print the URL of the remote repository
-
 # ENVIRONMENT
-
-DOCKIE_ARCH
-: Target architecture for pulled images, if unset it defaults to amd64
 
 DOCKIE_PATH
 : Location for images and guests. If unset, it defaults to
-$HOME/.local/var/lib/dockie
+$HOME/.dockie
 
 # SEE ALSO
 

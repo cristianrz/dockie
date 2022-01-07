@@ -1,0 +1,109 @@
+#!/bin/sh
+# BSD 3-Clause License
+#
+# Copyright (c) 2021, Cristian Ariza
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+#    contributors may be used to endorse or promote products derived from
+#    this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+set -eu
+
+_log_fatal() {
+	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
+}
+
+# Gets an image using graboid and extracts the whole file system on a given path
+# _get(path, system)
+_get() {
+	TMP="$(mktemp -d)"
+	trap 'rm -rf "$TMP"' EXIT
+	cd "$TMP"
+
+	"$GRABOID" "$2" >&2 || return 1
+	tar xzf ./*tar.gz
+
+	mv ./*.tar "$1"
+}
+
+# Creates the directory and assigns its path to the variable name
+# _init_dir(path, variable name)
+_init_dir() {
+	eval "$2=$1"
+	mkdir -p "$1"
+}
+
+# _tag_image(path, name)
+_tag_image() {
+	printf '%-20s%-22s%s\n' "$2 " "$(date '+%Y-%m-%d %H:%M:%S')" \
+		"$(du -h "$1" | awk '{print $1"B"}')" > "$1/info"
+}
+
+# _pull creates the directory that will host the image locally, calls _get to
+# actually get it and create the "info" file that describes it
+# _pull(system)
+_pull() {
+	[ "$#" -ne 1 ] && _usage "pull"
+
+	if _match "$1" '/'; then
+		image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}"
+	else
+		image_path="$DOCKIE_IMAGES/$1"
+	fi
+
+	rm -rf "${image_path:?}"
+	mkdir -p "$image_path"
+
+	# shellcheck disable=SC2015
+	_get "$image_path" "$1" || _log_fatal "pull failed for $1"
+
+	_tag_image "$image_path" "$1"
+}
+
+_uuid() {
+	id="$(cat /proc/sys/kernel/random/uuid)"
+	echo "${id##*-}"
+}
+
+# _match(string, substring)
+_match() { case x"$1" in *"$2"*) : ;; *) return 1 ;; esac }
+
+_usage() {
+	cat << EOF >&2
+Usage: dockie pull [OPTIONS] NAME
+
+Pull a rootfs from a repository
+EOF
+	exit 1
+}
+
+GRABOID="$(command -v graboid)"
+
+: "${DOCKIE_PATH:=$HOME/.dockie}"
+
+_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
+_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
+
+_pull "$@"

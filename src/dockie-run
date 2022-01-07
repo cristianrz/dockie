@@ -1,0 +1,125 @@
+#!/bin/sh
+# BSD 3-Clause License
+#
+# Copyright (c) 2021, Cristian Ariza
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+#    contributors may be used to endorse or promote products derived from
+#    this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+set -eu
+
+# _init_dir(path, variable name)
+# Creates the directory and assigns its path to the variable name
+_init_dir() {
+	eval "$2=$1"
+	mkdir -p "$1"
+}
+
+# _bootstrap(system, id, name)
+_bootstrap() {
+	image_path="$DOCKIE_IMAGES/$1"
+	guest_path="$DOCKIE_GUESTS/$2"
+
+	_init_dir "$guest_path/rootfs" guest_prefix
+
+	if [ ! -d "$image_path" ]; then
+		printf "Unable to find image '%s' locally\nPulling from %s\n" "$1" "$1" >&2
+		"$HERE/dockie-pull" "$1"
+	fi
+
+	# shellcheck disable=SC2154
+	cd "$guest_prefix" || exit 1
+
+	# files are gzipped but graboid gets them with .tar...
+	for i in "$image_path"/*.tar; do
+		# sometimes tar has errors and this is ok
+		tar xzf "$i" || true
+	done
+
+	d="$(date '+%Y-%m-%d %H:%M:%S')"
+
+	printf "%-14s%-20s%-21s%s\n" "$2" "$1" "$d" "$3" > "$guest_path/info"
+}
+
+_uuid() {
+	id="$(cat /proc/sys/kernel/random/uuid)"
+	echo "${id##*-}"
+}
+
+# _run(options..., image_name)
+_run() {
+	[ "$#" -eq 0 ] && _usage "run"
+
+	background=false
+
+	case "x${1-}" in
+	x-d) background=true && shift ;;
+	x--name | x-n) guest_name="$2" && shift 2 ;;
+	"x" | x-*) _usage "run" ;;
+	esac
+
+	image_name="$1" && shift
+	id="$(_uuid)"
+
+	_bootstrap "$image_name" "$id" "${guest_name:-$image_name}"
+
+	case "$background" in
+	false) "$HERE/dockie-exec" "$id" "$@" ;;
+	*) printf '%s\n' "$id" ;;
+	esac
+
+}
+
+_usage() {
+	cat << EOF >&2
+Usage: dockie run [OPTIONS] SYSTEM [COMMAND] [ARG...]
+
+Run a command in a new guest.
+
+Options:
+    -n, --name string    Assign a name to the guest
+    -d, --detach         Run guest in background and print guest ID
+EOF
+	exit 1
+}
+
+: "${DOCKIE_PATH:=$HOME/.dockie}"
+
+_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
+_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
+
+HERE="$(
+	cd "$(dirname "$0")"
+	pwd
+)" export HERE
+
+_run "$@"
+
+# Allows sourcing without executing
+# case "${1-}" in
+# test) : ;;
+# *) _run "$@" ;;
+# esac

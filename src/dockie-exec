@@ -1,0 +1,134 @@
+#!/bin/sh
+# BSD 3-Clause License
+#
+# Copyright (c) 2021, Cristian Ariza
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its
+#    contributors may be used to endorse or promote products derived from
+#    this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+set -eu
+
+# _init_dir(path, variable name)
+# Creates the directory and assigns its path to the variable name
+_init_dir() {
+	eval "$2=$1"
+	mkdir -p "$1"
+}
+
+_log_fatal() {
+	printf '\033[30;31m%s:\033[30;39m %s\n' "${0##*/}" "$*" >&2 && exit 1
+}
+
+_usage() {
+	cat << EOF >&2
+Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
+
+Run a command in an existing guest
+
+Options:
+      -g, --gui      Needed for some graphical programs to run. Will mount
+                       /dev, /var/lib/dbus/machine-id, /run/shm and /proc
+      -i, --install  Needed for some package managers to work. Will mount /dev,
+                 /sys, /proc, /tmp and /run/shm
+      -u, --user     Specify username
+      -v, --volume   mount a directory from the host to the guest, e.g -v /src:/dst
+EOF
+	exit 1
+}
+
+# Usage: dockie exec [OPTIONS] ROOTFS COMMAND [ARG...]
+#
+# Run a command in an existing guest
+#
+# Options:
+#       -g, --gui      Needed for some graphical programs to run. Will mount
+#                        /dev, /var/lib/dbus/machine-id, /run/shm and /proc
+#       -i, --install  Needed for some package managers to work. Will mount /dev,
+#	                 /sys, /proc, /tmp and /run/shm
+#       -u, --user     Specify username
+#       -v, --volume   mount a directory from the host to the guest, e.g -v /src:/dst
+#
+_exec() {
+	[ "$#" -eq 0 ] && _usage "exec"
+
+	# check if starts with -
+	while arg="$1" && shift && [ "${arg#-}" != "$arg" ]; do
+		case x"$arg" in
+		x-v | x--volume) mounts="${mounts-} -b $1" && shift ;;
+		x--user | x-u) user="$1" && shift ;;
+		x--install | x-i)
+			flags="-b /dev -b /sys -b /proc -b /run -i 0 -r"
+			;;
+		*) _log_fatal "invalid option '$arg'" ;;
+		esac
+	done
+
+	guest_path="$DOCKIE_GUESTS/$arg"
+	guest_prefix="$guest_path/rootfs"
+
+	[ ! -d "$guest_prefix" ] && _log_fatal "no such guest: $arg"
+
+	passwd="$guest_prefix/etc/passwd"
+
+	[ -f "$passwd" ] &&
+		id="$(awk -F ':' '$1 == "'"${user-root}"'" { print $3 }' "$passwd")"
+
+	[ -z "${flags-}" ] && flags="${mounts-} -i ${id:-0} -r"
+
+	flags="-w / -b /etc/resolv.conf $flags"
+
+	# shellcheck disable=SC2015
+	# prevents deleting guests that someone is using
+	# it's not catastrophic if the lock can't be created
+	[ ! -f "$guest_path/lock" ] && touch "$guest_path/lock" || true
+
+	trap 'rm -f $guest_path/lock' EXIT
+
+	envs="DISPLAY=${DISPLAY-} PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin TERM=${TERM-} HOME=/"
+	[ -n "${PROOT_TMP_DIR-}" ] && envs="PROOT_TMP_DIR=$PROOT_TMP_DIR $envs"
+
+	# shellcheck disable=SC2086
+	env -i $envs "$PROOT" $flags "$guest_prefix" "$@"
+}
+
+PROOT="$(command -v proot)"
+
+case "$PROOT" in
+"") _log_fatal "proot not found" ;;
+esac
+
+: "${DOCKIE_PATH:=$HOME/.dockie}"
+
+_init_dir "$DOCKIE_PATH/images" DOCKIE_IMAGES
+_init_dir "$DOCKIE_PATH/guests" DOCKIE_GUESTS
+
+_exec "$@"
+
+# Allows sourcing without executing
+# case "${1-}" in
+# test) : ;;
+# *) _exec "$@" ;;
+# esac
