@@ -46,7 +46,13 @@ There are two installation methods:
 
 It embeds PRoot inside the image. If the AppImage does not work for you or you already have PRoot, it's probably better if you use the method below.
 
-* [Standalone Dockie](https://github.com/cristianrz/dockie/#no-appimage): if you are using Android, a 32-bit processor or any other obscure device/OS, or you don't want to embed PRoot inside Dockie.
+* [Standalone Dockie](https://github.com/cristianrz/dockie/#no-appimage): if 
+  * you are using Android
+  * a 32-bit processor
+  * M1
+  * Raspberry Pi
+  * any other obscure device/OS, or
+  * you don't want to embed PRoot/Graboid inside Dockie
 
 ## AppImage (only x86_64)
 
@@ -112,9 +118,27 @@ or use it directly with
 $ ./dockie-x86_64.AppImage
 ```
 
-## No AppImage
+## No AppImage/Raspberry Pi/Android/M1
 
 After pulling the Dockie repo, `./src` contains all the shell scripts that Dockie uses, if you copy all of these to your PATH you're up and running. In this case you will have to manually download and install PRoot and Graboid.
+
+To download PRoot and Graboid:
+
+```
+$ sh build.sh
+```
+
+To install Dockie:
+
+```
+# install -m 755 build/{proot,graboid} src/dockie src/dockie-* /usr/local/bin
+```
+
+or if you don't have privileges
+
+```
+$ install -m 755 build/{proot,graboid} src/dockie src/dockie-* "$HOME/bin"
+```
 
 ## Usage
 
