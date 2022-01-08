@@ -46,7 +46,7 @@ There are two installation methods:
 
 It embeds PRoot inside the image. If the AppImage does not work for you or you already have PRoot, it's probably better if you use the method below.
 
-* [Standalone Dockie](https://github.com/cristianrz/dockie/#no-appimage): if 
+* [Standalone Dockie](https://github.com/cristianrz/dockie/#no-appimageraspberry-piandroidm1): if 
   * you are using Android
   * a 32-bit processor
   * M1
