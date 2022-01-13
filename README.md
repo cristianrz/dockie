@@ -118,9 +118,11 @@ or use it directly with
 $ ./dockie-x86_64.AppImage
 ```
 
-## No AppImage/Raspberry Pi/Android/M1
+## No AppImage/Raspberry Pi/M1
 
-After pulling the Dockie repo, `./src` contains all the shell scripts that Dockie uses, if you copy all of these to your PATH you're up and running. In this case you will have to manually download and install PRoot and Graboid.
+After pulling the Dockie repo, `./src` contains all the shell scripts that
+Dockie uses, if you copy all of these to your PATH you're up and running. In
+this case you will have to manually download and install PRoot and Graboid.
 
 To download PRoot and Graboid:
 
@@ -132,6 +134,37 @@ To install Dockie:
 
 ```
 # install -m 755 build/{proot,graboid} src/dockie src/dockie-* /usr/local/bin
+```
+
+or if you don't have privileges
+
+```
+$ install -m 755 build/{proot,graboid} src/dockie src/dockie-* "$HOME/bin"
+```
+
+## Android/Termux
+
+After pulling the Dockie repo, `./src` contains all the shell scripts that
+Dockie uses, if you copy all of these to your PATH you're up and running. In
+this case you will have to manually download and install PRoot and Graboid.
+
+```terminal
+pkg add proot golang git
+
+cd /tmp
+git clone https://github.com/blacktop/graboid
+cd graboid
+go build
+cp graboid "$PREFIX/bin"
+```
+
+Then install dockie:
+
+```terminal
+cd /tmp
+git clone https://github.com/cristianrz/dockie
+
+install -m 755 src/dockie src/dockie-* /usr/local/bin
 ```
 
 or if you don't have privileges
