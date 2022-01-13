@@ -40,7 +40,11 @@ _init_dir() {
 
 # _bootstrap(system, id, name)
 _bootstrap() {
-	image_path="$DOCKIE_IMAGES/$1"
+  case "$1" in
+  */*) image_path="$DOCKIE_IMAGES/${1%/*}-${1#*/}" ;;
+  *) image_path="$DOCKIE_IMAGES/$1" ;;
+  esac
+
 	guest_path="$DOCKIE_GUESTS/$2"
 
 	_init_dir "$guest_path/rootfs" guest_prefix
