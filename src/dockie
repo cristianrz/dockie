@@ -62,7 +62,7 @@ HERE="$(
 	pwd
 )" export HERE
 
-VERSION="v2.0.0"
+VERSION="v2.0.1"
 
 PATH="$HERE:$PATH" export PATH
 
