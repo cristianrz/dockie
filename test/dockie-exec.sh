@@ -2,7 +2,7 @@
 
 set -eu
 
-id="$(./src/dockie-run -d alpine 2>/dev/null)"
+id="$(./src/dockie-run -d alpine 2>/dev/null || true)"
 
 case "${#id}" in
 12) : ;;
