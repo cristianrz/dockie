@@ -1,6 +1,8 @@
 #!/bin/sh
 
 get_graboid() {
+	type graboid && return
+
 	case "$OS" in
 	desktop)
 		if [ ! -f graboid ]; then
@@ -10,18 +12,20 @@ get_graboid() {
 		fi
 		;;
 	android)
-		trap 'rm -rf /tmp/graboid'
+		trap 'rm -rf "${PREFIX-}"/tmp/graboid' EXIT
 		pkg install golang -y
-		cd /tmp
+		cd "${PREFIX-}"/tmp
 		git clone https://github.com/blacktop/graboid
 		cd graboid
 		go build
-		cp graboid "$PREFIX/bin"
+		cp graboid "${PREFIX-}"/bin
 		;;
 	esac
 }
 
 get_proot() {
+	type proot && return
+
 	case "$OS" in
 	desktop)
 		if [ ! -f proot ]; then
@@ -72,9 +76,9 @@ aarch64) ARCH2=arm64 ;;
 esac
 
 # check if it's android or "normal" Linux
-OS="desktop"
-case "$(uname -a)" in
-*android*) OS="android" ;;
+case "$(uname -o)" in
+Android) OS="android" ;;
+*) OS="desktop" ;;
 esac
 
 case "${1-}" in
@@ -94,9 +98,11 @@ clean) clean ;;
 	*)
 		# other functions change directory previously
 		cd "$HERE"
+
 		mkdir -p "${PREFIX-$HOME}"/bin
-		install -m 755 build/proot build/graboid "${PREFIX-$HOME}"/bin
+		[ -f build/proot ] && install -m 755 build/proot build/graboid "${PREFIX-$HOME}"/bin
 		install -m 755 src/dockie src/dockie-* "${PREFIX-$HOME}"/bin
+    
 		{
 			echo "[+] All done!"
 			echo

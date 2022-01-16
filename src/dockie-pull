@@ -43,6 +43,7 @@ _get() {
 	cd "$TMP"
 
 	"$GRABOID" "$2" >&2 || return 1
+	echo 'Extracting gzip archive' >&2
 	tar xzf ./*tar.gz
 
 	mv ./*.tar "$1"
