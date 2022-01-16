@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# BEWARE: tests are designed for ARM but you can change the image name from
+# arm64v8/alpine to x86-64/alpine
+
 set -eu
 
 pass=0
