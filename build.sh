@@ -72,9 +72,9 @@ aarch64) ARCH2=arm64 ;;
 esac
 
 # check if it's android or "normal" Linux
-OS="desktop"
-case "$(uname -a)" in
-*android*) OS="android" ;;
+case "$(uname -o)" in
+Android) OS="android" ;;
+*) OS="desktop" ;;
 esac
 
 case "${1-}" in
