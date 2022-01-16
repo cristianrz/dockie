@@ -10,13 +10,13 @@ get_graboid() {
 		fi
 		;;
 	android)
-		trap 'rm -rf /tmp/graboid' EXIT
+		trap 'rm -rf "${PREFIX-}"/tmp/graboid' EXIT
 		pkg install golang -y
 		cd "${PREFIX-}"/tmp
 		git clone https://github.com/blacktop/graboid
 		cd graboid
 		go build
-		cp graboid "$PREFIX/bin"
+		cp graboid "${PREFIX-}"/bin"
 		;;
 	esac
 }
