@@ -1,4 +1,5 @@
 *AppImage
+build/
 .DS_Store
 ._*
 AppDir
