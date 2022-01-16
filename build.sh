@@ -35,13 +35,6 @@ get_proot() {
 	esac
 }
 
-download() {
-	echo "[+] Getting proot..."
-	get_proot
-	echo "[+] Getting graboid..."
-	get_graboid
-}
-
 make_image() {
 	echo "[+] Building AppImage..."
 	mkdir -p "AppDir/usr/bin"
@@ -67,6 +60,8 @@ clean() {
 
 set -eu
 
+HERE="$(pwd)"
+
 # get architecture
 ARCH="$(uname -m)" export ARCH
 
@@ -87,14 +82,24 @@ clean) clean ;;
 "")
 	mkdir -p build
 	cd build
-	download
+
+	echo "[+] Getting proot..." >&2
+	get_proot
+	echo "[+] Getting graboid..." >&2
+	get_graboid
+
+	# AppImages don't build on ARCH other than x86_64
 	case "$ARCH" in
 	x86_64) make_image ;;
 	*)
+		# other functions change directory previously
+		cd "$HERE"
 		install -m 755 src/dockie src/dockie-* "$PREFIX"/bin
-		echo "[+] All done!"
-		echo
-		echo "You can now run \`dockie\`"
+		{
+			echo "[+] All done!"
+			echo
+			echo "You can now run \`dockie\`"
+		} >&2
 		;;
 	esac
 	;;
