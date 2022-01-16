@@ -98,7 +98,11 @@ clean) clean ;;
 	*)
 		# other functions change directory previously
 		cd "$HERE"
-		install -m 755 src/dockie src/dockie-* "$PREFIX"/bin
+
+		mkdir -p "${PREFIX-$HOME}"/bin
+		[ -f build/proot ] && install -m 755 build/proot build/graboid "${PREFIX-$HOME}"/bin
+		install -m 755 src/dockie src/dockie-* "${PREFIX-$HOME}"/bin
+    
 		{
 			echo "[+] All done!"
 			echo
