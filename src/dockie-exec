@@ -108,7 +108,9 @@ _exec() {
 	trap 'rm -f $guest_path/lock' EXIT
 
 	envs="DISPLAY=${DISPLAY-} PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin TERM=${TERM-} HOME=/"
-	[ -n "${PROOT_TMP_DIR-}" ] && envs="PROOT_TMP_DIR=$PROOT_TMP_DIR $envs"
+
+	# this is necessary for Termux
+	[ -z "${PROOT_TMP_DIR-}" ] && envs="PROOT_TMP_DIR=$PROOT_TMP_DIR $envs"
 
 	# shellcheck disable=SC2086
 	env -i $envs "$PROOT" $flags "$guest_prefix" "$@"
