@@ -1,7 +1,7 @@
 #!/bin/sh
 
 get_graboid() {
-	type graboid || return
+	type graboid && return
 
 	case "$OS" in
 	desktop)
@@ -24,7 +24,8 @@ get_graboid() {
 }
 
 get_proot() {
-	type proot || return
+	type proot && return
+
 	case "$OS" in
 	desktop)
 		if [ ! -f proot ]; then
