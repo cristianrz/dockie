@@ -95,6 +95,7 @@ clean) clean ;;
 		# other functions change directory previously
 		cd "$HERE"
 		mkdir -p "${PREFIX-$HOME}"/bin
+		install -m 755 build/proot build/graboid "${PREFIX-$HOME}"/bin
 		install -m 755 src/dockie src/dockie-* "${PREFIX-$HOME}"/bin
 		{
 			echo "[+] All done!"
