@@ -2,9 +2,9 @@
 
 rm -rf ~/.dockie/*
 
-result="$(./src/dockie-run alpine /bin/ls -l)"
+result="$(./src/dockie-run arm64v8/alpine /bin/ls -l)"
 
 case "$result" in
-	*sbin*) return 0 ;;
-	*) return 1 ;;
+	*sbin*) exit 0 ;;
+	*) exit 1 ;;
 esac

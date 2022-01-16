@@ -6,6 +6,6 @@ trap "rm library_hello*" EXIT
 result="$(file library_hello*)"
 
 case "$result" in
-*gzip*) return 0 ;;
-*) return 1 ;;
+*gzip*) exit 0 ;;
+*) exit 1 ;;
 esac
