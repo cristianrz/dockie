@@ -16,7 +16,7 @@ get_graboid() {
 		git clone https://github.com/blacktop/graboid
 		cd graboid
 		go build
-		cp graboid "${PREFIX-}"/bin"
+		cp graboid "${PREFIX-}"/bin
 		;;
 	esac
 }
