@@ -98,7 +98,7 @@ _exec() {
 
 	[ -z "${flags-}" ] && flags="${mounts-} -i ${id:-0} -r"
 
-	flags="-w / -b ${PREFIX-}/etc/resolv.conf $flags"
+	flags="-w / -b "$PREFIX"/etc/resolv.conf:/etc/resolv.conf $flags"
 
 	# shellcheck disable=SC2015
 	# prevents deleting guests that someone is using
