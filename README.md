@@ -40,19 +40,25 @@ disabled and therefore reducing your attack surface.
 
 There are two installation methods:
 
-* [AppImage](https://github.com/cristianrz/dockie/#appimage-only-x86_64): the recommended installation method if you have
+* [AppImage](https://github.com/cristianrz/dockie/#appimage-only-x86_64): the
+recommended installation method if you have
     * a 64 bit processor (which you are most likely) and
     * glibc (in contrast with, for example, musl).
 
-It embeds PRoot inside the image. If the AppImage does not work for you or you already have PRoot, it's probably better if you use the method below.
+It embeds PRoot inside the image. If the AppImage does not work for you or you
+already have PRoot, it's probably better if you use the method below.
 
-* [Standalone Dockie](https://github.com/cristianrz/dockie/#no-appimageraspberry-piandroidm1): if 
+* [Android/Termux](https://github.com/cristianrz/dockie#androidtermux)
+
+* [Standalone Dockie](https://github.com/cristianrz/dockie#no-appimageraspberry-pim1):
+if 
+
   * you are using Android
   * a 32-bit processor
   * M1
   * Raspberry Pi
-  * any other obscure device/OS, or
-  * you don't want to embed PRoot/Graboid inside Dockie
+  * any other obscure device/OS/architecture
+
 
 ## AppImage (only x86_64)
 
