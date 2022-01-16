@@ -98,7 +98,7 @@ _exec() {
 
 	[ -z "${flags-}" ] && flags="${mounts-} -i ${id:-0} -r"
 
-	flags="-w / -b /etc/resolv.conf $flags"
+	flags="-w / -b ${PREFIX-}/etc/resolv.conf $flags"
 
 	# shellcheck disable=SC2015
 	# prevents deleting guests that someone is using
@@ -110,7 +110,7 @@ _exec() {
 	envs="DISPLAY=${DISPLAY-} PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin TERM=${TERM-} HOME=/"
 
 	# this is necessary for Termux
-	[ -z "${PROOT_TMP_DIR-}" ] && envs="PROOT_TMP_DIR=$PREFIX/tmp $envs"
+	[ -z "${PROOT_TMP_DIR-}" ] && envs="PROOT_TMP_DIR=${PREFIX-}/tmp $envs"
 
 	# shellcheck disable=SC2086
 	env -i $envs "$PROOT" $flags "$guest_prefix" "$@"
