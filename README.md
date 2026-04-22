@@ -1,3 +1,5 @@
+> **Looking for Docker containers in Termux?** Use [proot-distro](https://github.com/termux/proot-distro) — it's the official Termux solution with broader distro support. If you need Docker image compatibility specifically, [udocker](https://github.com/indigo-dc/udocker) is available via `pkg install udocker`. Dockie is best suited for environments where you want a Docker-compatible CLI with a single binary and no dependencies.
+
 <p align="center"><img src="docs/whale_small.png" width="220px"></p>
 
 # Dockie
